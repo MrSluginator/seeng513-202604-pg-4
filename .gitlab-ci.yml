@@ -1,0 +1,54 @@
+stages:
+  - lint
+  - test
+  - build
+
+# ----------------------------------------------------
+# Frontend Jobs (Node.js)
+# ----------------------------------------------------
+frontend:lint:
+  stage: lint
+  image: node:20-alpine
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run lint
+    - npm run format:check
+
+frontend:build:
+  stage: build
+  image: node:20-alpine
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1 week
+
+# ----------------------------------------------------
+# Backend Jobs (Python / FastAPI)
+# ----------------------------------------------------
+backend:lint:
+  stage: lint
+  image: python:3.11-slim
+  before_script:
+    - cd backend
+    - pip install --no-cache-dir flake8 black isort
+  script:
+    - flake8 .
+    - black --check .
+    - isort --check-only .
+
+backend:test:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - cd backend
+    - apt-get update && apt-get install -y --no-install-recommends libpq-dev gcc && rm -rf /var/lib/apt/lists/*
+    - pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+  script:
+    - pytest
