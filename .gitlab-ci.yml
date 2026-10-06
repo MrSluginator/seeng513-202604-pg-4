@@ -11,7 +11,7 @@ frontend:lint:
   image: node:20-alpine
   before_script:
     - corepack enable
-    - corepack prepare pnpm@latest --activate
+    - corepack prepare pnpm@10 --activate
     - cd frontend
     - pnpm install --frozen-lockfile
   script:
@@ -23,7 +23,7 @@ frontend:build:
   image: node:20-alpine
   before_script:
     - corepack enable
-    - corepack prepare pnpm@latest --activate
+    - corepack prepare pnpm@10 --activate
     - cd frontend
     - pnpm install --frozen-lockfile
   script:
