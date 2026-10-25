@@ -7,3 +7,5 @@ function Pin() {
         </div>
     );
 }
+
+export default Pin;

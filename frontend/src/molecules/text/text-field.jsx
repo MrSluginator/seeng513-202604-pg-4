@@ -7,3 +7,5 @@ function TextField() {
         </div>
     );
 }
+
+export default TextField;

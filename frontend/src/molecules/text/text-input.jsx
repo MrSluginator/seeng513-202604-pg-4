@@ -7,3 +7,5 @@ function TextInput() {
         </div>
     );
 }
+
+export default TextInput;

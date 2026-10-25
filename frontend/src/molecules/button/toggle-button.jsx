@@ -7,3 +7,5 @@ function ToggleButton() {
         </div>
     );
 }
+
+export default ToggleButton;

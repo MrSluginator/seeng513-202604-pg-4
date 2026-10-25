@@ -7,3 +7,5 @@ function Icon() {
         </div>
     );
 }
+
+export default Icon;

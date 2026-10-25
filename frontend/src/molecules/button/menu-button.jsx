@@ -7,3 +7,5 @@ function MenuButton() {
         </div>
     );
 }
+
+export default MenuButton;

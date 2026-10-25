@@ -7,3 +7,5 @@ function TabButton() {
         </div>
     );
 }
+
+export default TabButton;

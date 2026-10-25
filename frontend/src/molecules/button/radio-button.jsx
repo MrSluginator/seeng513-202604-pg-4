@@ -7,3 +7,5 @@ function RadioButton() {
         </div>
     );
 }
+
+export default RadioButton;
