@@ -1,0 +1,55 @@
+.button {
+    display: flex;
+    flex-direction: row;
+    height: 32px;
+    min-width: 120px;
+    padding: 8px;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 32px;
+    border: 1px solid var(--p3);
+    background: var(--p2);
+    color: var(--p7);
+
+    font-size: var(--body-size);
+    font-weight: var(--body-weight);
+    line-height: var(--body-line-height);
+
+    .icon {
+        color: var(--p7);
+    }
+
+    .text {
+        display: flex;
+        flex: 1 0 0;
+        justify-content: center;
+        text-align: center;
+    }
+
+    &.iconOnly {
+        min-width: 0;
+        padding: 0;
+        aspect-ratio: 1 / 1;
+    }
+}
+
+.button:hover {
+    border: 1px solid var(--p4);
+    background: var(--p3);
+}
+
+.button:active {
+    border: 1px solid var(--p5);
+    background: var(--p4);
+}
+
+.button:disabled {
+    border: 1px solid var(--n3);
+    background: var(--n2);
+    color: var(--p5);
+
+    .icon {
+        color: var(--p5)
+    }
+}

@@ -1,20 +1,17 @@
 import React from 'react'
+import styles from './button.module.css'
+import Icon from '../icon';
 
-const baseStyle = {
-  padding: '8px 16px',
-  cursor: 'pointer',
-};
-
-function Button({ onClick, disabled = false, leftIcon, text, icon, style }) {
+function Button({ onClick, text, icon, icon_position = "right", disabled = false, variant = 'primary' }) {
     return (
         <button
+            className={`${styles.button} ${!text ? styles.iconOnly : ""}`}
             onClick={onClick}
             disabled={disabled}
-            style={baseStyle}
         >
-            {leftIcon && leftIcon}
-            {text && text}
-            {icon && icon}
+            {(icon && icon_position === "left") && <Icon name={icon}></Icon>}
+            {text && <span className={styles.text}>{text}</span>}
+            {(icon && icon_position === "right") && <Icon name={icon}></Icon>}
         </button>
     );
 }

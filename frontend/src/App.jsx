@@ -10,7 +10,12 @@ function App() {
       testing components
       <div>
         Buttons:
-        <Button></Button>
+        <div style={{ display:"flex", flexDirection: "row" }}>
+        <Button text="Hello"></Button>
+        <Button icon="filter"></Button>
+        <Button icon="left" icon_position="left" text="left"></Button>
+        <Button text="right" icon="right"></Button>
+        </div>
         <MenuButton></MenuButton>
         <RadioButton></RadioButton>
         <TabButton></TabButton>

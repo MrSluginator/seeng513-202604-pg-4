@@ -79,6 +79,14 @@
   --small-size: 0.75rem;  /* 14px */
   --small-weight: var(--weight-regular);
   --small-line-height: 1rem;
+
+  /* Icon Sizes */
+  --icon-xs: 1rem; /* 16px */
+  --icon-s: 1.25rem; /* 20px */
+  --icon-m: 1.5rem; /* 24px */
+  --icon-l: 2rem;
+  --icon-xl: 4rem;
+  --icon-xxl: 8rem;
 }
 
 h1 {
