@@ -1,7 +1,21 @@
-import { React, useId } from 'react';
-import styles from './tab-group.module.css';
+import React, { useId } from 'react';
+import styles from './radio-group.module.css';
 
-function TabGroup({ options, value, onChange, name, disabled = false }) {
+interface RadioProps {
+  value: any,
+  label: string,
+  disabled?: boolean
+}
+
+interface RadioGroupProps {
+  options: Array<RadioProps>,
+  value: any,
+  onChange: React.Dispatch<any>,
+  disabled?: boolean
+  id?: string,
+}
+
+function RadioGroup({ options, value, onChange, disabled = false, id: name }: RadioGroupProps) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
 
@@ -22,6 +36,9 @@ function TabGroup({ options, value, onChange, name, disabled = false }) {
               disabled={option.disabled}
               onChange={() => onChange?.(option.value)}
             />
+            <span className={styles.circle}>
+              <span className={styles.dot} />
+            </span>
             <span className={styles.label}>{option.label}</span>
           </label>
         ))}
@@ -30,4 +47,4 @@ function TabGroup({ options, value, onChange, name, disabled = false }) {
   );
 }
 
-export default TabGroup;
+export default RadioGroup;

@@ -1,9 +1,15 @@
-import React, { forwardRef, useId } from 'react';
+import { forwardRef, Ref, useId } from 'react';
 import styles from './text-field.module.css';
-import Icon from '../icon';
+
+interface TextFieldProps {
+  label?: string,
+  placeholder: string,
+  disabled?: boolean,
+  id?: string,
+}
 
 const TextField = forwardRef(function TextField(
-  { label, placeholder, disabled = false, id },
+  { label, placeholder, disabled = false, id }: TextFieldProps,
   ref
 ) {
   const generatedId = useId();
@@ -17,7 +23,7 @@ const TextField = forwardRef(function TextField(
         </label>
       )}
       <textarea
-        ref={ref}
+        ref={ref as Ref<HTMLTextAreaElement>}
         id={inputId}
         className={styles.input}
         placeholder={placeholder}

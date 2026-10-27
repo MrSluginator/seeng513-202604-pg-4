@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import styles from './widget.module.css';
-import Icon from './icon';
+import Icon, { IconName } from './icon';
+
+interface WidgetProps {
+  text?: string,
+  icon?: IconName,
+  defaultPressed?: boolean,
+  pressed: any,
+  onChange: React.Dispatch<any>
+  disabled?: boolean,
+  label?: string,
+}
 
 function Widget({
   text,
@@ -10,7 +20,7 @@ function Widget({
   onChange,
   disabled = false,
   label,
-}) {
+}: WidgetProps) {
   const [internalPressed, setInternalPressed] = useState(defaultPressed);
 
   const isControlled = pressed !== undefined;

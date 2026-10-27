@@ -15,13 +15,21 @@ import styles from './toggle-button.module.css';
  *  - disabled             : disables the switch
  *  - label                : accessible name, e.g. "Dark mode" (there is no visible text)
  */
+interface ToggleProps {
+  pressed?: any,
+  defaultPressed?: boolean,
+  onChange?: React.Dispatch<any>,
+  disabled?: boolean,
+  label?: string
+}
+
 function ToggleButton({
   pressed,
   defaultPressed = false,
   onChange,
   disabled = false,
   label,
-}) {
+}: ToggleProps) {
   const [internalPressed, setInternalPressed] = useState(defaultPressed);
 
   const isControlled = pressed !== undefined;

@@ -46,7 +46,7 @@ function App() {
         <div style={{ display: 'flex', gap: '10px' }}>
           <Button text="Hello"></Button>
           <Button icon="filter"></Button>
-          <Button icon="left" icon_position="left" text="left"></Button>
+          <Button icon="left" iconPosition="left" text="left"></Button>
           <Button text="right" icon="right"></Button>
         </div>
         <MenuButton></MenuButton>
@@ -54,9 +54,9 @@ function App() {
           value={size}
           onChange={setSize}
           options={[
-            { value: 'sm', label: 'Small' },
-            { value: 'md', label: 'Medium' },
-            { value: 'lg', label: 'Large' },
+            { value: 's', label: 'Small' },
+            { value: 'm', label: 'Medium' },
+            { value: 'l', label: 'Large' },
             { value: 'xl', label: 'Extra large', disabled: true },
           ]}
         />
@@ -95,10 +95,10 @@ function App() {
             />
           ))}
         </div>
-        <Slider max={100} defaultValue={14} majorSteps={5} minorSteps={1} />
-        <Slider defaultValue={[10, 18]} />
-        <Slider defaultValue={14} labelsPosition="top" />
-        <Slider defaultValue={[10, 18]} labelsPosition="top" />
+        <Slider min={0} max={100} defaultValue={14} majorSteps={5} minorSteps={1} />
+        <Slider min={0} max={24} defaultValue={[10, 18]} />
+        <Slider min={0} max={200} defaultValue={100} disabled={true} labelsPosition="top" />
+        <Slider min={5} max={10} step={0.1} defaultValue={[5.6, 7]} labelsPosition="top" />
         <div style={{ display: 'flex', gap: '10px' }}>
           <Widget text="text"></Widget>
           <Widget icon="food"></Widget>

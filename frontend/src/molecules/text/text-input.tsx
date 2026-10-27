@@ -1,6 +1,15 @@
-import React, { forwardRef, useId } from 'react';
+import { forwardRef, Ref, useId } from 'react';
 import styles from './text-input.module.css';
-import Icon from '../icon';
+import Icon, { IconName } from '../icon';
+
+interface TextInputProps {
+  label?: string,
+  placeholder?: string,
+  icon?: IconName,
+  iconPosition: 'left' | 'right',
+  disabled?: boolean,
+  id?: string,
+}
 
 const TextInput = forwardRef(function TextInput(
   {
@@ -9,9 +18,8 @@ const TextInput = forwardRef(function TextInput(
     icon,
     iconPosition = 'right',
     disabled = false,
-    className = '',
     id,
-  },
+  }: TextInputProps,
   ref
 ) {
   const generatedId = useId();
@@ -24,7 +32,7 @@ const TextInput = forwardRef(function TextInput(
   ) : null;
 
   return (
-    <div className={[styles.wrapper, className].filter(Boolean).join(' ')}>
+    <div className={styles.wrapper}>
       {label && (
         <label htmlFor={inputId} className={styles.label}>
           {label}
@@ -33,7 +41,7 @@ const TextInput = forwardRef(function TextInput(
       <div className={styles.field} data-disabled={disabled || undefined}>
         {iconPosition === 'left' && iconEl}
         <input
-          ref={ref}
+          ref={ref as Ref<HTMLInputElement>}
           id={inputId}
           className={styles.input}
           placeholder={placeholder}

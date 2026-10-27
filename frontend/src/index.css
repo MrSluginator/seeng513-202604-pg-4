@@ -87,6 +87,10 @@
   --icon-l: 2rem;
   --icon-xl: 4rem;
   --icon-xxl: 8rem;
+
+  --pin-s: 28px;
+  --pin-m: 32px;
+  --pin-l: 42px;
 }
 
 h1 {

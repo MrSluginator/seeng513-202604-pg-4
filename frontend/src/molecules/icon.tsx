@@ -1,4 +1,3 @@
-import React from 'react';
 import bookmark from '../assets/icons/bookmark.svg?react';
 import check from '../assets/icons/check.svg?react';
 import comment from '../assets/icons/comment.svg?react';
@@ -26,6 +25,7 @@ import sun from '../assets/icons/sun.svg?react';
 import times from '../assets/icons/times.svg?react';
 import up from '../assets/icons/up.svg?react';
 import wine from '../assets/icons/wine.svg?react';
+import { Color, Size } from '../global';
 
 const icons = {
   bookmark: bookmark,
@@ -34,8 +34,8 @@ const icons = {
   dollar: dollar,
   down: down,
   event: event,
-  'eye-closed': eyeClosed,
-  'eye-open': eyeOpen,
+  eyeClosed: eyeClosed,
+  eyeOpen: eyeOpen,
   filter: filter,
   food: food,
   home: home,
@@ -57,27 +57,29 @@ const icons = {
   wine: wine,
 };
 
-function Icon({ name, size = 'xs', color = 'n7', title }) {
+export type IconName = keyof typeof icons;
+
+interface IconProps {
+  name: IconName,
+  size?: Size,
+  color?: Color,
+}
+
+function Icon({ name, size = 'xs', color = 'n7'}: IconProps) {
   const SvgIcon = icons[name];
 
   if (!SvgIcon) {
-    // console.warn(`Icon: no icon named "${name}"`);
     return null;
   }
 
-  const resolvedColor = /^(#|rgb|hsl|var\(|currentColor)/.test(color)
-    ? color
-    : `var(--${color})`;
-  const resolvedSize = /^[0-9]/.test(size) ? size : `var(--icon-${size})`;
+  const resolvedColor = `var(--${color})`;
+  const resolvedSize = `var(--icon-${size})`;
 
   return (
     <SvgIcon
-      width={resolvedSize}
-      height={resolvedSize}
-      style={{ color: resolvedColor, flexShrink: 0 }}
-      role={title ? 'img' : undefined}
-      aria-label={title}
-      aria-hidden={title ? undefined : true}
+      style={{ color: resolvedColor, flexShrink: 0, width: resolvedSize, height: resolvedSize }}
+      role={'img'}
+      aria-label={name}
     />
   );
 }
