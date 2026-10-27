@@ -62,7 +62,7 @@ function Icon({ name, size = "xs", color = "n7", title }) {
   const SvgIcon = icons[name];
 
   if (!SvgIcon) {
-    console.warn(`Icon: no icon named "${name}"`);
+    // console.warn(`Icon: no icon named "${name}"`);
     return null;
   }
 
