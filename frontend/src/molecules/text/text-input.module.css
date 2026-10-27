@@ -1,0 +1,67 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+
+  .label {
+    align-self: start;
+    padding-left: 8px;
+    font: var(--small-weight) var(--small-size) var(--small-line-height);
+    color: var(--n6);
+  }
+}
+
+/* The visible box. The real <input> inside is stripped of its own styling. */
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 8px;
+  border-radius: 32px;
+  border: 1px solid var(--p1);
+  background: var(--n0);
+
+  &:hover:not([data-disabled]) {
+    border-color: var(--p2);
+    background-color: var(--p1);
+  }
+
+  /* A div can't match :focus-visible, so react to the input inside it */
+  &:has(.input:focus-visible) {
+    outline: 2px solid var(--p7);
+    outline-offset: 2px;
+  }
+
+  &[data-disabled] {
+    border-color: var(--n3);
+    background-color: var(--n2);
+    cursor: not-allowed;
+  }
+}
+
+.input {
+  flex: 1;
+  min-width: 0; /* lets the input shrink instead of overflowing the box */
+  padding: 0;
+  border: none;
+  outline: none; /* focus ring lives on .field */
+  background: transparent;
+
+  font-family: inherit;
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-line-height);
+  color: var(--n7);
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
