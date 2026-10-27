@@ -1,0 +1,46 @@
+.widget {
+  --width: 48px;
+  display: inline-flex;
+  height: 26px;
+  width: fit-content;
+  min-width: var(--width, 48px);
+  min-height: 26px;
+  padding: 4px 8px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 8px;
+  border: 1px solid var(--p2);
+  background: var(--p1);
+  color: var(--n7);
+
+  &:hover {
+    border-color: var(--p3);
+    background-color: var(--p2);
+  }
+
+  &[aria-checked="true"] {
+    border-color: var(--p4);
+    background-color: var(--p3);
+  }
+
+  &[aria-checked="true"]:hover {
+    border-color: var(--p5);
+    background-color: var(--p4);
+  }
+
+  &:disabled {
+    border-color: var(--n3);
+    background-color: var(--n2);
+    color: var(--n5);
+  }
+}
+
+.bigget {
+  height: 60px;
+  min-width: var(--width, 72px);
+  min-height: 60px;
+  padding: 8px;
+}
