@@ -57,19 +57,19 @@
   }
 }
 
-.input:checked+.label {
+.input:checked + .label {
   border-color: var(--p3);
   background: var(--p2);
   border-width: 4px;
 }
 
-.input:hover+.label {
+.input:hover + .label {
   border-color: var(--p4);
   background-color: var(--p3);
   border-width: 4px;
 }
 
-.input:disabled+.label {
+.input:disabled + .label {
   border-color: var(--n4);
   background-color: var(--n3);
   border-width: 2px;

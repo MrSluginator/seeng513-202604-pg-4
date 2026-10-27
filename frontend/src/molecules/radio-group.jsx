@@ -1,5 +1,5 @@
-import React, { useId } from "react";
-import styles from "./radio-group.module.css";
+import React, { useId } from 'react';
+import styles from './radio-group.module.css';
 
 /**
  * RadioGroup
@@ -15,42 +15,36 @@ import styles from "./radio-group.module.css";
  *  - name      : optional; a unique one is generated if you leave it out
  *  - disabled  : disables every option
  */
-function RadioGroup({
-	options,
-	value,
-	onChange,
-	name,
-	disabled = false,
-}) {
-	const generatedName = useId();
-	const groupName = name ?? generatedName;
+function RadioGroup({ options, value, onChange, name, disabled = false }) {
+  const generatedName = useId();
+  const groupName = name ?? generatedName;
 
-	return (
-		<fieldset className={styles.group} disabled={disabled}>
-			<div className={styles.options}>
-				{options.map((option) => (
-					<label
-						key={option.value}
-						className={`${styles.option} ${option.disabled || disabled ? styles.optionDisabled : ""}`}
-					>
-						<input
-							type="radio"
-							className={styles.input}
-							name={groupName}
-							value={option.value}
-							checked={value === option.value}
-							disabled={option.disabled}
-							onChange={() => onChange?.(option.value)}
-						/>
-						<span className={styles.circle}>
-							<span className={styles.dot} />
-						</span>
-						<span className={styles.label}>{option.label}</span>
-					</label>
-				))}
-			</div>
-		</fieldset>
-	);
+  return (
+    <fieldset className={styles.group} disabled={disabled}>
+      <div className={styles.options}>
+        {options.map((option) => (
+          <label
+            key={option.value}
+            className={`${styles.option} ${option.disabled || disabled ? styles.optionDisabled : ''}`}
+          >
+            <input
+              type="radio"
+              className={styles.input}
+              name={groupName}
+              value={option.value}
+              checked={value === option.value}
+              disabled={option.disabled}
+              onChange={() => onChange?.(option.value)}
+            />
+            <span className={styles.circle}>
+              <span className={styles.dot} />
+            </span>
+            <span className={styles.label}>{option.label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
 }
 
 export default RadioGroup;

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import styles from "./toggle-button.module.css";
+import React, { useState } from 'react';
+import styles from './toggle-button.module.css';
 
 /**
  * ToggleButton (on/off switch)

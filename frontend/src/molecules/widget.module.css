@@ -21,12 +21,12 @@
     background-color: var(--p2);
   }
 
-  &[aria-checked="true"] {
+  &[aria-checked='true'] {
     border-color: var(--p4);
     background-color: var(--p3);
   }
 
-  &[aria-checked="true"]:hover {
+  &[aria-checked='true']:hover {
     border-color: var(--p5);
     background-color: var(--p4);
   }

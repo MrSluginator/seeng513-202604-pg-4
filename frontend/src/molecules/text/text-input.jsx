@@ -1,6 +1,6 @@
-import React, { forwardRef, useId } from 'react'
-import styles from './text-input.module.css'
-import Icon from '../icon'
+import React, { forwardRef, useId } from 'react';
+import styles from './text-input.module.css';
+import Icon from '../icon';
 
 const TextInput = forwardRef(function TextInput(
   {
@@ -14,14 +14,14 @@ const TextInput = forwardRef(function TextInput(
   },
   ref
 ) {
-  const generatedId = useId()
-  const inputId = id ?? generatedId
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
 
   const iconEl = icon ? (
     <span className={styles.icon} aria-hidden="true">
       <Icon name={icon} />
     </span>
-  ) : null
+  ) : null;
 
   return (
     <div className={[styles.wrapper, className].filter(Boolean).join(' ')}>
@@ -42,7 +42,7 @@ const TextInput = forwardRef(function TextInput(
         {iconPosition === 'right' && iconEl}
       </div>
     </div>
-  )
-})
+  );
+});
 
 export default TextInput;

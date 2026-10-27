@@ -10,7 +10,9 @@
   border: 1px solid var(--p2);
   background-color: var(--p1);
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 
   .circle {
     box-sizing: border-box;
@@ -20,7 +22,9 @@
     border: 1px solid var(--p3);
     background-color: var(--p2);
     transform: translateX(0);
-    transition: transform 150ms ease, background-color 150ms ease,
+    transition:
+      transform 150ms ease,
+      background-color 150ms ease,
       border-color 150ms ease;
   }
 
@@ -36,7 +40,7 @@
   }
 
   /* ON (knob slides to the right: track inner width 46px - knob 24px = 22px) */
-  &[aria-checked="true"] {
+  &[aria-checked='true'] {
     border-color: var(--p3);
     background-color: var(--p2);
 
@@ -48,7 +52,7 @@
   }
 
   /* ON + hover */
-  &[aria-checked="true"]:hover:not(:disabled) {
+  &[aria-checked='true']:hover:not(:disabled) {
     border-color: var(--p4);
     background-color: var(--p3);
 
@@ -71,7 +75,7 @@
   }
 
   /* DISABLED (on) */
-  &:disabled[aria-checked="true"] {
+  &:disabled[aria-checked='true'] {
     border-color: var(--n4);
     background-color: var(--n3);
 

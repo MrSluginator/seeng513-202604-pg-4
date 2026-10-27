@@ -1,48 +1,48 @@
-@import url("https://fonts.googleapis.com/css2?family=Nokora:wght@100;300;400;700;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Nokora:wght@100;300;400;700;900&display=swap');
 
 :root {
   font-family: Nokora, system-ui, Helvetica, Arial, sans-serif;
 
   color-scheme: light dark;
-  --p1: #FCDAD5;
-  --p2: #F7A8A0;
-  --p3: #ED776D;
-  --p4: #E7483A;
-  --p5: #D1291A;
-  --p6: #A52114;
-  --p7: #7D180F;
-  --t0: #EFF5F5;
-  --t1: #E0EBEB;
-  --t2: #C2D6D6;
+  --p1: #fcdad5;
+  --p2: #f7a8a0;
+  --p3: #ed776d;
+  --p4: #e7483a;
+  --p5: #d1291a;
+  --p6: #a52114;
+  --p7: #7d180f;
+  --t0: #eff5f5;
+  --t1: #e0ebeb;
+  --t2: #c2d6d6;
   --t6: #274649;
-  --t7: #172D30;
-  --s1: #FFC8EF;
-  --s2: #FFA8D0;
-  --s3: #FA6AA8;
-  --s4: #EF3E80;
-  --s5: #CF0E60;
-  --s6: #9F0030;
+  --t7: #172d30;
+  --s1: #ffc8ef;
+  --s2: #ffa8d0;
+  --s3: #fa6aa8;
+  --s4: #ef3e80;
+  --s5: #cf0e60;
+  --s6: #9f0030;
   --s7: #580010;
-  --n0: #FAF8F8;
-  --n1: #F0ECEC;
-  --n2: #DED8D8;
-  --n3: #C5BDBD;
-  --n4: #A69C9C;
-  --n5: #877C7C;
+  --n0: #faf8f8;
+  --n1: #f0ecec;
+  --n2: #ded8d8;
+  --n3: #c5bdbd;
+  --n4: #a69c9c;
+  --n5: #877c7c;
   --n6: #514949;
   --n7: #383232;
-  --g1: #ADDF44;
-  --g2: #619D1C;
-  --g3: #446F14;
-  --y1: #FDED24;
-  --y2: #9E8F04;
-  --y3: #6E6403;
-  --b1: #6DDFEA;
-  --b2: #1B96D8;
+  --g1: #addf44;
+  --g2: #619d1c;
+  --g3: #446f14;
+  --y1: #fded24;
+  --y2: #9e8f04;
+  --y3: #6e6403;
+  --b1: #6ddfea;
+  --b2: #1b96d8;
   --b3: #136997;
-  --o1: #F8903B;
-  --o2: #E16D0E;
-  --o3: #9E4D0A;
+  --o1: #f8903b;
+  --o2: #e16d0e;
+  --o3: #9e4d0a;
 
   /* Font weights */
   --weight-regular: 400;
@@ -51,32 +51,32 @@
   --weight-bold: 700;
 
   /* H1 */
-  --h1-size: 2rem;       /* 40px */
+  --h1-size: 2rem; /* 40px */
   --h1-weight: var(--weight-bold);
   --h1-line-height: 2.5rem;
 
   /* H2 */
-  --h2-size: 2rem;         /* 32px */
+  --h2-size: 2rem; /* 32px */
   --h2-weight: var(--weight-semibold);
   --h2-line-height: 2.25rem;
 
   /* H3 */
-  --h3-size: 1.5rem;       /* 24px */
+  --h3-size: 1.5rem; /* 24px */
   --h3-weight: var(--weight-semibold);
   --h3-line-height: 2rem;
 
   /* H4 */
-  --h4-size: 1.25rem;      /* 20px */
+  --h4-size: 1.25rem; /* 20px */
   --h4-weight: var(--weight-bold);
   --h4-line-height: 24px;
 
   /* Body */
-  --body-size: 1rem;       /* 16px */
+  --body-size: 1rem; /* 16px */
   --body-weight: var(--weight-medium);
   --body-line-height: 1.25rem;
 
   /* Small */
-  --small-size: 0.75rem;  /* 14px */
+  --small-size: 0.75rem; /* 14px */
   --small-weight: var(--weight-regular);
   --small-line-height: 1rem;
 
@@ -113,7 +113,8 @@ h4 {
   line-height: var(--h4-line-height);
 }
 
-body, p {
+body,
+p {
   font-size: var(--body-size);
   font-weight: var(--body-weight);
   line-height: var(--body-line-height);
