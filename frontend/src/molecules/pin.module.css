@@ -1,0 +1,58 @@
+.pin {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.shape {
+  fill: var(--p3);
+  stroke: var(--p4);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+
+.number {
+  fill: var(--pin-text);
+  font-family: inherit;
+  font-weight: 500;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Clickable version: a native <button> wrapping the SVG */
+.button {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  line-height: 0;
+  /* removes stray space under the SVG */
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  &[aria-pressed='true'] .shape {
+    fill: var(--p4);
+    stroke: var(--p3);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--p7);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    .shape {
+      fill: var(--n3);
+      stroke: var(--n4);
+    }
+  }
+}
