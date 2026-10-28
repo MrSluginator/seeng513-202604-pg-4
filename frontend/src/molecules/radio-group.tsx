@@ -2,20 +2,26 @@ import React, { useId } from 'react';
 import styles from './radio-group.module.css';
 
 interface RadioProps {
-  value: any,
-  label: string,
-  disabled?: boolean
+  value: any;
+  label: string;
+  disabled?: boolean;
 }
 
 interface RadioGroupProps {
-  options: Array<RadioProps>,
-  value: any,
-  onChange: React.Dispatch<any>,
-  disabled?: boolean
-  id?: string,
+  options: Array<RadioProps>;
+  value: any;
+  onChange: React.Dispatch<any>;
+  disabled?: boolean;
+  id?: string;
 }
 
-function RadioGroup({ options, value, onChange, disabled = false, id: name }: RadioGroupProps) {
+function RadioGroup({
+  options,
+  value,
+  onChange,
+  disabled = false,
+  id: name,
+}: RadioGroupProps) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
 

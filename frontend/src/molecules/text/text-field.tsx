@@ -2,10 +2,10 @@ import { forwardRef, Ref, useId } from 'react';
 import styles from './text-field.module.css';
 
 interface TextFieldProps {
-  label?: string,
-  placeholder: string,
-  disabled?: boolean,
-  id?: string,
+  label?: string;
+  placeholder: string;
+  disabled?: boolean;
+  id?: string;
 }
 
 const TextField = forwardRef(function TextField(

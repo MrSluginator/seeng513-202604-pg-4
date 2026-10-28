@@ -95,10 +95,28 @@ function App() {
             />
           ))}
         </div>
-        <Slider min={0} max={100} defaultValue={14} majorSteps={5} minorSteps={1} />
+        <Slider
+          min={0}
+          max={100}
+          defaultValue={14}
+          majorSteps={5}
+          minorSteps={1}
+        />
         <Slider min={0} max={24} defaultValue={[10, 18]} />
-        <Slider min={0} max={200} defaultValue={100} disabled={true} labelsPosition="top" />
-        <Slider min={5} max={10} step={0.1} defaultValue={[5.6, 7]} labelsPosition="top" />
+        <Slider
+          min={0}
+          max={200}
+          defaultValue={100}
+          disabled={true}
+          labelsPosition="top"
+        />
+        <Slider
+          min={5}
+          max={10}
+          step={0.1}
+          defaultValue={[5.6, 7]}
+          labelsPosition="top"
+        />
         <div style={{ display: 'flex', gap: '10px' }}>
           <Widget text="text"></Widget>
           <Widget icon="food"></Widget>

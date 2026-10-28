@@ -16,11 +16,11 @@ import styles from './toggle-button.module.css';
  *  - label                : accessible name, e.g. "Dark mode" (there is no visible text)
  */
 interface ToggleProps {
-  pressed?: any,
-  defaultPressed?: boolean,
-  onChange?: React.Dispatch<any>,
-  disabled?: boolean,
-  label?: string
+  pressed?: any;
+  defaultPressed?: boolean;
+  onChange?: React.Dispatch<any>;
+  disabled?: boolean;
+  label?: string;
 }
 
 function ToggleButton({

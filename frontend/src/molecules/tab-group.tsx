@@ -2,20 +2,26 @@ import React, { useId } from 'react';
 import styles from './tab-group.module.css';
 
 interface TabProps {
-  value: any,
-  label: string,
-  disabled?: boolean,
+  value: any;
+  label: string;
+  disabled?: boolean;
 }
 
 interface TabGroupProps {
-  options: Array<TabProps>,
-  value: any,
-  onChange: React.Dispatch<any>
-  id?: string,
-  disabled?: boolean,
+  options: Array<TabProps>;
+  value: any;
+  onChange: React.Dispatch<any>;
+  id?: string;
+  disabled?: boolean;
 }
 
-function TabGroup({ options, value, onChange, id, disabled = false }: TabGroupProps) {
+function TabGroup({
+  options,
+  value,
+  onChange,
+  id,
+  disabled = false,
+}: TabGroupProps) {
   const generatedName = useId();
   const groupName = id ?? generatedName;
 

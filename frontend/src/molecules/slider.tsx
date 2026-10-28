@@ -29,7 +29,8 @@ interface Tick {
 
 const INSET = 'var(--slider-inset)';
 
-const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
+const clamp = (n: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, n));
 
 const inRail = (percent: number) =>
   `calc(${INSET} + (100% - 2 * ${INSET}) * ${percent / 100})`;
@@ -38,7 +39,7 @@ function buildTicks(
   min: number,
   majorStep: number,
   majorSteps: number,
-  minorSteps: number,
+  minorSteps: number
 ): Tick[] {
   const ticks: Tick[] = [];
   for (let i = 0; i < majorSteps; i += 1) {
@@ -47,7 +48,10 @@ function buildTicks(
 
     if (i < majorSteps - 1) {
       for (let j = 1; j <= minorSteps; j += 1) {
-        ticks.push({ value: value + (j * majorStep) / (minorSteps + 1), major: false });
+        ticks.push({
+          value: value + (j * majorStep) / (minorSteps + 1),
+          major: false,
+        });
       }
     }
   }
@@ -76,7 +80,9 @@ function Slider<T extends SliderValue>({
 
   const isRange = typeof current !== 'number';
   const values: number[] =
-    typeof current === 'number' ? [current] : [...current].sort((a, b) => a - b);
+    typeof current === 'number'
+      ? [current]
+      : [...current].sort((a, b) => a - b);
 
   const railRef = useRef<HTMLDivElement>(null);
   const activeIndex = useRef<number | null>(null);
@@ -85,7 +91,8 @@ function Slider<T extends SliderValue>({
   const majorStep = (max - min) / (majorSteps - 1);
 
   const toPercent = (v: number) => ((v - min) / (max - min)) * 100;
-  const snap = (v: number) => clamp(Math.round((v - min) / step) * step + min, min, max);
+  const snap = (v: number) =>
+    clamp(Math.round((v - min) / step) * step + min, min, max);
 
   const commit = (index: number, next: number) => {
     if (disabled) return;
@@ -142,26 +149,27 @@ function Slider<T extends SliderValue>({
     setDragging(null);
   };
 
-  const handleKeyDown = (index: number) => (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (disabled) return;
+  const handleKeyDown =
+    (index: number) => (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return;
 
-    const v = values[index];
-    const targets: Partial<Record<string, number>> = {
-      ArrowRight: v + step,
-      ArrowUp: v + step,
-      ArrowLeft: v - step,
-      ArrowDown: v - step,
-      PageUp: v + majorStep,
-      PageDown: v - majorStep,
-      Home: min,
-      End: max,
+      const v = values[index];
+      const targets: Partial<Record<string, number>> = {
+        ArrowRight: v + step,
+        ArrowUp: v + step,
+        ArrowLeft: v - step,
+        ArrowDown: v - step,
+        PageUp: v + majorStep,
+        PageDown: v - majorStep,
+        Home: min,
+        End: max,
+      };
+
+      const target = targets[e.key];
+      if (target === undefined) return;
+      e.preventDefault();
+      commit(index, snap(target));
     };
-
-    const target = targets[e.key];
-    if (target === undefined) return;
-    e.preventDefault();
-    commit(index, snap(target));
-  };
 
   const ticks = buildTicks(min, majorStep, majorSteps, minorSteps);
 
@@ -198,7 +206,11 @@ function Slider<T extends SliderValue>({
             {ticks
               .filter((t) => t.major)
               .map(({ value: v }, i) => (
-                <span key={i} className={styles.label} style={{ left: `${toPercent(v)}%` }}>
+                <span
+                  key={i}
+                  className={styles.label}
+                  style={{ left: `${toPercent(v)}%` }}
+                >
                   {formatLabel(v)}
                 </span>
               ))}
@@ -210,7 +222,9 @@ function Slider<T extends SliderValue>({
               className={styles.thumb}
               role="slider"
               tabIndex={disabled ? -1 : 0}
-              aria-label={isRange ? `${label} ${i === 0 ? 'start' : 'end'}` : label}
+              aria-label={
+                isRange ? `${label} ${i === 0 ? 'start' : 'end'}` : label
+              }
               aria-valuemin={min}
               aria-valuemax={max}
               aria-valuenow={v}

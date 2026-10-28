@@ -3,12 +3,12 @@ import styles from './text-input.module.css';
 import Icon, { IconName } from '../icon';
 
 interface TextInputProps {
-  label?: string,
-  placeholder?: string,
-  icon?: IconName,
-  iconPosition: 'left' | 'right',
-  disabled?: boolean,
-  id?: string,
+  label?: string;
+  placeholder?: string;
+  icon?: IconName;
+  iconPosition: 'left' | 'right';
+  disabled?: boolean;
+  id?: string;
 }
 
 const TextInput = forwardRef(function TextInput(

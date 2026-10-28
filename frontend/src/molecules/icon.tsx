@@ -60,12 +60,12 @@ const icons = {
 export type IconName = keyof typeof icons;
 
 interface IconProps {
-  name: IconName,
-  size?: Size,
-  color?: Color,
+  name: IconName;
+  size?: Size;
+  color?: Color;
 }
 
-function Icon({ name, size = 'xs', color = 'n7'}: IconProps) {
+function Icon({ name, size = 'xs', color = 'n7' }: IconProps) {
   const SvgIcon = icons[name];
 
   if (!SvgIcon) {
@@ -77,7 +77,12 @@ function Icon({ name, size = 'xs', color = 'n7'}: IconProps) {
 
   return (
     <SvgIcon
-      style={{ color: resolvedColor, flexShrink: 0, width: resolvedSize, height: resolvedSize }}
+      style={{
+        color: resolvedColor,
+        flexShrink: 0,
+        width: resolvedSize,
+        height: resolvedSize,
+      }}
       role={'img'}
       aria-label={name}
     />

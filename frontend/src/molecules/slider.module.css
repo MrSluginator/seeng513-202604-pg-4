@@ -158,8 +158,10 @@
   white-space: nowrap;
 }
 
-.slider[data-disabled="true"] {
-  .track, .rail, .fill {
+.slider[data-disabled='true'] {
+  .track,
+  .rail,
+  .fill {
     cursor: default;
   }
 

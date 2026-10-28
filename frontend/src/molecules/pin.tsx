@@ -34,7 +34,10 @@ function Pin({
     if (!selected || !onDeselect) return undefined;
 
     function handlePointerDown(event: PointerEvent) {
-      if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         onDeselect?.(event);
       }
     }
@@ -56,7 +59,10 @@ function Pin({
       <svg
         className={styles.pin}
         viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
-        style={{width: `var(--pin-${size})`, height: `calc(var(--pin-${size}) * ${VIEWBOX_HEIGHT} / ${VIEWBOX_WIDTH})`}}
+        style={{
+          width: `var(--pin-${size})`,
+          height: `calc(var(--pin-${size}) * ${VIEWBOX_HEIGHT} / ${VIEWBOX_WIDTH})`,
+        }}
         aria-hidden="true"
       >
         <path
