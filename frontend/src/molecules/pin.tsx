@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import styles from './pin.module.css';
+import styles from '../assets/styles/pin.module.css';
 import { Size as PinSize } from '../global';
 
 const HEAD_CENTER = { x: 15.2, y: 15 };

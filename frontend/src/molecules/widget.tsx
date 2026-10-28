@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './widget.module.css';
+import styles from '../assets/styles/widget.module.css';
 import Icon, { IconName } from './icon';
 
 interface WidgetProps {

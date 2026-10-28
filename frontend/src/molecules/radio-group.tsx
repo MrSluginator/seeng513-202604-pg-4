@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import styles from './radio-group.module.css';
+import styles from '../assets/styles/radio-group.module.css';
 
 interface RadioProps {
   value: any;

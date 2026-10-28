@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import styles from './slider.module.css';
+import styles from '../assets/styles/slider.module.css';
 
 type RangeValue = [number, number];
 type SliderValue = number | RangeValue;

@@ -1,6 +1,6 @@
 import { forwardRef, Ref, useId } from 'react';
-import styles from './text-input.module.css';
-import Icon, { IconName } from '../icon';
+import styles from '../assets/styles/text-input.module.css';
+import Icon, { IconName } from './icon';
 
 interface TextInputProps {
   label?: string;

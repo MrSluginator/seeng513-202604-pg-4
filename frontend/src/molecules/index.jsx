@@ -1,8 +1,8 @@
-export { default as Button } from './button/button';
-export { default as MenuButton } from './button/menu-button';
-export { default as ToggleButton } from './button/toggle-button';
-export { default as TextField } from './text/text-field';
-export { default as TextInput } from './text/text-input';
+export { default as Button } from './button';
+export { default as MenuButton } from './menu-button';
+export { default as ToggleButton } from './toggle-button';
+export { default as TextField } from './text-field';
+export { default as TextInput } from './text-input';
 export { default as Icon } from './icon';
 export { default as Pin } from './pin';
 export { default as RadioGroup } from './radio-group';

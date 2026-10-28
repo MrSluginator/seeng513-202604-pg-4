@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import styles from './tab-group.module.css';
+import styles from '../assets/styles/tab-group.module.css';
 
 interface TabProps {
   value: any;

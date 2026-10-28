@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from './button.module.css';
-import Icon, { IconName } from '../icon';
+import styles from '../assets/styles/button.module.css';
+import Icon, { IconName } from './icon';
 
 interface ButtonProps {
   onClick: (event: React.MouseEvent) => void;

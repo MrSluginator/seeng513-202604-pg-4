@@ -1,5 +1,5 @@
 import { forwardRef, Ref, useId } from 'react';
-import styles from './text-field.module.css';
+import styles from '../assets/styles/text-field.module.css';
 
 interface TextFieldProps {
   label?: string;
