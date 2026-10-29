@@ -2,8 +2,13 @@
 
 :root {
   font-family: Nokora, system-ui, Helvetica, Arial, sans-serif;
-
+  --device-cutoff: 768px;
+  --desktop-min: var(--device-cutoff);
+  --mobile-max: var(--device-cutoff);
+  /* we may want to consider tablets, but that can wait */
+  
   color-scheme: light dark;
+
   --p1: #fcdad5;
   --p2: #f7a8a0;
   --p3: #ed776d;
@@ -130,17 +135,51 @@ small {
   line-height: var(--small-line-height);
 }
 
-body {
+html, body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  width: 100%;
+}
+
+body {
   min-width: 320px;
   min-height: 100vh;
+  color: var(--n7);
+  background-color: var(--n0);
 }
 
 #root {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.page { flex: 1; }          /* wrap your <Routes> in a div with this class */
+
+.box {
+  position: sticky;
+  bottom: 0;
+  order: 2;                 /* mobile: after content */
+}
+
+@media (min-width: 768px) {
+  .box {
+    top: 0;
+    bottom: auto;
+    order: 0;               /* desktop: before content */
+  }
+}
+
+/* we will do dark theme in the future
+@media (prefers-color-scheme: dark) {
+  body {
+    color: var(--n0);
+    background-color: var(--n7);
+  }
+} */
