@@ -1,5 +1,3 @@
-function Saved() {
-
-}
+function Saved() {}
 
 export default Saved;

@@ -6,7 +6,7 @@
   --desktop-min: var(--device-cutoff);
   --mobile-max: var(--device-cutoff);
   /* we may want to consider tablets, but that can wait */
-  
+
   color-scheme: light dark;
 
   --p1: #fcdad5;
@@ -135,7 +135,8 @@ small {
   line-height: var(--small-line-height);
 }
 
-html, body {
+html,
+body {
   margin: 0;
   width: 100%;
 }
@@ -160,19 +161,21 @@ body {
   min-height: 100dvh;
 }
 
-.page { flex: 1; }          /* wrap your <Routes> in a div with this class */
+.page {
+  flex: 1;
+} /* wrap your <Routes> in a div with this class */
 
 .box {
   position: sticky;
   bottom: 0;
-  order: 2;                 /* mobile: after content */
+  order: 2; /* mobile: after content */
 }
 
 @media (min-width: 768px) {
   .box {
     top: 0;
     bottom: auto;
-    order: 0;               /* desktop: before content */
+    order: 0; /* desktop: before content */
   }
 }
 

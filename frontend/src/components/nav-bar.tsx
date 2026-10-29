@@ -4,11 +4,19 @@ import { Button, Icon, TextInput } from '../molecules';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 interface NavBarProps {
-  signedIn: boolean,
-  defaultValue: 'home' | 'map' | 'saved' | 'post' | 'settings',
+  signedIn: boolean;
+  defaultValue: 'home' | 'map' | 'saved' | 'post' | 'settings';
 }
 
-function NavItem({ to, children, end }: { to: string; children: React.ReactNode; end?: boolean }) {
+function NavItem({
+  to,
+  children,
+  end,
+}: {
+  to: string;
+  children: React.ReactNode;
+  end?: boolean;
+}) {
   return (
     <NavLink
       to={to}
@@ -31,23 +39,43 @@ function NavBar({ signedIn, defaultValue }: NavBarProps) {
   return (
     <div className={styles.box}>
       <div className={styles.mobile}>
-        <NavItem to="/map"><Icon name="map" /></NavItem>
-        <NavItem to="/saved"><Icon name="bookmark" /></NavItem>
-        <NavItem to="/" end><Icon name="home" /></NavItem>
-        <NavItem to="/post"><Icon name="event" /></NavItem>
-        <NavItem to="/settings"><Icon name="settings" /></NavItem>
+        <NavItem to="/map">
+          <Icon name="map" />
+        </NavItem>
+        <NavItem to="/saved">
+          <Icon name="bookmark" />
+        </NavItem>
+        <NavItem to="/" end>
+          <Icon name="home" />
+        </NavItem>
+        <NavItem to="/post">
+          <Icon name="event" />
+        </NavItem>
+        <NavItem to="/settings">
+          <Icon name="settings" />
+        </NavItem>
       </div>
       <div className={styles.desktop}>
         <div className={styles.holder}>
-          <NavItem to="/" end><div>Logo</div></NavItem>
-          <NavItem to="/map"><div>Heat Map</div></NavItem>
-          <NavItem to="/saved"><div>Saved Events</div></NavItem>
-          <NavItem to="/post"><div>Post Event</div></NavItem>
+          <NavItem to="/" end>
+            <div>Logo</div>
+          </NavItem>
+          <NavItem to="/map">
+            <div>Heat Map</div>
+          </NavItem>
+          <NavItem to="/saved">
+            <div>Saved Events</div>
+          </NavItem>
+          <NavItem to="/post">
+            <div>Post Event</div>
+          </NavItem>
         </div>
         <div className={styles.holder}>
-          <TextInput icon='search' placeholder='Search'></TextInput>
-          <Button icon='settings' onClick={onSettingsClick}></Button>
-          {!signedIn && <Button text='Sign In' onClick={onSignInClick}></Button>}
+          <TextInput icon="search" placeholder="Search"></TextInput>
+          <Button icon="settings" onClick={onSettingsClick}></Button>
+          {!signedIn && (
+            <Button text="Sign In" onClick={onSignInClick}></Button>
+          )}
           {signedIn && <div>Profile Button</div>}
         </div>
       </div>

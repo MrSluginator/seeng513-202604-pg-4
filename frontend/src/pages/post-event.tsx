@@ -1,5 +1,3 @@
-function PostEvent() {
-
-}
+function PostEvent() {}
 
 export default PostEvent;

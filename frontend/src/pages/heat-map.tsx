@@ -1,6 +1,3 @@
-
-function HeatMap() {
-
-}
+function HeatMap() {}
 
 export default HeatMap;
