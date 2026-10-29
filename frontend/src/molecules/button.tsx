@@ -6,8 +6,8 @@ interface ButtonProps {
   onClick: (event: React.MouseEvent) => void;
   text?: string;
   icon?: IconName;
-  iconPosition: 'left' | 'right';
-  disabled: boolean;
+  iconPosition?: 'left' | 'right';
+  disabled?: boolean;
 }
 
 function Button({
