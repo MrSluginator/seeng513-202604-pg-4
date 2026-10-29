@@ -1,0 +1,19 @@
+.logo {
+  display: flex;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 8px;
+  background: var(--S6, #9F0030);
+
+  color: var(--n0);
+  font-family: Nokora;
+  font-size: var(--Static-Headline-Large-Size, 32px);
+  font-style: normal;
+  font-weight: 900;
+  line-height: var(--Static-Headline-Large-Line-Height, 40px);
+  /* 125% */
+  letter-spacing: var(--Static-Headline-Large-Tracking, 0);
+}

@@ -5,7 +5,7 @@ import { HeatMap, Landing, PostEvent, Saved, Settings, SignIn } from './pages';
 function App() {
   return (
     <div className="App">
-      <NavBar signedIn={false} defaultValue={'home'}></NavBar>
+      <NavBar signedIn={false}></NavBar>
       <div className="page">
         <Routes>
           <Route path="/" element={<Landing />} />
