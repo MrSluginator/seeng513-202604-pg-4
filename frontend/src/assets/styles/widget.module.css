@@ -6,15 +6,19 @@
   min-width: var(--width, 48px);
   min-height: 26px;
   padding: 4px 8px;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
+  cursor: pointer;
 
   border-radius: 8px;
   border: 1px solid var(--p2);
   background: var(--p1);
   color: var(--n7);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
 
   &:hover {
     border-color: var(--p3);
@@ -26,10 +30,10 @@
     background-color: var(--p3);
   }
 
-  &[aria-checked='true']:hover {
+  /* &[aria-checked='true']:hover {
     border-color: var(--p5);
     background-color: var(--p4);
-  }
+  } */
 
   &:disabled {
     border-color: var(--n3);
@@ -39,8 +43,10 @@
 }
 
 .bigget {
+  flex-direction: column;
   height: 60px;
   min-width: var(--width, 72px);
   min-height: 60px;
   padding: 8px;
+  gap: 10px
 }

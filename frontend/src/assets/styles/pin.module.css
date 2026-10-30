@@ -14,7 +14,7 @@
 }
 
 .number {
-  fill: var(--pin-text);
+  fill: var(--n0);
   font-family: inherit;
   font-weight: 500;
   user-select: none;
@@ -45,7 +45,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--p7);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
 

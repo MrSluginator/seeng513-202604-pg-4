@@ -31,11 +31,6 @@
   text-align: start;
   resize: vertical;
 
-  &:hover {
-    border-color: var(--p2);
-    background-color: var(--p1);
-  }
-
   &:disabled {
     border-color: var(--n3);
     background-color: var(--n2);
@@ -43,7 +38,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--p7);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
 }

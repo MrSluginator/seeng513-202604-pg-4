@@ -3,7 +3,7 @@ import styles from '../assets/styles/button.module.css';
 import Icon, { IconName } from './icon';
 
 interface ButtonProps {
-  onClick: (event: React.MouseEvent) => void;
+  onClick?: (event: React.MouseEvent) => void;
   text?: string;
   icon?: IconName;
   iconPosition?: 'left' | 'right';
@@ -19,6 +19,7 @@ function Button({
 }: ButtonProps) {
   return (
     <button
+      type="button"
       className={`${styles.button} ${!text ? styles.iconOnly : ''}`}
       onClick={onClick}
       disabled={disabled}
