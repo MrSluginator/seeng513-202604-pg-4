@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import styles from '../../assets/styles/event-card.module.css';
-import { Button } from '../../molecules';
+import { Button, Icon } from '../../molecules';
 import { NavLink } from 'react-router-dom';
+import Rating from '../rating';
 
 interface EventProps {
   id: string,
@@ -10,14 +11,6 @@ interface EventProps {
   imageUrl: string
   rating: number,
   defaultSaved?: boolean,
-}
-
-function Rating({ value = 0 }) {
-  return (
-    <div className={styles.rating}>
-      { }
-    </div>
-  );
 }
 
 function EventCard({ id, title, description, imageUrl, rating, defaultSaved = false }: EventProps) {
@@ -40,7 +33,7 @@ function EventCard({ id, title, description, imageUrl, rating, defaultSaved = fa
               {title}
             </NavLink>
           </h3>
-          <Rating value={rating}></Rating>
+          <Rating value={rating} max={5}></Rating>
         </div>
         {description}
       </div>
