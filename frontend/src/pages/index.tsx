@@ -6,3 +6,4 @@ export { default as Settings } from './settings';
 export { default as SignIn } from './sign-in';
 export { default as EventDetails } from './event-details';
 export { default as NotFound } from './not-found';
+export { default as Testing } from './testing';

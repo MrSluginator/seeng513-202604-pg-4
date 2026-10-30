@@ -1,6 +1,6 @@
 import { NavBar } from './components';
 import { Routes, Route } from 'react-router-dom';
-import { EventDetails, HeatMap, Landing, NotFound, PostEvent, Saved, Settings, SignIn } from './pages';
+import { EventDetails, HeatMap, Landing, NotFound, PostEvent, Saved, Settings, SignIn, Testing } from './pages';
 
 function App() {
   return (
@@ -15,6 +15,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/sign_in" element={<SignIn />} />
           <Route path="/event/:id" element={<EventDetails />} />
+          <Route path="/testing" element={<Testing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
