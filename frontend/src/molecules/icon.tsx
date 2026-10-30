@@ -63,9 +63,10 @@ interface IconProps {
   name: IconName;
   size?: Size;
   color?: Color;
+  fill?: boolean;
 }
 
-function Icon({ name, size = 'xs', color }: IconProps) {
+function Icon({ name, size = 'xs', color, fill = false }: IconProps) {
   const SvgIcon = icons[name];
 
   if (!SvgIcon) {
@@ -79,6 +80,7 @@ function Icon({ name, size = 'xs', color }: IconProps) {
     <SvgIcon
       style={{
         color: color ? resolvedColor : undefined,
+        fill: fill ? 'currentColor' : undefined,
         flexShrink: 0,
         width: resolvedSize,
         height: resolvedSize,

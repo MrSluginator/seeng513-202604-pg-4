@@ -12,6 +12,7 @@ import {
   Widget,
   TabGroup,
 } from '../molecules';
+import { EventCard } from '../components';
 
 function Landing() {
   const [size, setSize] = useState('md');
@@ -40,6 +41,7 @@ function Landing() {
     <div>
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
+      <EventCard id='this' title='Sushi' description='sushi is gay' rating={4.5} defaultSaved={true} imageUrl=''></EventCard>
       testing components
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         Buttons:
