@@ -8,6 +8,8 @@
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* labels on top: labels, ticks, then the rail */
@@ -21,6 +23,7 @@
   position: relative;
   cursor: pointer;
   touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .track {
@@ -57,6 +60,8 @@
 .thumb {
   position: absolute;
   top: calc(var(--slider-thumb-height) / 2);
+  touch-action: none;
+  -webkit-user-drag: none;
 }
 
 .fill {
@@ -84,7 +89,7 @@
 }
 
 .thumb:focus-visible {
-  outline: 2px solid var(--p7);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 

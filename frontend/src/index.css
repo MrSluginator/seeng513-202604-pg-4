@@ -49,6 +49,8 @@
   --o2: #e16d0e;
   --o3: #9e4d0a;
 
+  --focus: var(--p5);
+
   /* Font weights */
   --weight-regular: 400;
   --weight-medium: 500;

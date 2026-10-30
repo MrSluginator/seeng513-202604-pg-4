@@ -16,6 +16,7 @@
   font-size: var(--body-size);
   font-weight: var(--body-weight);
   line-height: var(--body-line-height);
+  cursor: pointer;
 
   .icon {
     color: var(--n7);
@@ -35,7 +36,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--p7);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
 }
