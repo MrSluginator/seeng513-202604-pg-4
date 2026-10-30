@@ -48,5 +48,5 @@
   min-width: var(--width, 72px);
   min-height: 60px;
   padding: 8px;
-  gap: 10px
+  gap: 10px;
 }

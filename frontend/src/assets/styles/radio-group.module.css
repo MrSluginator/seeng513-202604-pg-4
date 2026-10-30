@@ -69,13 +69,13 @@
   }
 }
 
-.input:checked+.circle {
+.input:checked + .circle {
   .dot {
     background: var(--p3);
   }
 }
 
-.input:hover+.circle {
+.input:hover + .circle {
   border-color: var(--p4);
   background-color: var(--p2);
 
@@ -84,13 +84,13 @@
   }
 }
 
-.input:hover:checked+.circle {
+.input:hover:checked + .circle {
   .dot {
     background-color: var(--p4);
   }
 }
 
-.input:disabled+.circle {
+.input:disabled + .circle {
   border-color: var(--n3);
   background-color: var(--n2);
 
@@ -99,7 +99,7 @@
   }
 }
 
-.input:disabled:checked+.circle {
+.input:disabled:checked + .circle {
   .dot {
     background-color: var(--n4);
   }
