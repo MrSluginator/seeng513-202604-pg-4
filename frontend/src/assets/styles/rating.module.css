@@ -1,5 +1,8 @@
 .rating {
   display: flex;
+  background-color: color-mix(in srgb, var(--p7) 20%, transparent);
+  padding: 4px;
+  border-radius: 8px;
 }
 
 .star {
