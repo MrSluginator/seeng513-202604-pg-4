@@ -15,11 +15,7 @@ import {
 import { EventCard } from '../components';
 
 function Landing() {
-  return (
-    <div>
-      landing page
-    </div>
-  );
+  return <div>landing page</div>;
 }
 
 export default Landing;

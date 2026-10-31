@@ -33,9 +33,13 @@ function Button({
       aria-label={label}
       data-pressed={isToggle ? pressed : undefined}
     >
-      {icon && iconPosition === 'left' && <Icon name={icon} fill={pressed}></Icon>}
+      {icon && iconPosition === 'left' && (
+        <Icon name={icon} fill={pressed}></Icon>
+      )}
       {text && <span className={styles.text}>{text}</span>}
-      {icon && iconPosition === 'right' && <Icon name={icon} fill={pressed}></Icon>}
+      {icon && iconPosition === 'right' && (
+        <Icon name={icon} fill={pressed}></Icon>
+      )}
     </button>
   );
 }

@@ -5,15 +5,22 @@ import { NavLink } from 'react-router-dom';
 import Rating from '../rating';
 
 interface EventProps {
-  id: string,
-  title: string,
-  description: string,
-  imageUrl: string
-  rating: number,
-  defaultSaved?: boolean,
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  rating: number;
+  defaultSaved?: boolean;
 }
 
-function EventCard({ id, title, description, imageUrl, rating, defaultSaved = false }: EventProps) {
+function EventCard({
+  id,
+  title,
+  description,
+  imageUrl,
+  rating,
+  defaultSaved = false,
+}: EventProps) {
   const [saved, setSaved] = useState(defaultSaved);
 
   const onSave = () => setSaved((prev) => !prev);
@@ -21,7 +28,12 @@ function EventCard({ id, title, description, imageUrl, rating, defaultSaved = fa
   return (
     <div className={styles.card}>
       <div className={styles.save}>
-        <Button icon='bookmark' onClick={onSave} pressed={saved} label={saved ? 'Remove from saved' : 'Save event'}></Button>
+        <Button
+          icon="bookmark"
+          onClick={onSave}
+          pressed={saved}
+          label={saved ? 'Remove from saved' : 'Save event'}
+        ></Button>
       </div>
       <div className={styles.image}>
         <img></img>

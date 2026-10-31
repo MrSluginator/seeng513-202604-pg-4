@@ -1,6 +1,16 @@
 import { NavBar } from './components';
 import { Routes, Route } from 'react-router-dom';
-import { EventDetails, HeatMap, Landing, NotFound, PostEvent, Saved, Settings, SignIn, Testing } from './pages';
+import {
+  EventDetails,
+  HeatMap,
+  Landing,
+  NotFound,
+  PostEvent,
+  Saved,
+  Settings,
+  SignIn,
+  Testing,
+} from './pages';
 
 function App() {
   return (

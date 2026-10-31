@@ -1,4 +1,4 @@
-import styles from '../assets/styles/rating.module.css'
+import styles from '../assets/styles/rating.module.css';
 import { Icon } from '../molecules';
 
 interface RatingProps {
@@ -21,7 +21,7 @@ function Rating({ value = 0, max = 5 }: RatingProps) {
 
         return (
           <span key={i} className={styles.star} aria-hidden="true">
-            <Icon name="spark" fill={true}/>
+            <Icon name="spark" fill={true} />
             <span
               className={styles.filled}
               style={{ width: `${portion * 100}%` }}

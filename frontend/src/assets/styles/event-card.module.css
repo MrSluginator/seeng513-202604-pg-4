@@ -12,6 +12,15 @@
 
   cursor: pointer;
   position: relative;
+  transition: background-color ease 150ms;
+
+  &:hover {
+    background-color: var(--p3);
+
+    .image {
+      scale: 0.97;
+    }
+  }
 }
 
 .info {
@@ -21,12 +30,14 @@
   align-self: stretch;
   padding: 16px;
   padding-top: 8px;
+  transition: scale ease 150ms;
 }
 
 .titleBar {
   display: flex;
   justify-content: space-between;
-  flex: content;
+  align-items: center;
+  width: 100%;
 }
 
 .save {
@@ -46,6 +57,7 @@
   align-self: stretch;
   border-radius: 32px;
   background: var(--n7);
+  transition: scale ease 150ms;
 }
 
 .link::after {
