@@ -1,10 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Nokora:wght@100;300;400;700;900&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: Nokora, system-ui, Helvetica, Arial, sans-serif;
+
   color-scheme: light dark;
-  color: #213547;
-  background-color: #ffffff;
+  --p1: #fcdad5;
+  --p2: #f7a8a0;
+  --p3: #ed776d;
+  --p4: #e7483a;
+  --p5: #d1291a;
+  --p6: #a52114;
+  --p7: #7d180f;
+  --t0: #eff5f5;
+  --t1: #e0ebeb;
+  --t2: #c2d6d6;
+  --t6: #274649;
+  --t7: #172d30;
+  --s1: #ffc8ef;
+  --s2: #ffa8d0;
+  --s3: #fa6aa8;
+  --s4: #ef3e80;
+  --s5: #cf0e60;
+  --s6: #9f0030;
+  --s7: #580010;
+  --n0: #faf8f8;
+  --n1: #f0ecec;
+  --n2: #ded8d8;
+  --n3: #c5bdbd;
+  --n4: #a69c9c;
+  --n5: #877c7c;
+  --n6: #514949;
+  --n7: #383232;
+  --g1: #addf44;
+  --g2: #619d1c;
+  --g3: #446f14;
+  --y1: #fded24;
+  --y2: #9e8f04;
+  --y3: #6e6403;
+  --b1: #6ddfea;
+  --b2: #1b96d8;
+  --b3: #136997;
+  --o1: #f8903b;
+  --o2: #e16d0e;
+  --o3: #9e4d0a;
+
+  --focus: var(--p5);
+
+  /* Font weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* H1 */
+  --h1-size: 2rem; /* 40px */
+  --h1-weight: var(--weight-bold);
+  --h1-line-height: 2.5rem;
+
+  /* H2 */
+  --h2-size: 2rem; /* 32px */
+  --h2-weight: var(--weight-semibold);
+  --h2-line-height: 2.25rem;
+
+  /* H3 */
+  --h3-size: 1.5rem; /* 24px */
+  --h3-weight: var(--weight-semibold);
+  --h3-line-height: 2rem;
+
+  /* H4 */
+  --h4-size: 1.25rem; /* 20px */
+  --h4-weight: var(--weight-bold);
+  --h4-line-height: 24px;
+
+  /* Body */
+  --body-size: 1rem; /* 16px */
+  --body-weight: var(--weight-medium);
+  --body-line-height: 1.25rem;
+
+  /* Small */
+  --small-size: 0.75rem; /* 14px */
+  --small-weight: var(--weight-regular);
+  --small-line-height: 1rem;
+
+  /* Icon Sizes */
+  --icon-xs: 1rem; /* 16px */
+  --icon-s: 1.25rem; /* 20px */
+  --icon-m: 1.5rem; /* 24px */
+  --icon-l: 2rem;
+  --icon-xl: 4rem;
+  --icon-xxl: 8rem;
+
+  --pin-s: 28px;
+  --pin-m: 32px;
+  --pin-l: 42px;
+}
+
+h1 {
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--h1-line-height);
+}
+
+h2 {
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: var(--h2-line-height);
+}
+
+h3 {
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  line-height: var(--h3-line-height);
+}
+
+h4 {
+  font-size: var(--h4-size);
+  font-weight: var(--h4-weight);
+  line-height: var(--h4-line-height);
+}
+
+body,
+p {
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-line-height);
+}
+
+small {
+  font-size: var(--small-size);
+  font-weight: var(--small-weight);
+  line-height: var(--small-line-height);
 }
 
 body {
