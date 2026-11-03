@@ -3,56 +3,28 @@ import styles from '../assets/styles/event-card.module.css';
 import { Button, Icon, Widget } from '../molecules';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Rating from './rating';
-import ImageCarousel from './image-carousel';
+import Carousel from './carousel';
 
-interface BaseEventProps {
+export interface Event {
   id: string;
   title: string;
   rating: number;
+  reviews: number;
   defaultSaved: boolean;
-}
-
-interface MiniEventCardProps extends BaseEventProps {
-  size: 's';
   time: TimeRange;
   location: string;
   price?: PriceRange;
   tags: Array<string>;
-}
-
-interface DefaultEventCardProps extends BaseEventProps {
-  size?: 'm'; // optional so 'm' stays the default
+  description: string;
   summary: string;
   imageUrl: string;
-}
-
-interface MegaEventCardProps extends BaseEventProps {
-  size: 'l';
-  description: string;
-  imageUrl: string;
-  reviews: number;
-  time: TimeRange;
-  location: string;
-  price?: PriceRange;
-  tags: Array<string>;
-}
-
-interface FullEventCardProps extends BaseEventProps {
-  size: 'xl';
-  description: string;
   imageUrls: Array<string>;
-  reviews: number;
-  time: TimeRange;
-  location: string;
-  price?: PriceRange;
-  tags: Array<string>;
 }
 
-type EventProps =
-  | MiniEventCardProps
-  | DefaultEventCardProps
-  | MegaEventCardProps
-  | FullEventCardProps;
+interface EventProps {
+  event: Event;
+  size: 's' | 'm' | 'l' | 'xl';
+}
 
 type PriceRange = {
   low: number;
@@ -100,19 +72,20 @@ function formatTimeRange(time: TimeRange): string {
 }
 
 function EventCard(props: EventProps) {
-  const [saved, setSaved] = useState(props.defaultSaved);
-  const size = props.size ?? 'm';
+  const size = props.size;
+  const event = props.event;
+  const [saved, setSaved] = useState(event.defaultSaved);
 
   const onSave = () => setSaved((prev) => !prev);
-  const onRate = () => {};
-  const onShare = () => {};
+  const onRate = () => { };
+  const onShare = () => { };
 
   const navigate = useNavigate();
 
   const Tags =
-    props.size === 's' || props.size === 'l' || props.size === 'xl' ? (
+    size !== 'm' ? (
       <div className={styles.tags}>
-        {props.tags.map((tag) => (
+        {event.tags.map((tag) => (
           <Widget
             key={tag}
             text={tag}
@@ -128,7 +101,7 @@ function EventCard(props: EventProps) {
 
   return (
     <div className={`${styles.card} ${styles[size]}`}>
-      {(props.size === 'm' || props.size === undefined) && (
+      {(size === 'm') && (
         <div className={styles.save}>
           <Button
             icon="bookmark"
@@ -138,44 +111,56 @@ function EventCard(props: EventProps) {
           ></Button>
         </div>
       )}
-      {props.size !== 's' && (
+      {size !== 's' && (
         <div className={styles.image}>
-          {props.size !== 'xl' && <img src={props.imageUrl} alt="" />}
-          {props.size === 'xl' && (
-            <ImageCarousel images={props.imageUrls} title={props.title} />
-          )}
+          {size !== 'xl' &&
+            <img src={event.imageUrl} alt="" /> ||
+            <Carousel
+              items={event.imageUrls}
+              getKey={(src: string) => src}
+              itemLabel="photo"
+              overlay={true}
+              renderItem={(src: string, i: number) => (
+                <img
+                  src={src}
+                  alt={`${event.title} photo ${i + 1} of ${event.imageUrls.length}`}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              )}
+            />
+          }
         </div>
       )}
       <div className={styles.info}>
         <div className={styles.titleBar}>
           <h3>
-            {(props.size === 'xl' && <div>{props.title}</div>) || (
-              <NavLink to={`/event/${props.id}`} className={styles.link}>
-                {props.title}
+            {(size === 'xl' && <div>{event.title}</div>) || (
+              <NavLink to={`/event/${event.id}`} className={styles.link}>
+                {event.title}
               </NavLink>
             )}
           </h3>
-          <Rating rating={props.rating} reviews={props.reviews}></Rating>
+          <Rating rating={event.rating} reviews={event.reviews}></Rating>
         </div>
-        {props.size === 's' && Tags}
-        {(props.size === 's' || props.size === 'l' || props.size === 'xl') && (
+        {size === 's' && Tags}
+        {(size === 's' || size === 'l' || size === 'xl') && (
           <div className={styles.stats}>
-            <Price className={styles.price} price={props.price}></Price>
+            <Price className={styles.price} price={event.price}></Price>
             <div className={styles.time}>
               <Icon name="clock" />
-              <small>{formatTimeRange(props.time)}</small>
+              <small>{formatTimeRange(event.time)}</small>
             </div>
             <div className={styles.location}>
               <Icon name="pin" />
-              <small>{props.location}</small>
+              <small>{event.location}</small>
             </div>
           </div>
         )}
         <div className={styles.descBox}>
-          {(props.size === 'l' || props.size === 'xl') && (
+          {(size === 'l' || size === 'xl') && (
             <div className={styles.description}>
               <h3>About</h3>
-              <text>{props.description}</text>
+              <text>{event.description}</text>
               <div className={styles.interactables}>
                 <Button
                   icon="spark"
@@ -196,9 +181,9 @@ function EventCard(props: EventProps) {
               </div>
             </div>
           )}
-          {props.size !== 's' && Tags}
+          {size !== 's' && Tags}
         </div>
-        {(props.size === 'm' || props.size === undefined) && props.summary}
+        {(size === 'm') && event.summary}
       </div>
     </div>
   );

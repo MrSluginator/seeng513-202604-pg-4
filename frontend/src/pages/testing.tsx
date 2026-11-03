@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EventCard, ImageCarousel } from '../components';
+import { Carousel, EventCard } from '../components';
 import {
   Button,
   Icon,
@@ -13,6 +13,8 @@ import {
   ToggleButton,
   Widget,
 } from '../molecules';
+import EventGrid from '../components/event-grid';
+import { Event } from '../components/event-card';
 
 function Testing() {
   const [size, setSize] = useState('md');
@@ -42,10 +44,100 @@ function Testing() {
   start.setHours(11);
   end.setHours(15);
   const tags: Array<string> = ['sun', 'dance', 'food', 'drinks', 'rain'];
+  const event1: Event = {
+    id: '1',
+    title: "Sushi",
+    summary: "sushi is gay",
+    defaultSaved: false,
+    rating: 2.3,
+    reviews: 120,
+    time: {start, end},
+    location: 'here',
+    tags: tags,
+    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    imageUrl: 'https://picsum.photos/800/450',
+  };
+  const event2: Event = {
+    id: '2',
+    title: "Sushi",
+    summary: "sushi is gay",
+    defaultSaved: false,
+    rating: 2.3,
+    reviews: 120,
+    time: {start, end},
+    location: 'here',
+    tags: tags,
+    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    imageUrl: 'https://picsum.photos/800/450',
+  };
+  const event3: Event = {
+    id: '3',
+    title: "Sushi",
+    summary: "sushi is gay",
+    defaultSaved: true,
+    rating: 2.3,
+    reviews: 120,
+    time: {start, end},
+    location: 'here',
+    tags: tags,
+    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    imageUrl: 'https://picsum.photos/800/450',
+  };
+  const event4: Event = {
+    id: '4',
+    title: "Sushi",
+    summary: "sushi is gay",
+    defaultSaved: true,
+    rating: 4.8,
+    reviews: 500400,
+    time: {start, end},
+    location: 'here',
+    tags: tags,
+    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    imageUrl: 'https://picsum.photos/800/450',
+  };
+  const event5: Event = {
+    id: '5',
+    title: "Sushi",
+    summary: "sushi is gay",
+    defaultSaved: false,
+    rating: 1.4,
+    reviews: 10029,
+    time: {start, end},
+    location: 'here',
+    tags: tags,
+    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    imageUrl: 'https://picsum.photos/800/450',
+  };
+  const event6: Event = {
+    id: '6',
+    title: "Sushi",
+    summary: "sushi is gay",
+    defaultSaved: false,
+    rating: 2.6,
+    reviews: 2340,
+    time: {start, end},
+    location: 'here',
+    tags: tags,
+    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    imageUrl: 'https://picsum.photos/800/450',
+  };
+  const events: Array<Event> = [
+    event1, event2, event3, event4, event5, event6,
+  ];
   return (
     <div>
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
+      <EventGrid size='m' events={events} showMore={true} filters={tags} onFilterRemove={() => {}}/>
+      <EventGrid size='s' events={events} onFilterRemove={() => {}}/>
+      <EventGrid size='l' events={events} filters={tags} onFilterRemove={() => {}}/>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div
           style={{
@@ -56,21 +148,13 @@ function Testing() {
           }}
         >
           <EventCard
-            id="this"
-            title="Sushi"
-            summary="sushi is gay"
-            rating={4.5}
-            defaultSaved={true}
-            imageUrl={'d'}
-          ></EventCard>
+            size='m'
+            event={event4}
+          />
           <EventCard
-            id="that"
-            title="Sushi"
-            summary="sushi is gay"
-            defaultSaved={false}
-            rating={2.3}
-            imageUrl={'gay'}
-          ></EventCard>
+            size='m'
+            event={event1}
+          />
         </div>
         <div
           style={{
@@ -82,54 +166,22 @@ function Testing() {
         >
           <EventCard
             size="s"
-            id="this"
-            title="Sushi"
-            rating={4.5}
-            defaultSaved={true}
-            tags={tags}
-            time={{ start, end }}
-            location={'here'}
-            price={{ low: 10, high: 35 }}
-          ></EventCard>
+            event={event1}
+          />
           <EventCard
             size="s"
-            id="that"
-            title="Sushi"
-            defaultSaved={false}
-            rating={2.3}
-            tags={tags}
-            time={new Date()}
-            location={'there'}
-          ></EventCard>
+            event={event4}
+          />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <EventCard
             size="l"
-            id="this"
-            title="Sushi"
-            rating={4.5}
-            defaultSaved={true}
-            description={'this is an event description yay'}
-            time={{ start, end }}
-            tags={tags}
-            reviews={102}
-            location={'here'}
-            imageUrl={'d'}
-            price={{ low: 10, high: 35 }}
-          ></EventCard>
+            event={event4}
+          />
           <EventCard
             size="l"
-            id="that"
-            title="Sushi"
-            defaultSaved={false}
-            rating={2.3}
-            description={'this is an event description yay'}
-            time={new Date()}
-            tags={tags}
-            reviews={2300}
-            location={'there'}
-            imageUrl={'d'}
-          ></EventCard>
+            event={event2}
+          />
         </div>
         <div
           style={{
@@ -141,31 +193,12 @@ function Testing() {
         >
           <EventCard
             size="xl"
-            id="this"
-            title="Sushi"
-            rating={4.5}
-            defaultSaved={true}
-            description={'this is an event description yay'}
-            tags={tags}
-            time={{ start, end }}
-            reviews={102}
-            location={'here'}
-            imageUrls={['d', 'a', 'b']}
-            price={{ low: 10, high: 35 }}
-          ></EventCard>
+            event={event4}
+          />
           <EventCard
             size="xl"
-            id="that"
-            title="Sushi"
-            defaultSaved={false}
-            rating={2.3}
-            description={'this is an event description yay'}
-            tags={tags}
-            time={new Date()}
-            reviews={2300}
-            location={'there'}
-            imageUrls={['d', 'a', 'b', 'c', 'e']}
-          ></EventCard>
+            event={event2}
+          />
         </div>
       </div>
       testing components
@@ -250,17 +283,6 @@ function Testing() {
           <Widget icon="food"></Widget>
           <Widget icon="food" text="food"></Widget>
         </div>
-        <ImageCarousel
-          title="test images"
-          images={[
-            'https://cdn.britannica.com/22/187222-050-07B17FB6/apples-on-a-tree-branch.jpg',
-            'b',
-            'c',
-            'd',
-            'e',
-            'f',
-          ]}
-        />
       </div>
     </div>
   );

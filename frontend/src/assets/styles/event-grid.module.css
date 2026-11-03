@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px
+}
+
+.eventGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.more {
+  max-height: 480px;
+  overflow-y: hidden;
+}
+
+.s {
+  overflow-y: scroll;
+}
+
+.m {
+  
+}
+
+.l {
+
+}
+
+.header {
+  display: flex;
+  padding: 0px 40px;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+}
+
+.filterBox {
+  display: flex;
+  align-content: center;
+  gap: 4px;
+
+  small {
+    align-content: center;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1 0 0;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+
+}
