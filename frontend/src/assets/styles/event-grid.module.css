@@ -17,18 +17,6 @@
   overflow-y: hidden;
 }
 
-.s {
-  overflow-y: scroll;
-}
-
-.m {
-  
-}
-
-.l {
-
-}
-
 .header {
   display: flex;
   padding: 0px 40px;

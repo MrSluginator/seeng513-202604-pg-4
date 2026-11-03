@@ -77,8 +77,8 @@ function EventCard(props: EventProps) {
   const [saved, setSaved] = useState(event.defaultSaved);
 
   const onSave = () => setSaved((prev) => !prev);
-  const onRate = () => { };
-  const onShare = () => { };
+  const onRate = () => {};
+  const onShare = () => {};
 
   const navigate = useNavigate();
 
@@ -101,7 +101,7 @@ function EventCard(props: EventProps) {
 
   return (
     <div className={`${styles.card} ${styles[size]}`}>
-      {(size === 'm') && (
+      {size === 'm' && (
         <div className={styles.save}>
           <Button
             icon="bookmark"
@@ -113,8 +113,7 @@ function EventCard(props: EventProps) {
       )}
       {size !== 's' && (
         <div className={styles.image}>
-          {size !== 'xl' &&
-            <img src={event.imageUrl} alt="" /> ||
+          {(size !== 'xl' && <img src={event.imageUrl} alt="" />) || (
             <Carousel
               items={event.imageUrls}
               getKey={(src: string) => src}
@@ -128,7 +127,7 @@ function EventCard(props: EventProps) {
                 />
               )}
             />
-          }
+          )}
         </div>
       )}
       <div className={styles.info}>
@@ -183,7 +182,7 @@ function EventCard(props: EventProps) {
           )}
           {size !== 's' && Tags}
         </div>
-        {(size === 'm') && event.summary}
+        {size === 'm' && event.summary}
       </div>
     </div>
   );
