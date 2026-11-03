@@ -1,3 +1,10 @@
+.box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
 .rating {
   display: flex;
   background-color: color-mix(in srgb, var(--p7) 20%, transparent);
