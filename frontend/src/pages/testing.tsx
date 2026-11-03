@@ -47,7 +47,14 @@ function Testing() {
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
           <EventCard
             id="this"
             title="Sushi"
@@ -65,7 +72,14 @@ function Testing() {
             imageUrl={'gay'}
           ></EventCard>
         </div>
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
           <EventCard
             size="s"
             id="this"
@@ -117,7 +131,14 @@ function Testing() {
             imageUrl={'d'}
           ></EventCard>
         </div>
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
           <EventCard
             size="xl"
             id="this"

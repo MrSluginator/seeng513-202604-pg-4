@@ -33,3 +33,9 @@
 .filled svg path {
   fill: currentColor;
 }
+
+@media (max-width: 768px) {
+  .box small {
+    display: none;
+  }
+}

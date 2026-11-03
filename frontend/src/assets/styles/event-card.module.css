@@ -4,6 +4,7 @@
   height: 350px;
   flex-direction: column;
   align-items: flex-start;
+  align-self: center;
 
   border-radius: 32px;
   background: var(--p2);
@@ -88,10 +89,6 @@
     gap: 4px;
   }
 
-  .image {
-    min-height: 440px;
-  }
-
   &:hover {
     scale: none;
   }
@@ -145,7 +142,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  align-self: stretch;
+}
+
+.descBox {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 20px;
 }
 
 .description {
@@ -232,5 +236,73 @@
 
   .rich {
     color: var(--y3);
+  }
+}
+
+@media (max-width: 768px) {
+  .l {
+    max-width: 480px;
+    flex-direction: column;
+    height: fit-content;
+
+    .info {
+      gap: 10px;
+      padding: 0;
+    }
+
+    .image {
+      min-height: 0;
+      aspect-ratio: 3 / 2;
+    }
+
+    .titleBar {
+      padding: 10px 20px;
+    }
+
+    .stats {
+      display: grid;
+      padding: 0 20px;
+      width: 100%;
+      grid-template-areas:
+        'time     price'
+        'location location';
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .tags {
+      display: none;
+    }
+  }
+
+  .xl {
+    .info {
+      padding: 0;
+      gap: 0;
+    }
+
+    .titleBar {
+      padding: 10px 20px;
+    }
+
+    .stats {
+      padding: 0 20px;
+      display: grid;
+      width: 100%;
+      grid-template-areas:
+        'time     price'
+        'location location';
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .tags {
+      padding: 10px 20px;
+    }
+
+    .descBox {
+      flex-direction: column-reverse;
+      gap: 0;
+    }
   }
 }

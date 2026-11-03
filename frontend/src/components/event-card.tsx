@@ -171,31 +171,33 @@ function EventCard(props: EventProps) {
             </div>
           </div>
         )}
-        {(props.size === 'l' || props.size === 'xl') && (
-          <div className={styles.description}>
-            <h3>About</h3>
-            <text>{props.description}</text>
-            <div className={styles.interactables}>
-              <Button
-                icon="spark"
-                onClick={onRate}
-                label={'Rate event'}
-              ></Button>
-              <Button
-                icon="share"
-                onClick={onShare}
-                label={'Share event'}
-              ></Button>
-              <Button
-                icon="bookmark"
-                onClick={onSave}
-                pressed={saved}
-                label={saved ? 'Remove from saved' : 'Save event'}
-              ></Button>
+        <div className={styles.descBox}>
+          {(props.size === 'l' || props.size === 'xl') && (
+            <div className={styles.description}>
+              <h3>About</h3>
+              <text>{props.description}</text>
+              <div className={styles.interactables}>
+                <Button
+                  icon="spark"
+                  onClick={onRate}
+                  label={'Rate event'}
+                ></Button>
+                <Button
+                  icon="share"
+                  onClick={onShare}
+                  label={'Share event'}
+                ></Button>
+                <Button
+                  icon="bookmark"
+                  onClick={onSave}
+                  pressed={saved}
+                  label={saved ? 'Remove from saved' : 'Save event'}
+                ></Button>
+              </div>
             </div>
-          </div>
-        )}
-        {props.size !== 's' && Tags}
+          )}
+          {props.size !== 's' && Tags}
+        </div>
         {(props.size === 'm' || props.size === undefined) && props.summary}
       </div>
     </div>
