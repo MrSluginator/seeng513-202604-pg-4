@@ -5,8 +5,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import Rating from './rating';
 import ImageCarousel from './image-carousel';
 
-
-
 interface BaseEventProps {
   id: string;
   title: string;
@@ -19,7 +17,7 @@ interface MiniEventCardProps extends BaseEventProps {
   time: TimeRange;
   location: string;
   price?: PriceRange;
-  tags: Array<string>
+  tags: Array<string>;
 }
 
 interface DefaultEventCardProps extends BaseEventProps {
@@ -50,11 +48,15 @@ interface FullEventCardProps extends BaseEventProps {
   tags: Array<string>;
 }
 
-type EventProps = MiniEventCardProps | DefaultEventCardProps | MegaEventCardProps | FullEventCardProps;
+type EventProps =
+  | MiniEventCardProps
+  | DefaultEventCardProps
+  | MegaEventCardProps
+  | FullEventCardProps;
 
 type PriceRange = {
   low: number;
-  high: number
+  high: number;
 };
 interface PriceProps {
   price?: PriceRange;
@@ -62,7 +64,7 @@ interface PriceProps {
 }
 
 function Price({ price, className }: PriceProps) {
-  const range = price ? `(${price.low} - ${price.high})` : 'Free'
+  const range = price ? `(${price.low} - ${price.high})` : 'Free';
   const avg = price ? (price.low + price.high) / 2 : 0;
   const count = (avg: number) => {
     if (avg < 30) return 1;
@@ -73,9 +75,11 @@ function Price({ price, className }: PriceProps) {
 
   return (
     <div className={`${styles.price} ${className ?? ''}`}>
-      <div className={`${styles.icons} ${!price ? styles.free : count(avg) === 4 ? styles.rich : ''}`}>
+      <div
+        className={`${styles.icons} ${!price ? styles.free : count(avg) === 4 ? styles.rich : ''}`}
+      >
         {Array.from({ length: count(avg) }, (i: number) => (
-          <Icon name='dollar' key={i} />
+          <Icon name="dollar" key={i} />
         ))}
       </div>
       <small>{range}</small>
@@ -88,7 +92,7 @@ const timeFormatter = new Intl.DateTimeFormat('en-US', {
   minute: '2-digit',
 });
 
-type TimeRange = { start: Date, end: Date } | Date
+type TimeRange = { start: Date; end: Date } | Date;
 
 function formatTimeRange(time: TimeRange): string {
   if (time instanceof Date) return timeFormatter.format(time);
@@ -100,22 +104,31 @@ function EventCard(props: EventProps) {
   const size = props.size ?? 'm';
 
   const onSave = () => setSaved((prev) => !prev);
-  const onRate = () => { };
-  const onShare = () => { };
+  const onRate = () => {};
+  const onShare = () => {};
 
   const navigate = useNavigate();
 
-  const Tags = props.size === 's' || props.size === 'l' || props.size === 'xl' ? (
-    <div className={styles.tags}>
-      {props.tags.map((tag) => (
-        <Widget key={tag} text={tag} pressed={null} onChange={() => { navigate(`/search?tag=${tag}`) }} label={`Search for events matching the tag: ${tag}`} />
-      ))}
-    </div>
-  ) : null;
+  const Tags =
+    props.size === 's' || props.size === 'l' || props.size === 'xl' ? (
+      <div className={styles.tags}>
+        {props.tags.map((tag) => (
+          <Widget
+            key={tag}
+            text={tag}
+            pressed={null}
+            onChange={() => {
+              navigate(`/search?tag=${tag}`);
+            }}
+            label={`Search for events matching the tag: ${tag}`}
+          />
+        ))}
+      </div>
+    ) : null;
 
   return (
     <div className={`${styles.card} ${styles[size]}`}>
-      {(props.size === 'm' || props.size === undefined) &&
+      {(props.size === 'm' || props.size === undefined) && (
         <div className={styles.save}>
           <Button
             icon="bookmark"
@@ -124,20 +137,23 @@ function EventCard(props: EventProps) {
             label={saved ? 'Remove from saved' : 'Save event'}
           ></Button>
         </div>
-      }
-      {props.size !== 's' &&
+      )}
+      {props.size !== 's' && (
         <div className={styles.image}>
           {props.size !== 'xl' && <img src={props.imageUrl} alt="" />}
-          {props.size === 'xl' && <ImageCarousel images={props.imageUrls} title={props.title} />}
+          {props.size === 'xl' && (
+            <ImageCarousel images={props.imageUrls} title={props.title} />
+          )}
         </div>
-      }
+      )}
       <div className={styles.info}>
         <div className={styles.titleBar}>
           <h3>
-
-            {props.size === 'xl' && (<div>{props.title}</div>) || (<NavLink to={`/event/${props.id}`} className={styles.link}>
-              {props.title}
-            </NavLink>)}
+            {(props.size === 'xl' && <div>{props.title}</div>) || (
+              <NavLink to={`/event/${props.id}`} className={styles.link}>
+                {props.title}
+              </NavLink>
+            )}
           </h3>
           <Rating rating={props.rating} reviews={props.reviews}></Rating>
         </div>
@@ -146,26 +162,39 @@ function EventCard(props: EventProps) {
           <div className={styles.stats}>
             <Price className={styles.price} price={props.price}></Price>
             <div className={styles.time}>
-              <Icon name='clock' />
+              <Icon name="clock" />
               <small>{formatTimeRange(props.time)}</small>
             </div>
             <div className={styles.location}>
-              <Icon name='pin' />
+              <Icon name="pin" />
               <small>{props.location}</small>
             </div>
           </div>
         )}
-        {(props.size === 'l' || props.size === 'xl') &&
+        {(props.size === 'l' || props.size === 'xl') && (
           <div className={styles.description}>
             <h3>About</h3>
             <text>{props.description}</text>
             <div className={styles.interactables}>
-              <Button icon='spark' onClick={onRate} label={'Rate event'}></Button>
-              <Button icon='share' onClick={onShare} label={'Share event'}></Button>
-              <Button icon='bookmark' onClick={onSave} pressed={saved} label={saved ? 'Remove from saved' : 'Save event'}></Button>
+              <Button
+                icon="spark"
+                onClick={onRate}
+                label={'Rate event'}
+              ></Button>
+              <Button
+                icon="share"
+                onClick={onShare}
+                label={'Share event'}
+              ></Button>
+              <Button
+                icon="bookmark"
+                onClick={onSave}
+                pressed={saved}
+                label={saved ? 'Remove from saved' : 'Save event'}
+              ></Button>
             </div>
           </div>
-        }
+        )}
         {props.size !== 's' && Tags}
         {(props.size === 'm' || props.size === undefined) && props.summary}
       </div>

@@ -1,6 +1,18 @@
-import { useState } from "react";
-import { EventCard, ImageCarousel } from "../components";
-import { Button, Icon, MenuButton, Pin, RadioGroup, Slider, TabGroup, TextField, TextInput, ToggleButton, Widget } from "../molecules";
+import { useState } from 'react';
+import { EventCard, ImageCarousel } from '../components';
+import {
+  Button,
+  Icon,
+  MenuButton,
+  Pin,
+  RadioGroup,
+  Slider,
+  TabGroup,
+  TextField,
+  TextInput,
+  ToggleButton,
+  Widget,
+} from '../molecules';
 
 function Testing() {
   const [size, setSize] = useState('md');
@@ -25,38 +37,115 @@ function Testing() {
     { id: 'cafe-14', label: 'Saved spot', x: 90, y: 200 }, // no number
   ];
 
-  const start = new Date()
+  const start = new Date();
   const end = new Date();
   start.setHours(11);
   end.setHours(15);
-  const tags: Array<string> = [
-    'sun',
-    'dance',
-    'food',
-    'drinks',
-    'rain',
-  ];
+  const tags: Array<string> = ['sun', 'dance', 'food', 'drinks', 'rain'];
   return (
     <div>
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div style={{display: 'flex', gap: '20px'}}>
-      <EventCard id='this' title='Sushi' summary='sushi is gay' rating={4.5} defaultSaved={true} imageUrl={'d'}></EventCard>
-      <EventCard id='that' title='Sushi' summary='sushi is gay' defaultSaved={false} rating={2.3} imageUrl={'gay'}></EventCard>
-      </div>
-      <div style={{display: 'flex', gap: '20px'}}>
-      <EventCard size='s' id='this' title='Sushi' rating={4.5} defaultSaved={true} tags={tags} time={{start, end}} location={"here"} price={{low: 10, high: 35}}></EventCard>
-      <EventCard size='s' id='that' title='Sushi' defaultSaved={false} rating={2.3} tags={tags} time={new Date()} location={"there"}></EventCard>
-      </div>
-       <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-      <EventCard size='l' id='this' title='Sushi' rating={4.5} defaultSaved={true} description={'this is an event description yay'} time={{start, end}} tags={tags} reviews={102} location={"here"} imageUrl={'d'} price={{low: 10, high: 35}}></EventCard>
-      <EventCard size='l' id='that' title='Sushi' defaultSaved={false} rating={2.3} description={'this is an event description yay'} time={new Date()} tags={tags} reviews={2300} location={"there"} imageUrl={'d'}></EventCard>
-      </div>
-       <div style={{display: 'flex', gap: '20px'}}>
-      <EventCard size='xl' id='this' title='Sushi' rating={4.5} defaultSaved={true} description={'this is an event description yay'} tags={tags} time={{start, end}} reviews={102} location={"here"} imageUrls={['d', 'a', 'b']} price={{low: 10, high: 35}}></EventCard>
-      <EventCard size='xl' id='that' title='Sushi' defaultSaved={false} rating={2.3} description={'this is an event description yay'} tags={tags} time={new Date()} reviews={2300} location={"there"} imageUrls={['d', 'a', 'b', 'c', 'e']}></EventCard>
-      </div>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <EventCard
+            id="this"
+            title="Sushi"
+            summary="sushi is gay"
+            rating={4.5}
+            defaultSaved={true}
+            imageUrl={'d'}
+          ></EventCard>
+          <EventCard
+            id="that"
+            title="Sushi"
+            summary="sushi is gay"
+            defaultSaved={false}
+            rating={2.3}
+            imageUrl={'gay'}
+          ></EventCard>
+        </div>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <EventCard
+            size="s"
+            id="this"
+            title="Sushi"
+            rating={4.5}
+            defaultSaved={true}
+            tags={tags}
+            time={{ start, end }}
+            location={'here'}
+            price={{ low: 10, high: 35 }}
+          ></EventCard>
+          <EventCard
+            size="s"
+            id="that"
+            title="Sushi"
+            defaultSaved={false}
+            rating={2.3}
+            tags={tags}
+            time={new Date()}
+            location={'there'}
+          ></EventCard>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <EventCard
+            size="l"
+            id="this"
+            title="Sushi"
+            rating={4.5}
+            defaultSaved={true}
+            description={'this is an event description yay'}
+            time={{ start, end }}
+            tags={tags}
+            reviews={102}
+            location={'here'}
+            imageUrl={'d'}
+            price={{ low: 10, high: 35 }}
+          ></EventCard>
+          <EventCard
+            size="l"
+            id="that"
+            title="Sushi"
+            defaultSaved={false}
+            rating={2.3}
+            description={'this is an event description yay'}
+            time={new Date()}
+            tags={tags}
+            reviews={2300}
+            location={'there'}
+            imageUrl={'d'}
+          ></EventCard>
+        </div>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <EventCard
+            size="xl"
+            id="this"
+            title="Sushi"
+            rating={4.5}
+            defaultSaved={true}
+            description={'this is an event description yay'}
+            tags={tags}
+            time={{ start, end }}
+            reviews={102}
+            location={'here'}
+            imageUrls={['d', 'a', 'b']}
+            price={{ low: 10, high: 35 }}
+          ></EventCard>
+          <EventCard
+            size="xl"
+            id="that"
+            title="Sushi"
+            defaultSaved={false}
+            rating={2.3}
+            description={'this is an event description yay'}
+            tags={tags}
+            time={new Date()}
+            reviews={2300}
+            location={'there'}
+            imageUrls={['d', 'a', 'b', 'c', 'e']}
+          ></EventCard>
+        </div>
       </div>
       testing components
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -140,7 +229,17 @@ function Testing() {
           <Widget icon="food"></Widget>
           <Widget icon="food" text="food"></Widget>
         </div>
-        <ImageCarousel title="test images" images={['https://cdn.britannica.com/22/187222-050-07B17FB6/apples-on-a-tree-branch.jpg','b','c','d','e','f']}/>
+        <ImageCarousel
+          title="test images"
+          images={[
+            'https://cdn.britannica.com/22/187222-050-07B17FB6/apples-on-a-tree-branch.jpg',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+          ]}
+        />
       </div>
     </div>
   );

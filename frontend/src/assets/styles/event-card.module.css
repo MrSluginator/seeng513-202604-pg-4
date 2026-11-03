@@ -11,7 +11,8 @@
 
   cursor: pointer;
   position: relative;
-  transition: background-color ease 150ms,
+  transition:
+    background-color ease 150ms,
     scale ease 150ms;
 
   &:hover {
@@ -55,8 +56,8 @@
     display: grid;
     width: 100%;
     grid-template-areas:
-      "time     price"
-      "location location";
+      'time     price'
+      'location location';
     grid-template-columns: 1fr auto;
     /* time grows, price hugs its content */
     gap: 4px;
@@ -81,8 +82,7 @@
   .stats {
     display: grid;
     width: 100%;
-    grid-template-areas:
-      "price time location";
+    grid-template-areas: 'price time location';
     grid-template-columns: auto 2fr 3fr;
     /* time grows, price hugs its content */
     gap: 4px;
@@ -103,7 +103,7 @@
   align-items: center;
   flex: 1 0 0;
   align-self: stretch;
-  height:fit-content;
+  height: fit-content;
   box-shadow: none;
   cursor: default;
 
@@ -115,15 +115,14 @@
   .stats {
     display: grid;
     width: 100%;
-    grid-template-areas:
-      "price time location";
+    grid-template-areas: 'price time location';
     grid-template-columns: auto 2fr 3fr;
     /* time grows, price hugs its content */
     gap: 4px;
   }
 
   .image {
-     z-index: 1;
+    z-index: 1;
   }
 
   &:hover {
@@ -213,7 +212,6 @@
   gap: 10px;
   flex-wrap: wrap;
   z-index: 1;
-
 }
 
 .price {

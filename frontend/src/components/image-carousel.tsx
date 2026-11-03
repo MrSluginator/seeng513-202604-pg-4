@@ -51,7 +51,7 @@ function ImageCarousel({ images, title }: ImageCarouselProps) {
       {images.length > 1 && (
         <div className={styles.controls}>
           <Button
-            icon='left'
+            icon="left"
             onClick={() => goTo(index - 1)}
             disabled={isFirst}
             aria-label="Previous photo"
@@ -70,7 +70,7 @@ function ImageCarousel({ images, title }: ImageCarouselProps) {
           </div>
 
           <Button
-            icon='right'
+            icon="right"
             onClick={() => goTo(index + 1)}
             disabled={isLast}
             aria-label="Next photo"
