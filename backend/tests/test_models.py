@@ -17,6 +17,7 @@ from db.models import (
     EventTag,
     NotificationSettings,
     Photo,
+    RecurrencePattern,
     SavedEvent,
     ScrapedEvent,
     Tag,
@@ -161,6 +162,7 @@ def test_orm_relationships_end_to_end(db_session):
         title="Downtown Jazz Night",
         summary="A cozy evening of live jazz performances",
         description="Live jazz music",
+        recurrence_pattern=RecurrencePattern.ONE_TIME,
         price=Decimal("25.00"),
         latitude=Decimal("51.044700"),
         longitude=Decimal("-114.071900"),
@@ -218,6 +220,8 @@ def test_orm_relationships_end_to_end(db_session):
     db_session.commit()
 
     # Verify relationships from both sides
+    assert concert.recurrence_pattern == "one-time"
+    assert concert.recurrence_end_date is None
     assert concert in alice.created_events
     assert banner in concert.photos
     assert concert in banner.events
@@ -256,3 +260,43 @@ def test_saved_event_rating_check_constraint(db_session):
     db_session.add(invalid_saved)
     with pytest.raises(IntegrityError):
         db_session.commit()
+
+
+def test_event_recurrence_constraints(db_session):
+    """Verify recurrence_pattern enum values and recurrence_end_date constraint."""
+    now = datetime.now(timezone.utc)
+
+    weekly_ev = Event(
+        title="Weekly Trivia",
+        recurrence_pattern=RecurrencePattern.WEEKLY,
+        recurrence_end_date=now,
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(weekly_ev)
+    db_session.commit()
+    assert weekly_ev.recurrence_pattern == "weekly"
+    assert weekly_ev.recurrence_end_date is not None
+
+    invalid_pattern_ev = Event(
+        title="Invalid Pattern Event",
+        recurrence_pattern="yearly",
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(invalid_pattern_ev)
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+    db_session.rollback()
+
+    invalid_end_date_ev = Event(
+        title="None With End Date",
+        recurrence_pattern=RecurrencePattern.NONE,
+        recurrence_end_date=now,
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(invalid_end_date_ev)
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+

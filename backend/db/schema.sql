@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT,
     start_time TIMESTAMPTZ,
     end_time TIMESTAMPTZ,
+    recurrence_pattern VARCHAR(20) NOT NULL DEFAULT 'none' CHECK (recurrence_pattern IN ('none', 'one-time', 'daily', 'weekly', 'monthly')),
+    recurrence_end_date TIMESTAMPTZ,
     price DECIMAL(10, 2),
     currency VARCHAR(3) NOT NULL DEFAULT 'USD',
     location_name VARCHAR(255),
@@ -62,7 +64,8 @@ CREATE TABLE IF NOT EXISTS events (
     visits_count INTEGER NOT NULL DEFAULT 0,
     shares_count INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CHECK (recurrence_pattern <> 'none' OR recurrence_end_date IS NULL)
 );
 
 CREATE TABLE IF NOT EXISTS photos (

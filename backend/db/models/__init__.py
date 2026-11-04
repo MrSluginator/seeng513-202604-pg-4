@@ -1,7 +1,7 @@
 """SQLAlchemy ORM models."""
 
 from db.models.comment import Comment
-from db.models.event import Event
+from db.models.event import Event, RecurrencePattern
 from db.models.event_photo import EventPhoto
 from db.models.event_tag import EventTag
 from db.models.notification_settings import NotificationSettings
@@ -20,6 +20,7 @@ __all__ = [
     "NotificationSettings",
     "UserFriend",
     "Event",
+    "RecurrencePattern",
     "Photo",
     "EventPhoto",
     "Comment",

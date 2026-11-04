@@ -3,9 +3,11 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from decimal import Decimal
+from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import (
+    CheckConstraint,
     DateTime,
     ForeignKey,
     Integer,
@@ -31,10 +33,30 @@ if TYPE_CHECKING:
     from db.models.user import User
 
 
+class RecurrencePattern(str, Enum):
+    """Supported recurrence patterns for an event."""
+
+    NONE = "none"
+    ONE_TIME = "one-time"
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+
+
 class Event(Base):
     """Main event listings created natively or promoted from raw scraped sources."""
 
     __tablename__ = "events"
+    __table_args__ = (
+        CheckConstraint(
+            "recurrence_pattern IN ('none', 'one-time', 'daily', 'weekly', 'monthly')",
+            name="ck_events_recurrence_pattern",
+        ),
+        CheckConstraint(
+            "recurrence_pattern <> 'none' OR recurrence_end_date IS NULL",
+            name="ck_events_recurrence_end_date_requires_pattern",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -55,6 +77,16 @@ class Event(Base):
         nullable=True,
     )
     end_time: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    recurrence_pattern: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default=RecurrencePattern.NONE.value,
+        server_default=text("'none'"),
+    )
+    recurrence_end_date: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
     )
