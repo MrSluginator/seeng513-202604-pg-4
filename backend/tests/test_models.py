@@ -167,6 +167,7 @@ def test_orm_relationships_end_to_end(db_session):
         price_max=Decimal("40.00"),
         latitude=Decimal("51.044700"),
         longitude=Decimal("-114.071900"),
+        crowd_by_hour={str(hour): (80 if 19 <= hour <= 22 else 15) for hour in range(24)},
         created_at=now,
         updated_at=now,
     )
@@ -223,6 +224,9 @@ def test_orm_relationships_end_to_end(db_session):
     # Verify relationships from both sides
     assert concert.recurrence_pattern == "one-time"
     assert concert.recurrence_end_date is None
+    assert len(concert.crowd_by_hour) == 24
+    assert concert.crowd_by_hour["20"] == 80
+    assert concert.crowd_by_hour["10"] == 15
     assert concert in alice.created_events
     assert banner in concert.photos
     assert concert in banner.events

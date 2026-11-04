@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS events (
     location_name VARCHAR(255),
     latitude DECIMAL(9, 6),
     longitude DECIMAL(9, 6),
-    crowd_value NUMERIC,
+    crowd_by_hour JSONB NOT NULL DEFAULT '{}'::jsonb,
     visits_count INTEGER NOT NULL DEFAULT 0,
     shares_count INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

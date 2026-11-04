@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from sqlalchemy import (
     CheckConstraint,
@@ -20,7 +20,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.database import Base
+from db.database import Base, JSONBType
 
 if TYPE_CHECKING:
     from db.models.comment import Comment
@@ -113,7 +113,12 @@ class Event(Base):
     location_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     latitude: Mapped[Optional[Decimal]] = mapped_column(Numeric(9, 6), nullable=True)
     longitude: Mapped[Optional[Decimal]] = mapped_column(Numeric(9, 6), nullable=True)
-    crowd_value: Mapped[Optional[Decimal]] = mapped_column(Numeric, nullable=True)
+    crowd_by_hour: Mapped[dict[str, Any]] = mapped_column(
+        JSONBType,
+        nullable=False,
+        default=dict,
+        server_default=text("'{}'"),
+    )
     visits_count: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
