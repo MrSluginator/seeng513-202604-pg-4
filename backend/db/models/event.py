@@ -56,6 +56,18 @@ class Event(Base):
             "recurrence_pattern <> 'none' OR recurrence_end_date IS NULL",
             name="ck_events_recurrence_end_date_requires_pattern",
         ),
+        CheckConstraint(
+            "price_min IS NULL OR price_min >= 0",
+            name="ck_events_price_min_non_negative",
+        ),
+        CheckConstraint(
+            "price_max IS NULL OR price_max >= 0",
+            name="ck_events_price_max_non_negative",
+        ),
+        CheckConstraint(
+            "price_max IS NULL OR (price_min IS NOT NULL AND price_max >= price_min)",
+            name="ck_events_price_range_valid",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -90,7 +102,8 @@ class Event(Base):
         DateTime(timezone=True),
         nullable=True,
     )
-    price: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    price_min: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
+    price_max: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
     currency: Mapped[str] = mapped_column(
         String(3),
         nullable=False,

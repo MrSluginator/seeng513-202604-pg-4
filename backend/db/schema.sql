@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS events (
     end_time TIMESTAMPTZ,
     recurrence_pattern VARCHAR(20) NOT NULL DEFAULT 'none' CHECK (recurrence_pattern IN ('none', 'one-time', 'daily', 'weekly', 'monthly')),
     recurrence_end_date TIMESTAMPTZ,
-    price DECIMAL(10, 2),
+    price_min DECIMAL(10, 2) CHECK (price_min IS NULL OR price_min >= 0),
+    price_max DECIMAL(10, 2) CHECK (price_max IS NULL OR price_max >= 0),
     currency VARCHAR(3) NOT NULL DEFAULT 'USD',
     location_name VARCHAR(255),
     latitude DECIMAL(9, 6),
@@ -65,7 +66,8 @@ CREATE TABLE IF NOT EXISTS events (
     shares_count INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CHECK (recurrence_pattern <> 'none' OR recurrence_end_date IS NULL)
+    CHECK (recurrence_pattern <> 'none' OR recurrence_end_date IS NULL),
+    CHECK (price_max IS NULL OR (price_min IS NOT NULL AND price_max >= price_min))
 );
 
 CREATE TABLE IF NOT EXISTS photos (

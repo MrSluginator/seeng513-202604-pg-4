@@ -163,7 +163,8 @@ def test_orm_relationships_end_to_end(db_session):
         summary="A cozy evening of live jazz performances",
         description="Live jazz music",
         recurrence_pattern=RecurrencePattern.ONE_TIME,
-        price=Decimal("25.00"),
+        price_min=Decimal("25.00"),
+        price_max=Decimal("40.00"),
         latitude=Decimal("51.044700"),
         longitude=Decimal("-114.071900"),
         created_at=now,
@@ -299,4 +300,62 @@ def test_event_recurrence_constraints(db_session):
     db_session.add(invalid_end_date_ev)
     with pytest.raises(IntegrityError):
         db_session.commit()
+
+
+def test_event_price_range_constraints(db_session):
+    """Verify price_min and price_max support single prices and valid price ranges."""
+    now = datetime.now(timezone.utc)
+
+    # Single price with price_max = NULL
+    single_null_max = Event(
+        title="Single Price (Null Max)",
+        price_min=Decimal("15.00"),
+        price_max=None,
+        created_at=now,
+        updated_at=now,
+    )
+    # Single price with price_min == price_max
+    single_equal = Event(
+        title="Single Price (Equal)",
+        price_min=Decimal("15.00"),
+        price_max=Decimal("15.00"),
+        created_at=now,
+        updated_at=now,
+    )
+    # Price range with price_min < price_max
+    range_ev = Event(
+        title="Tiered Ticket Event",
+        price_min=Decimal("10.00"),
+        price_max=Decimal("50.00"),
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add_all([single_null_max, single_equal, range_ev])
+    db_session.commit()
+
+    # Invalid: price_max < price_min
+    inverted_range = Event(
+        title="Inverted Price Range",
+        price_min=Decimal("50.00"),
+        price_max=Decimal("10.00"),
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(inverted_range)
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+    db_session.rollback()
+
+    # Invalid: price_max set while price_min is NULL
+    max_without_min = Event(
+        title="Max Without Min",
+        price_min=None,
+        price_max=Decimal("20.00"),
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(max_without_min)
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+
 
