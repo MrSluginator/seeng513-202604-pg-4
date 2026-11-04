@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import os
 
 from dotenv import load_dotenv
@@ -21,9 +22,21 @@ class Base(DeclarativeBase):
     pass
 
 
+def normalize_database_url(url: str) -> str:
+    """Normalize PostgreSQL URL schemes for installed SQLAlchemy drivers."""
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    if (
+        url.startswith("postgresql+psycopg://")
+        and importlib.util.find_spec("psycopg") is None
+    ):
+        url = url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+    return url
+
+
 def get_engine(database_url: str | None = None):
     """Create and return a SQLAlchemy engine."""
-    url = database_url or DATABASE_URL
+    url = normalize_database_url(database_url or DATABASE_URL)
     return create_engine(url, pool_pre_ping=True)
 
 
