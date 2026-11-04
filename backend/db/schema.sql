@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
     account_type VARCHAR(50) NOT NULL DEFAULT 'standard',
-    sparks_balance INTEGER NOT NULL DEFAULT 0,
+    spark_rating INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

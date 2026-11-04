@@ -42,7 +42,7 @@ class User(Base):
         default="standard",
         server_default=text("'standard'"),
     )
-    sparks_balance: Mapped[int] = mapped_column(
+    spark_rating: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
         default=0,
