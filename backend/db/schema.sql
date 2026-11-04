@@ -1,4 +1,4 @@
--- Flare Database Schema (PostgreSQL 16+)
+-- Database Schema (PostgreSQL 16+)
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
