@@ -145,9 +145,11 @@ def test_orm_relationships_end_to_end(db_session):
     db_session.add(friendship)
     db_session.flush()
 
+    assert alice.spark_rating == 0
     assert alice.settings.social_links == {"instagram": "@alice"}
     assert alice.notification_settings.rsvp_updates is True
     assert alice.notification_settings.trending_in_my_area is True
+    assert alice.notification_settings.spark_rating_updates is True
     assert bob in alice.friends
 
     # 2. Events, Photos, EventPhotos, Tags, EventTags, UserPreferredTags

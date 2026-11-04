@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS notification_settings (
     interests_me BOOLEAN NOT NULL DEFAULT TRUE,
     new_in_my_area BOOLEAN NOT NULL DEFAULT TRUE,
     trending_in_my_area BOOLEAN NOT NULL DEFAULT FALSE,
-    sparks_sent_to_me BOOLEAN NOT NULL DEFAULT TRUE
+    spark_rating_updates BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS user_friends (

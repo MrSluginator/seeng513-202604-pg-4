@@ -52,7 +52,7 @@ class NotificationSettings(Base):
         default=False,
         server_default=text("FALSE"),
     )
-    sparks_sent_to_me: Mapped[bool] = mapped_column(
+    spark_rating_updates: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
         default=True,
