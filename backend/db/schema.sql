@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     creator_id UUID REFERENCES users(id) ON DELETE SET NULL,
     title VARCHAR(255) NOT NULL,
+    summary VARCHAR(255),
     description TEXT,
     start_time TIMESTAMPTZ,
     end_time TIMESTAMPTZ,

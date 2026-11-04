@@ -48,6 +48,7 @@ class Event(Base):
         nullable=True,
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
+    summary: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     start_time: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),

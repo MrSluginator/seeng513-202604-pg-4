@@ -159,6 +159,7 @@ def test_orm_relationships_end_to_end(db_session):
     concert = Event(
         creator=alice,
         title="Downtown Jazz Night",
+        summary="A cozy evening of live jazz performances",
         description="Live jazz music",
         price=Decimal("25.00"),
         latitude=Decimal("51.044700"),
