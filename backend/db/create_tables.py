@@ -6,16 +6,16 @@ import argparse
 import sys
 from pathlib import Path
 
+from sqlalchemy import Engine, text
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.schema import CreateTable
+
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
-from sqlalchemy import Engine, text
-from sqlalchemy.dialects import postgresql 
-from sqlalchemy.schema import CreateTable 
-
-import db.models 
-from db.database import Base, get_engine 
+import db.models  # noqa: E402, F401
+from db.database import Base, get_engine  # noqa: E402
 
 SCHEMA_SQL_PATH = Path(__file__).resolve().parent / "schema.sql"
 

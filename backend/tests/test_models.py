@@ -167,7 +167,9 @@ def test_orm_relationships_end_to_end(db_session):
         price_max=Decimal("40.00"),
         latitude=Decimal("51.044700"),
         longitude=Decimal("-114.071900"),
-        crowd_by_hour={str(hour): (80 if 19 <= hour <= 22 else 15) for hour in range(24)},
+        crowd_by_hour={
+            str(hour): (80 if 19 <= hour <= 22 else 15) for hour in range(24)
+        },
         review_count=12,
         rating=Decimal("4.75"),
         created_at=now,
@@ -246,7 +248,7 @@ def test_orm_relationships_end_to_end(db_session):
 
 
 def test_review_constraints(db_session):
-    """Verify reviews enforce rating BETWEEN 1 AND 5, optional content, and unique (user_id, event_id)."""
+    """Verify review rating bounds, optional content, and unique user/event pair."""
     now = datetime.now(timezone.utc)
     user = User(
         username="rater",
@@ -397,5 +399,3 @@ def test_event_price_range_constraints(db_session):
     db_session.add(max_without_min)
     with pytest.raises(IntegrityError):
         db_session.commit()
-
-

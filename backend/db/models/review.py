@@ -72,4 +72,3 @@ class Review(Base):
 
     event: Mapped[Event] = relationship("Event", back_populates="reviews")
     user: Mapped[User] = relationship("User", back_populates="reviews")
-
