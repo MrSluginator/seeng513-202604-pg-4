@@ -168,6 +168,8 @@ def test_orm_relationships_end_to_end(db_session):
         latitude=Decimal("51.044700"),
         longitude=Decimal("-114.071900"),
         crowd_by_hour={str(hour): (80 if 19 <= hour <= 22 else 15) for hour in range(24)},
+        review_count=12,
+        rating=Decimal("4.75"),
         created_at=now,
         updated_at=now,
     )
@@ -227,6 +229,8 @@ def test_orm_relationships_end_to_end(db_session):
     assert len(concert.crowd_by_hour) == 24
     assert concert.crowd_by_hour["20"] == 80
     assert concert.crowd_by_hour["10"] == 15
+    assert concert.review_count == 12
+    assert concert.rating == Decimal("4.75")
     assert concert in alice.created_events
     assert banner in concert.photos
     assert concert in banner.events

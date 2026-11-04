@@ -68,6 +68,10 @@ class Event(Base):
             "price_max IS NULL OR (price_min IS NOT NULL AND price_max >= price_min)",
             name="ck_events_price_range_valid",
         ),
+        CheckConstraint(
+            "rating IS NULL OR (rating >= 0 AND rating <= 5)",
+            name="ck_events_rating_range",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -130,6 +134,16 @@ class Event(Base):
         nullable=False,
         default=0,
         server_default=text("0"),
+    )
+    review_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default=text("0"),
+    )
+    rating: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(3, 2),
+        nullable=True,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -64,6 +64,8 @@ CREATE TABLE IF NOT EXISTS events (
     crowd_by_hour JSONB NOT NULL DEFAULT '{}'::jsonb,
     visits_count INTEGER NOT NULL DEFAULT 0,
     shares_count INTEGER NOT NULL DEFAULT 0,
+    review_count INTEGER NOT NULL DEFAULT 0,
+    rating DECIMAL(3, 2) CHECK (rating IS NULL OR (rating >= 0 AND rating <= 5)),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CHECK (recurrence_pattern <> 'none' OR recurrence_end_date IS NULL),
