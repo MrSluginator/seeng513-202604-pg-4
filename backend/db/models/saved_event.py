@@ -2,16 +2,13 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Boolean,
-    CheckConstraint,
     DateTime,
     ForeignKey,
     Integer,
-    SmallInteger,
-    Text,
     Uuid,
     func,
     text,
@@ -26,15 +23,9 @@ if TYPE_CHECKING:
 
 
 class SavedEvent(Base):
-    """Junction table tracking bookmarks, check-ins, ratings, and reviews."""
+    """Junction table tracking bookmarks and check-in visits."""
 
     __tablename__ = "saved_events"
-    __table_args__ = (
-        CheckConstraint(
-            "user_rating BETWEEN 1 AND 5",
-            name="ck_saved_events_user_rating_range",
-        ),
-    )
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -52,14 +43,12 @@ class SavedEvent(Base):
         default=True,
         server_default=text("TRUE"),
     )
-    user_rating: Mapped[Optional[int]] = mapped_column(SmallInteger, nullable=True)
     user_visits: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
         default=0,
         server_default=text("0"),
     )
-    user_review: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

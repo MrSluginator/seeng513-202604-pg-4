@@ -2,9 +2,19 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import DateTime, ForeignKey, Text, Uuid, func, text
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    SmallInteger,
+    Text,
+    UniqueConstraint,
+    Uuid,
+    func,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
@@ -14,10 +24,21 @@ if TYPE_CHECKING:
     from db.models.user import User
 
 
-class Comment(Base):
-    """Public comment threads tied to events."""
+class Review(Base):
+    """User reviews and star ratings tied to events."""
 
-    __tablename__ = "comments"
+    __tablename__ = "reviews"
+    __table_args__ = (
+        CheckConstraint(
+            "rating BETWEEN 1 AND 5",
+            name="ck_reviews_rating_range",
+        ),
+        UniqueConstraint(
+            "user_id",
+            "event_id",
+            name="uq_reviews_user_event",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -35,7 +56,8 @@ class Comment(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
+    rating: Mapped[int] = mapped_column(SmallInteger, nullable=False)
+    content: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -48,5 +70,6 @@ class Comment(Base):
         onupdate=func.now(),
     )
 
-    event: Mapped[Event] = relationship("Event", back_populates="comments")
-    user: Mapped[User] = relationship("User", back_populates="comments")
+    event: Mapped[Event] = relationship("Event", back_populates="reviews")
+    user: Mapped[User] = relationship("User", back_populates="reviews")
+

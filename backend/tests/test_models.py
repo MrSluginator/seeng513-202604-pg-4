@@ -11,13 +11,13 @@ from sqlalchemy.orm import sessionmaker
 from db.create_tables import SCHEMA_SQL_PATH, create_tables, generate_postgres_ddl
 from db.database import Base
 from db.models import (
-    Comment,
     Event,
     EventPhoto,
     EventTag,
     NotificationSettings,
     Photo,
     RecurrencePattern,
+    Review,
     SavedEvent,
     ScrapedEvent,
     Tag,
@@ -35,7 +35,7 @@ EXPECTED_TABLES = {
     "events",
     "photos",
     "event_photos",
-    "comments",
+    "reviews",
     "saved_events",
     "tags",
     "event_tags",
@@ -96,8 +96,8 @@ def test_foreign_key_ondelete_rules():
     assert get_fk_ondelete("photos", "uploader_id") == "SET NULL"
     assert get_fk_ondelete("event_photos", "event_id") == "CASCADE"
     assert get_fk_ondelete("event_photos", "photo_id") == "CASCADE"
-    assert get_fk_ondelete("comments", "event_id") == "CASCADE"
-    assert get_fk_ondelete("comments", "user_id") == "CASCADE"
+    assert get_fk_ondelete("reviews", "event_id") == "CASCADE"
+    assert get_fk_ondelete("reviews", "user_id") == "CASCADE"
     assert get_fk_ondelete("saved_events", "user_id") == "CASCADE"
     assert get_fk_ondelete("saved_events", "event_id") == "CASCADE"
     assert get_fk_ondelete("event_tags", "event_id") == "CASCADE"
@@ -194,11 +194,12 @@ def test_orm_relationships_end_to_end(db_session):
     )
     db_session.add(event_photo)
 
-    # 3. Comments, SavedEvents, ScrapedEvents
-    comment = Comment(
+    # 3. Reviews, SavedEvents, ScrapedEvents
+    review = Review(
         event=concert,
         user=bob,
-        content="Cannot wait for this show!",
+        rating=5,
+        content="Amazing atmosphere!",
         created_at=now,
         updated_at=now,
     )
@@ -206,9 +207,7 @@ def test_orm_relationships_end_to_end(db_session):
         user=bob,
         event=concert,
         is_saved=True,
-        user_rating=5,
         user_visits=1,
-        user_review="Amazing atmosphere!",
         created_at=now,
         updated_at=now,
     )
@@ -220,7 +219,7 @@ def test_orm_relationships_end_to_end(db_session):
         status="processed",
         parsed_event=concert,
     )
-    db_session.add_all([comment, saved, scraped])
+    db_session.add_all([review, saved, scraped])
     db_session.commit()
 
     # Verify relationships from both sides
@@ -236,8 +235,9 @@ def test_orm_relationships_end_to_end(db_session):
     assert concert in banner.events
     assert music_tag in concert.tags
     assert music_tag in alice.preferred_tags
-    assert len(concert.comments) == 1
-    assert concert.comments[0].user == bob
+    assert len(concert.reviews) == 1
+    assert concert.reviews[0].user == bob
+    assert concert.reviews[0].rating == 5
     assert concert in bob.saved_events
     assert bob in concert.saved_by_users
     assert concert.scraped_source == scraped
@@ -245,8 +245,8 @@ def test_orm_relationships_end_to_end(db_session):
     assert len(db_session.query(UserPreferredTag).all()) == 1
 
 
-def test_saved_event_rating_check_constraint(db_session):
-    """Verify saved_events enforces user_rating BETWEEN 1 AND 5."""
+def test_review_constraints(db_session):
+    """Verify reviews enforce rating BETWEEN 1 AND 5, optional content, and unique (user_id, event_id)."""
     now = datetime.now(timezone.utc)
     user = User(
         username="rater",
@@ -259,14 +259,46 @@ def test_saved_event_rating_check_constraint(db_session):
     db_session.add_all([user, ev])
     db_session.flush()
 
-    invalid_saved = SavedEvent(
+    # Valid star-only review (content is None)
+    star_only = Review(
         user_id=user.id,
         event_id=ev.id,
-        user_rating=6,
+        rating=4,
+        content=None,
         created_at=now,
         updated_at=now,
     )
-    db_session.add(invalid_saved)
+    db_session.add(star_only)
+    db_session.commit()
+    assert star_only.content is None
+
+    # Duplicate review by same user on same event should fail UNIQUE constraint
+    duplicate_review = Review(
+        user_id=user.id,
+        event_id=ev.id,
+        rating=5,
+        content="Second review attempt",
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(duplicate_review)
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+    db_session.rollback()
+
+    # Invalid rating (> 5) should fail CHECK constraint
+    other_ev = Event(title="Second Event", created_at=now, updated_at=now)
+    db_session.add(other_ev)
+    db_session.flush()
+
+    invalid_review = Review(
+        user_id=user.id,
+        event_id=other_ev.id,
+        rating=6,
+        created_at=now,
+        updated_at=now,
+    )
+    db_session.add(invalid_review)
     with pytest.raises(IntegrityError):
         db_session.commit()
 

@@ -1,11 +1,11 @@
 """SQLAlchemy ORM models."""
 
-from db.models.comment import Comment
 from db.models.event import Event, RecurrencePattern
 from db.models.event_photo import EventPhoto
 from db.models.event_tag import EventTag
 from db.models.notification_settings import NotificationSettings
 from db.models.photo import Photo
+from db.models.review import Review
 from db.models.saved_event import SavedEvent
 from db.models.scraped_event import ScrapedEvent
 from db.models.tag import Tag
@@ -23,7 +23,7 @@ __all__ = [
     "RecurrencePattern",
     "Photo",
     "EventPhoto",
-    "Comment",
+    "Review",
     "SavedEvent",
     "Tag",
     "EventTag",

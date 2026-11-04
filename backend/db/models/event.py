@@ -23,10 +23,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db.database import Base, JSONBType
 
 if TYPE_CHECKING:
-    from db.models.comment import Comment
     from db.models.event_photo import EventPhoto
     from db.models.event_tag import EventTag
     from db.models.photo import Photo
+    from db.models.review import Review
     from db.models.saved_event import SavedEvent
     from db.models.scraped_event import ScrapedEvent
     from db.models.tag import Tag
@@ -173,8 +173,8 @@ class Event(Base):
         back_populates="events",
         viewonly=True,
     )
-    comments: Mapped[list[Comment]] = relationship(
-        "Comment",
+    reviews: Mapped[list[Review]] = relationship(
+        "Review",
         back_populates="event",
         cascade="all, delete-orphan",
     )

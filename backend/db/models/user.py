@@ -10,10 +10,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db.database import Base
 
 if TYPE_CHECKING:
-    from db.models.comment import Comment
     from db.models.event import Event
     from db.models.notification_settings import NotificationSettings
     from db.models.photo import Photo
+    from db.models.review import Review
     from db.models.saved_event import SavedEvent
     from db.models.tag import Tag
     from db.models.user_friend import UserFriend
@@ -104,8 +104,8 @@ class User(Base):
         "Photo",
         back_populates="uploader",
     )
-    comments: Mapped[list[Comment]] = relationship(
-        "Comment",
+    reviews: Mapped[list[Review]] = relationship(
+        "Review",
         back_populates="user",
         cascade="all, delete-orphan",
     )
