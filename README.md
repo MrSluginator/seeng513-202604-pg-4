@@ -36,6 +36,11 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 │   └── .env.example      # Example frontend environment variables
 ├── backend/              # FastAPI application
 │   ├── main.py           # FastAPI entrypoint & routes
+│   ├── db/               # Database configuration, ORM models & schema
+│   │   ├── database.py   # SQLAlchemy engine & session setup
+│   │   ├── models/       # SQLAlchemy ORM models
+│   │   ├── create_tables.py # Script to initialize/manage DB tables
+│   │   └── schema.sql    # Raw PostgreSQL DDL schema script
 │   ├── tests/            # Pytest test suite
 │   ├── requirements.txt  # Production Python dependencies
 │   ├── requirements-dev.txt # Development/linting dependencies
@@ -105,6 +110,42 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
    uvicorn main:app --reload --port 8000
    ```
    The backend API will be available at `http://localhost:8000` (Swagger docs at `http://localhost:8000/docs`).
+
+#### Database Schema Initialization
+
+Make sure your PostgreSQL instance is running (either locally or via `docker compose up -d db`) and `DATABASE_URL` is configured in `backend/.env` (defaults to `postgresql://flare_user:flare_password@localhost:5432/flare_db`).
+
+##### Option 1: Via Python (`db/create_tables.py`)
+
+Run the initialization script from the `backend/` directory (with your virtual environment activated):
+
+- **Create tables via SQLAlchemy ORM metadata**:
+  ```bash
+  python db/create_tables.py
+  ```
+- **Execute the raw `db/schema.sql` file directly via Python**:
+  ```bash
+  python db/create_tables.py --from-sql-file
+  ```
+- **Additional flags**:
+  - `--drop`: Drop all existing tables before creating them (e.g., `python db/create_tables.py --drop`)
+  - `--database-url <url>`: Override the `DATABASE_URL` environment variable
+  - `--print-sql`: Print the compiled PostgreSQL DDL to stdout and exit without connecting to a database
+
+##### Option 2: Via Plain `psql` (`db/schema.sql`)
+
+You can also apply [`backend/db/schema.sql`](backend/db/schema.sql) directly using the `psql` CLI:
+
+- **Against a local or remote PostgreSQL instance**:
+  ```bash
+  psql "postgresql://flare_user:flare_password@localhost:5432/flare_db" -f backend/db/schema.sql
+  ```
+  *(Or using `DATABASE_URL`: `psql "$DATABASE_URL" -f backend/db/schema.sql`)*
+
+- **Against the Docker Compose `db` container**:
+  ```bash
+  docker compose exec -T db psql -U flare_user -d flare_db < backend/db/schema.sql
+  ```
 
 ---
 
