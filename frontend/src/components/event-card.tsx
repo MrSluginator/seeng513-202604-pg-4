@@ -95,7 +95,15 @@ function EventImage({ event, gallery }: { event: Event; gallery: boolean }) {
   );
 }
 
-function EventStats({ price, time, location }: { price?: PriceRange, time: TimeRange, location: string }) {
+function EventStats({
+  price,
+  time,
+  location,
+}: {
+  price?: PriceRange;
+  time: TimeRange;
+  location: string;
+}) {
   return (
     <div className={styles.stats}>
       <Price className={styles.price} price={price}></Price>
@@ -131,32 +139,35 @@ function EventTags({ tags }: { tags: Array<string> }) {
   );
 }
 
-
-function EventInteractables({ event, share = true, save = true, rate = true }: { event: Event, share?: boolean, save?: boolean, rate?: boolean }) {
+function EventInteractables({
+  event,
+  share = true,
+  save = true,
+  rate = true,
+}: {
+  event: Event;
+  share?: boolean;
+  save?: boolean;
+  rate?: boolean;
+}) {
   const [saved, setSaved] = useState(event.defaultSaved);
 
   const onSave = () => setSaved((prev) => !prev);
-  const onRate = () => { };
-  const onShare = () => { };
+  const onRate = () => {};
+  const onShare = () => {};
 
   return (
     <div className={styles.interactables}>
-      {rate && <Button
-        icon="spark"
-        onClick={onRate}
-        label={'Rate event'}
-      />}
-      {share && <Button
-        icon="share"
-        onClick={onShare}
-        label={'Share event'}
-      />}
-      {save && <Button
-        icon="bookmark"
-        onClick={onSave}
-        pressed={saved}
-        label={saved ? 'Remove from saved' : 'Save event'}
-      />}
+      {rate && <Button icon="spark" onClick={onRate} label={'Rate event'} />}
+      {share && <Button icon="share" onClick={onShare} label={'Share event'} />}
+      {save && (
+        <Button
+          icon="bookmark"
+          onClick={onSave}
+          pressed={saved}
+          label={saved ? 'Remove from saved' : 'Save event'}
+        />
+      )}
     </div>
   );
 }
@@ -167,7 +178,9 @@ function EventCard(props: EventProps) {
 
   return (
     <div className={`${styles.card} ${styles[size]}`}>
-      {size === 'm' && <EventInteractables event={event} rate={true} share={true} />}
+      {size === 'm' && (
+        <EventInteractables event={event} rate={true} share={true} />
+      )}
       {size !== 's' && <EventImage event={event} gallery={size === 'xl'} />}
       <div className={styles.info}>
         <div className={styles.titleBar}>
@@ -181,9 +194,15 @@ function EventCard(props: EventProps) {
           <Rating rating={event.rating} reviews={event.reviews}></Rating>
         </div>
         {size !== 'm' && <EventTags tags={event.tags} />}
-        {size !== 'm' && <EventStats price={event.price} time={event.time} location={event.location} />}
+        {size !== 'm' && (
+          <EventStats
+            price={event.price}
+            time={event.time}
+            location={event.location}
+          />
+        )}
         {size === 'm' && event.summary}
-        {(size === 'l' || size === 'xl') &&
+        {(size === 'l' || size === 'xl') && (
           <div className={styles.description}>
             <div className="row">
               <h3>About</h3>
@@ -191,7 +210,7 @@ function EventCard(props: EventProps) {
             </div>
             <p>{event.description}</p>
           </div>
-        }
+        )}
       </div>
     </div>
   );

@@ -45,91 +45,137 @@ function Testing() {
   const tags: Array<string> = ['sun', 'dance', 'food', 'drinks', 'rain'];
   const event1: Event = {
     id: '1',
-    title: "Sushi",
-    summary: "sushi is gay",
+    title: 'Sushi',
+    summary: 'sushi is gay',
     defaultSaved: false,
     rating: 2.3,
     reviews: 120,
-    time: {start, end},
+    time: { start, end },
     location: 'here this asidoiwn 123798 asd',
     tags: tags,
-    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
-    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    description:
+      "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: [
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+    ],
     imageUrl: 'https://picsum.photos/800/450',
   };
   const event2: Event = {
     id: '2',
-    title: "Sushi",
-    summary: "sushi is gay",
+    title: 'Sushi',
+    summary: 'sushi is gay',
     defaultSaved: false,
     rating: 2.3,
     reviews: 120,
-    time: {start, end},
+    time: { start, end },
     location: 'here12387a sda987 33e2e',
     tags: tags,
-    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
-    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    description:
+      "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: [
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+    ],
     imageUrl: 'https://picsum.photos/800/450',
   };
   const event3: Event = {
     id: '3',
-    title: "Sushi",
-    summary: "sushi is gay",
+    title: 'Sushi',
+    summary: 'sushi is gay',
     defaultSaved: true,
     rating: 2.3,
     reviews: 120,
-    time: {start, end},
+    time: { start, end },
     location: 'here',
     tags: tags,
-    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
-    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    description:
+      "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: [
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+    ],
     imageUrl: 'https://picsum.photos/800/450',
   };
   const event4: Event = {
     id: '4',
-    title: "Sushi",
-    summary: "sushi is gay",
+    title: 'Sushi',
+    summary: 'sushi is gay',
     defaultSaved: true,
     rating: 4.8,
     reviews: 500400,
-    time: {start, end},
+    time: { start, end },
     location: 'here',
     tags: tags,
-    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
-    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    description:
+      "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: [
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+    ],
     imageUrl: 'https://picsum.photos/800/450',
   };
   const event5: Event = {
     id: '5',
-    title: "Sushi",
-    summary: "sushi is gay",
+    title: 'Sushi',
+    summary: 'sushi is gay',
     defaultSaved: false,
     rating: 1.4,
     reviews: 10029,
-    time: {start, end},
+    time: { start, end },
     location: 'here',
     tags: tags,
-    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
-    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    description:
+      "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: [
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+    ],
     imageUrl: 'https://picsum.photos/800/450',
   };
   const event6: Event = {
     id: '6',
-    title: "Sushi",
-    summary: "sushi is gay",
+    title: 'Sushi',
+    summary: 'sushi is gay',
     defaultSaved: false,
     rating: 2.6,
     reviews: 2340,
-    time: {start, end},
+    time: { start, end },
     location: 'here',
     tags: tags,
-    description: "this is a description about sushi and it's kinda long or something idk guys this is silly",
-    imageUrls: ['https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450', 'https://picsum.photos/800/450'],
+    description:
+      "this is a description about sushi and it's kinda long or something idk guys this is silly",
+    imageUrls: [
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+      'https://picsum.photos/800/450',
+    ],
     imageUrl: 'https://picsum.photos/800/450',
   };
-  const events: Array<Event> = [
-    event1, event2, event3, event4, event5, event6,
-  ];
+  const events: Array<Event> = [event1, event2, event3, event4, event5, event6];
   return (
     <div>
       <h1>Flare</h1>
@@ -143,14 +189,8 @@ function Testing() {
             justifyContent: 'center',
           }}
         >
-          <EventCard
-            size='m'
-            event={event4}
-          />
-          <EventCard
-            size='m'
-            event={event1}
-          />
+          <EventCard size="m" event={event4} />
+          <EventCard size="m" event={event1} />
         </div>
         <div
           style={{
@@ -160,24 +200,12 @@ function Testing() {
             justifyContent: 'center',
           }}
         >
-          <EventCard
-            size="s"
-            event={event1}
-          />
-          <EventCard
-            size="s"
-            event={event4}
-          />
+          <EventCard size="s" event={event1} />
+          <EventCard size="s" event={event4} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <EventCard
-            size="l"
-            event={event4}
-          />
-          <EventCard
-            size="l"
-            event={event2}
-          />
+          <EventCard size="l" event={event4} />
+          <EventCard size="l" event={event2} />
         </div>
         <div
           style={{
@@ -187,14 +215,8 @@ function Testing() {
             justifyContent: 'center',
           }}
         >
-          <EventCard
-            size="xl"
-            event={event4}
-          />
-          <EventCard
-            size="xl"
-            event={event2}
-          />
+          <EventCard size="xl" event={event4} />
+          <EventCard size="xl" event={event2} />
         </div>
       </div>
       testing components

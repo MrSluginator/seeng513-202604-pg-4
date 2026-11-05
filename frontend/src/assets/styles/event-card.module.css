@@ -100,7 +100,7 @@
   .m & {
     padding: 16px;
     padding-top: 8px;
-    gap: 0px
+    gap: 0px;
   }
 
   .l & {
@@ -185,7 +185,7 @@
   order: 3;
 
   p {
-    flex: 1
+    flex: 1;
   }
 
   h3 {
@@ -245,19 +245,19 @@
 }
 
 .time {
-  flex: 2 0 135px;   /* grows, but never below 135px */
+  flex: 2 0 135px; /* grows, but never below 135px */
 }
 
 .location {
-  flex: 3 0 var(--location-basis);  /* grows, never shrinks */
-  max-width: 100%;   /* once alone on a line, don't overflow the card */
+  flex: 3 0 var(--location-basis); /* grows, never shrinks */
+  max-width: 100%; /* once alone on a line, don't overflow the card */
 }
 
 .icons {
   display: flex;
   align-items: center;
 
-  &>*+* {
+  & > * + * {
     margin-inline-start: -8px;
     /* overlap the dollar icons */
   }
