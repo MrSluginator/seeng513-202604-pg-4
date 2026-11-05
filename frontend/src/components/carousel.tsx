@@ -1,17 +1,28 @@
-import { useRef, useState } from 'react';
-import styles from '../assets/styles/image-carousel.module.css';
+import { Key, ReactNode, useRef, useState } from 'react';
+import styles from '../assets/styles/carousel.module.css';
 import { Button } from '../molecules';
 
-interface ImageCarouselProps {
-  images: string[];
-  title: string;
+interface CarouselProps<T> {
+  items: T[];
+  renderItem: (item: T, index: number) => ReactNode;
+  getKey: (item: T, index: number) => Key;
+  overlay?: boolean;
+  label?: string;
+  itemLabel?: string;
 }
 
-function ImageCarousel({ images, title }: ImageCarouselProps) {
+function Carousel<T>({
+  items,
+  renderItem,
+  getKey,
+  overlay = true,
+  label,
+  itemLabel = 'item',
+}: CarouselProps<T>) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
-  if (images.length === 0) return null;
+  if (items.length === 0) return null;
 
   const goTo = (i: number) => {
     const el = trackRef.current;
@@ -25,10 +36,10 @@ function ImageCarousel({ images, title }: ImageCarouselProps) {
   };
 
   const isFirst = index === 0;
-  const isLast = index === images.length - 1;
+  const isLast = index === items.length - 1;
 
   return (
-    <div className={styles.carousel}>
+    <div className={`${styles.carousel} ${overlay ? styles.overlay : ''}`}>
       <div
         ref={trackRef}
         className={styles.track}
@@ -36,34 +47,37 @@ function ImageCarousel({ images, title }: ImageCarouselProps) {
         tabIndex={0}
         role="group"
         aria-roledescription="carousel"
-        aria-label={`${title} photos`}
+        aria-label={label}
       >
-        {images.map((src, i) => (
-          <img
-            key={src}
-            src={src}
-            alt={`${title} photo ${i + 1} of ${images.length}`}
-            loading={i === 0 ? 'eager' : 'lazy'}
-          />
+        {items.map((item, i) => (
+          <div
+            key={getKey(item, i)}
+            className={styles.slide}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${itemLabel} ${i + 1} of ${items.length}`}
+          >
+            {renderItem(item, i)}
+          </div>
         ))}
       </div>
 
-      {images.length > 1 && (
+      {items.length > 1 && (
         <div className={styles.controls}>
           <Button
             icon="left"
             onClick={() => goTo(index - 1)}
             disabled={isFirst}
-            aria-label="Previous photo"
+            aria-label={`Previous ${itemLabel}`}
           />
 
           <div className={styles.dots}>
-            {images.map((_, i) => (
+            {items.map((item, i) => (
               <button
-                key={i}
+                key={getKey(item, i)}
                 className={`${styles.dot} ${i === index ? styles.active : ''}`}
                 onClick={() => goTo(i)}
-                aria-label={`Go to photo ${i + 1}`}
+                aria-label={`Go to ${itemLabel} ${i + 1}`}
                 aria-current={i === index}
               />
             ))}
@@ -73,7 +87,7 @@ function ImageCarousel({ images, title }: ImageCarouselProps) {
             icon="right"
             onClick={() => goTo(index + 1)}
             disabled={isLast}
-            aria-label="Next photo"
+            aria-label={`Next ${itemLabel}`}
           />
         </div>
       )}
@@ -81,4 +95,4 @@ function ImageCarousel({ images, title }: ImageCarouselProps) {
   );
 }
 
-export default ImageCarousel;
+export default Carousel;
