@@ -73,11 +73,11 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
    ```
 3. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 4. Run the development server:
    ```bash
-   npm run dev
+   pnpm run dev
    ```
    The frontend will be available at `http://localhost:5173`.
 

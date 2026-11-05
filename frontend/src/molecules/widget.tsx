@@ -5,9 +5,10 @@ import Icon, { IconName } from './icon';
 interface WidgetProps {
   text?: string;
   icon?: IconName;
+  iconPosition?: 'left' | 'right' | 'top' | 'bottom';
   defaultPressed?: boolean;
-  pressed: any;
-  onChange: React.Dispatch<any>;
+  pressed?: any;
+  onChange?: React.Dispatch<any>;
   disabled?: boolean;
   label?: string;
 }
@@ -15,6 +16,7 @@ interface WidgetProps {
 function Widget({
   text,
   icon,
+  iconPosition = 'right',
   pressed,
   defaultPressed = false,
   onChange,
@@ -32,18 +34,23 @@ function Widget({
     onChange?.(next);
   }
 
+  const bigget = iconPosition === 'top' || iconPosition === 'bottom';
+  const first = iconPosition === 'top' || iconPosition === 'left';
+  const iconEl = icon ? <Icon name={icon} /> : null;
+
   return (
     <button
       type="button"
       role="switch"
       aria-checked={isPressed}
       aria-label={label}
-      className={`${styles.widget} ${icon && text ? styles.bigget : ''}`}
+      className={`${styles.widget} ${bigget ? styles.bigget : ''}`}
       onClick={handleClick}
       disabled={disabled}
     >
-      {icon && <Icon name={icon} />}
+      {first && iconEl}
       {text}
+      {!first && iconEl}
     </button>
   );
 }

@@ -30,35 +30,20 @@
 
   /* OFF + hover */
   &:hover:not(:disabled) {
-    border-color: var(--p3);
-    background-color: var(--p2);
-
     .circle {
-      border-color: var(--p4);
-      background-color: var(--p3);
+      border-color: var(--p5);
+      background-color: var(--p4);
     }
   }
 
   /* ON (knob slides to the right: track inner width 46px - knob 24px = 22px) */
   &[aria-checked='true'] {
-    border-color: var(--p3);
-    background-color: var(--p2);
-
-    .circle {
-      transform: translateX(22px);
-      border-color: var(--p3);
-      background-color: var(--p1);
-    }
-  }
-
-  /* ON + hover */
-  &[aria-checked='true']:hover:not(:disabled) {
     border-color: var(--p4);
     background-color: var(--p3);
 
     .circle {
-      border-color: var(--p4);
-      background-color: var(--p2);
+      border-color: var(--p5);
+      transform: translateX(22px);
     }
   }
 
@@ -80,14 +65,14 @@
     background-color: var(--n3);
 
     .circle {
-      border-color: var(--n4);
+      border-color: var(--n5);
       background-color: var(--n2);
     }
   }
 
   /* Keyboard focus */
   &:focus-visible {
-    outline: 2px solid var(--p7);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
 }
