@@ -58,7 +58,8 @@
   --weight-bold: 700;
 
   /* H1 */
-  --h1-size: 2rem; /* 40px */
+  --h1-size: 2rem;
+  /* 40px */
   --h1-weight: var(--weight-bold);
   --h1-line-height: 2.5rem;
 
@@ -98,6 +99,13 @@
   --pin-s: 28px;
   --pin-m: 32px;
   --pin-l: 42px;
+
+  --logo-xs: 1rem;
+  --logo-s: 2rem;
+  --logo-m: 3rem;
+  --logo-l: 4rem;
+  --logo-xl: 8rem;
+  --logo-xxl: 12rem;
 }
 
 h1 {
@@ -162,7 +170,8 @@ body {
 .App {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow-y: auto;
 }
 
 .page {

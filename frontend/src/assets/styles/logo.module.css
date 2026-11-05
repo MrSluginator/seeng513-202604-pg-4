@@ -1,0 +1,9 @@
+.logo {
+  display: flex;
+  padding: 0px 8px 4px;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--p5) 20%, transparent);
+}
