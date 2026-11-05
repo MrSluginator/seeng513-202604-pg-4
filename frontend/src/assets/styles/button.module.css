@@ -29,7 +29,7 @@
   }
 
   &.iconOnly {
-    min-width: 0;
+    min-width: 32px;
     padding: 0;
     aspect-ratio: 1 / 1;
   }
