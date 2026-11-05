@@ -56,7 +56,7 @@ function NavBar({ signedIn }: NavBarProps) {
       <div className={styles.desktop}>
         <div className={styles.holder}>
           <NavItem to="/" end>
-            <Logo/>
+            <Logo size="m" />
           </NavItem>
           <NavItem to="/map">
             <div>Heat Map</div>

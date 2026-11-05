@@ -96,6 +96,13 @@
   --pin-s: 28px;
   --pin-m: 32px;
   --pin-l: 42px;
+
+  --logo-xs: 1rem;
+  --logo-s: 2rem;
+  --logo-m: 3rem;
+  --logo-l: 4rem;
+  --logo-xl: 8rem;
+  --logo-xxl: 12rem;
 }
 
 h1 {
