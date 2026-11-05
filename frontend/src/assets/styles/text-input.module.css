@@ -24,10 +24,10 @@
   border: 1px solid var(--p1);
   background: var(--n0);
 
-  &:hover:not([data-disabled]) {
+  /* &:hover:not([data-disabled]) {
     border-color: var(--p2);
     background-color: var(--p1);
-  }
+  } */
 
   /* A div can't match :focus-visible, so react to the input inside it */
   &:has(.input:focus-visible) {

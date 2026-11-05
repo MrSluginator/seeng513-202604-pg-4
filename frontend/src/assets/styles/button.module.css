@@ -11,6 +11,7 @@
   border: 1px solid var(--p3);
   background: var(--p2);
   color: var(--n7);
+  cursor: pointer;
 
   font-size: var(--body-size);
   font-weight: var(--body-weight);
@@ -53,6 +54,7 @@
   border-color: var(--n3);
   background-color: var(--n2);
   color: var(--p5);
+  cursor: not-allowed;
 
   .icon {
     color: var(--p5);

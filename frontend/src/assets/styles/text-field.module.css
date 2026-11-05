@@ -31,10 +31,10 @@
   text-align: start;
   resize: vertical;
 
-  &:hover {
+  /* &:hover {
     border-color: var(--p2);
     background-color: var(--p1);
-  }
+  } */
 
   &:disabled {
     border-color: var(--n3);
