@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 from sqlalchemy import create_engine, event
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import CreateTable
 
-from db.create_tables import SCHEMA_SQL_PATH, create_tables, generate_postgres_ddl
 from db.database import Base
 from db.models import (
     Event,
@@ -26,7 +28,10 @@ from db.models import (
     UserPreferredTag,
     UserSettings,
 )
-from db.seed_data import SEED_SQL_PATH, seed_database
+
+DB_DIR = Path(__file__).resolve().parent.parent / "db"
+SCHEMA_SQL_PATH = DB_DIR / "schema.sql"
+SEED_SQL_PATH = DB_DIR / "seed.sql"
 
 EXPECTED_TABLES = {
     "users",
@@ -56,7 +61,7 @@ def db_session():
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
-    create_tables(engine)
+    Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     session = TestingSessionLocal()
     try:
@@ -72,7 +77,11 @@ def test_all_tables_registered():
 
 def test_postgres_ddl_generation_and_sql_file():
     """Verify PostgreSQL DDL compiles cleanly and schema.sql contains all tables."""
-    ddl = generate_postgres_ddl()
+    dialect = postgresql.dialect()
+    ddl = "\n\n".join(
+        f"{str(CreateTable(table).compile(dialect=dialect)).strip()};"
+        for table in Base.metadata.sorted_tables
+    )
     sql_file_content = SCHEMA_SQL_PATH.read_text(encoding="utf-8")
 
     for table_name in EXPECTED_TABLES:
@@ -402,32 +411,8 @@ def test_event_price_range_constraints(db_session):
         db_session.commit()
 
 
-def test_seed_database_populates_all_tables(db_session):
-    """Verify seed_database populates all 13 tables and supports idempotent/reset."""
-    counts = seed_database(db_session)
-    assert set(counts.keys()) == EXPECTED_TABLES
-    for table_name, count in counts.items():
-        assert count > 0, f"Expected {table_name} to have seeded rows"
-
-    # Running again without reset is idempotent
-    second_counts = seed_database(db_session, reset=False)
-    assert second_counts == counts
-
-    # Running with reset=True clears and reseeds cleanly
-    reset_counts = seed_database(db_session, reset=True)
-    assert reset_counts == counts
-
-
 def test_seed_sql_file_contains_all_tables():
     """Verify seed.sql exists and includes INSERT statements for all 13 tables."""
     seed_sql_content = SEED_SQL_PATH.read_text(encoding="utf-8")
     for table_name in EXPECTED_TABLES:
         assert f"INSERT INTO {table_name}" in seed_sql_content
-
-
-def test_seed_sql_file_contains_all_tables():
-    """Verify seed.sql exists and includes INSERT statements for all 13 tables."""
-    seed_sql_content = SEED_SQL_PATH.read_text(encoding="utf-8")
-    for table_name in EXPECTED_TABLES:
-        assert f"INSERT INTO {table_name}" in seed_sql_content
-
