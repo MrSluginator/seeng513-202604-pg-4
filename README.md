@@ -40,6 +40,7 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 │   │   ├── database.py   # SQLAlchemy engine & session setup
 │   │   ├── models/       # SQLAlchemy ORM models
 │   │   ├── create_tables.py # Script to initialize/manage DB tables
+│   │   ├── seed_data.py  # Script to seed dummy data into the DB
 │   │   └── schema.sql    # Raw PostgreSQL DDL schema script
 │   ├── tests/            # Pytest test suite
 │   ├── requirements.txt  # Production Python dependencies
@@ -146,6 +147,19 @@ You can also apply [`backend/db/schema.sql`](backend/db/schema.sql) directly usi
   ```bash
   docker compose exec -T db psql -U flare_user -d flare_db < backend/db/schema.sql
   ```
+
+#### Seeding Dummy Data (`db/seed_data.py`)
+
+To populate the database with sample users, settings, friendships, tags, events, photos, reviews, saved events, and scraped events, run from the `backend/` directory:
+
+```bash
+python db/seed_data.py
+```
+
+- **Additional flags**:
+  - `--reset`: Clear existing rows in all tables before seeding (`python db/seed_data.py --reset`)
+  - `--drop`: Drop and recreate all tables before seeding (`python db/seed_data.py --drop`)
+  - `--database-url <url>`: Override the `DATABASE_URL` environment variable
 
 ---
 
