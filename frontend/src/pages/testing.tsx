@@ -183,14 +183,26 @@ function Testing() {
       <p>Welcome to Flare! React frontend is initialized.</p>
       <EventGrid
         size="m"
+        display={{ type: 'grid', hidden: true }}
         events={events}
-        showMore={true}
         filters={tags}
         onFilterRemove={() => {}}
       />
-      <EventGrid size="s" events={events} onFilterRemove={() => {}} />
+      <EventGrid
+        size="s"
+        display={{ type: 'grid', hidden: false }}
+        events={events}
+        onFilterRemove={() => {}}
+      />
+      <EventGrid
+        size="s"
+        display={{ type: 'carousel', controls: false }}
+        events={events}
+        onFilterRemove={() => {}}
+      />
       <EventGrid
         size="l"
+        display={{ type: 'carousel', controls: true }}
         events={events}
         filters={tags}
         onFilterRemove={() => {}}

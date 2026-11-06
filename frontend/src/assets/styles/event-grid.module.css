@@ -5,6 +5,13 @@
   gap: 10px;
 }
 
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 .eventGrid {
   display: flex;
   flex-wrap: wrap;
@@ -12,17 +19,13 @@
   justify-content: center;
 }
 
-.more {
-  max-height: 480px;
-  overflow-y: hidden;
-}
-
 .header {
   display: flex;
   padding: 0px 40px;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   align-self: stretch;
+  gap: 10px;
 }
 
 .filterBox {
@@ -48,5 +51,23 @@
   gap: 20px;
 }
 
-@media (max-width: 768px) {
+.search {
+  flex: 1;
+  width: 100%;
+}
+/* need to specify max widths if they exist */
+.carousel {
+  .s & {
+    --slide-max-w: 330px;
+  }
+
+  .m & {
+    --slide-max-w: 350px;
+  }
+
+  .l & {
+    @media (max-width: 768px) {
+      --slide-max-w: 480px;
+    }
+  }
 }
