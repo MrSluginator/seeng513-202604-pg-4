@@ -41,7 +41,8 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 │   │   ├── models/       # SQLAlchemy ORM models
 │   │   ├── create_tables.py # Script to initialize/manage DB tables
 │   │   ├── seed_data.py  # Script to seed dummy data into the DB
-│   │   └── schema.sql    # Raw PostgreSQL DDL schema script
+│   │   ├── schema.sql    # Raw PostgreSQL DDL schema script
+│   │   └── seed.sql      # Raw PostgreSQL dummy data seed script
 │   ├── tests/            # Pytest test suite
 │   ├── requirements.txt  # Production Python dependencies
 │   ├── requirements-dev.txt # Development/linting dependencies
@@ -112,11 +113,11 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
    ```
    The backend API will be available at `http://localhost:8000` (Swagger docs at `http://localhost:8000/docs`).
 
-#### Database Schema Initialization
+### Database Schema Initialization
 
 Make sure your PostgreSQL instance is running (either locally or via `docker compose up -d db`) and `DATABASE_URL` is configured in `backend/.env` (defaults to `postgresql://flare_user:flare_password@localhost:5432/flare_db`).
 
-##### Option 1: Via Python (`db/create_tables.py`)
+#### Option 1: Via Python (`db/create_tables.py`)
 
 Run the initialization script from the `backend/` directory (with your virtual environment activated):
 
@@ -133,7 +134,7 @@ Run the initialization script from the `backend/` directory (with your virtual e
   - `--database-url <url>`: Override the `DATABASE_URL` environment variable
   - `--print-sql`: Print the compiled PostgreSQL DDL to stdout and exit without connecting to a database
 
-##### Option 2: Via Plain `psql` (`db/schema.sql`)
+#### Option 2: Via Plain `psql` (`db/schema.sql`)
 
 You can also apply [`backend/db/schema.sql`](backend/db/schema.sql) directly using the `psql` CLI:
 
@@ -148,18 +149,34 @@ You can also apply [`backend/db/schema.sql`](backend/db/schema.sql) directly usi
   docker compose exec -T db psql -U flare_user -d flare_db < backend/db/schema.sql
   ```
 
-#### Seeding Dummy Data (`db/seed_data.py`)
+### Seeding Dummy Data (`db/seed.sql` & `db/seed_data.py`)
 
-To populate the database with sample users, settings, friendships, tags, events, photos, reviews, saved events, and scraped events, run from the `backend/` directory:
+To populate the database with sample users, settings, friendships, tags, events, photos, reviews, saved events, and scraped events:
+
+#### Option 1: Via Python (`db/seed_data.py`)
+
+Run from the `backend/` directory:
 
 ```bash
 python db/seed_data.py
 ```
 
 - **Additional flags**:
+  - `--from-sql-file`: Execute `db/seed.sql` directly via Python (`python db/seed_data.py --from-sql-file`)
   - `--reset`: Clear existing rows in all tables before seeding (`python db/seed_data.py --reset`)
   - `--drop`: Drop and recreate all tables before seeding (`python db/seed_data.py --drop`)
   - `--database-url <url>`: Override the `DATABASE_URL` environment variable
+
+#### Option 2: Via Plain `psql` (`db/seed.sql`)
+
+- **Against a local or remote PostgreSQL instance**:
+  ```bash
+  psql "postgresql://flare_user:flare_password@localhost:5432/flare_db" -f backend/db/seed.sql
+  ```
+- **Against the Docker Compose `db` container**:
+  ```bash
+  docker compose exec -T db psql -U flare_user -d flare_db < backend/db/seed.sql
+  ```
 
 ---
 

@@ -9,7 +9,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session, sessionmaker
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +34,8 @@ from db.models import (  # noqa: E402
     UserPreferredTag,
     UserSettings,
 )
+
+SEED_SQL_PATH = Path(__file__).resolve().parent / "seed.sql"
 
 
 def _hourly_crowd(
@@ -687,10 +689,22 @@ def get_table_counts(session: Session) -> dict[str, int]:
     return {table_name: session.query(model).count() for table_name, model in models}
 
 
+def execute_sql_seed(
+    target_engine: Engine | None = None,
+    sql_path: Path = SEED_SQL_PATH,
+) -> None:
+    """Execute the raw PostgreSQL seed.sql file against the target engine."""
+    db_engine = target_engine or get_engine()
+    sql_content = sql_path.read_text(encoding="utf-8")
+    with db_engine.begin() as connection:
+        connection.execute(text(sql_content))
+
+
 def run_seed(
     target_engine: Engine | None = None,
     reset: bool = False,
     drop_and_recreate: bool = False,
+    from_sql_file: bool = False,
 ) -> dict[str, int]:
     """Initialize tables if needed and seed dummy data using the target engine."""
     db_engine = target_engine or get_engine()
@@ -699,6 +713,14 @@ def run_seed(
     create_tables(db_engine)
 
     session_factory = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+    if from_sql_file:
+        if reset:
+            with session_factory() as session:
+                clear_all_data(session)
+        execute_sql_seed(db_engine, SEED_SQL_PATH)
+        with session_factory() as session:
+            return get_table_counts(session)
+
     with session_factory() as session:
         return seed_database(session, reset=reset)
 
@@ -723,6 +745,11 @@ def main() -> None:
         action="store_true",
         help="Drop and recreate all tables before seeding.",
     )
+    parser.add_argument(
+        "--from-sql-file",
+        action="store_true",
+        help="Execute db/seed.sql directly instead of SQLAlchemy ORM objects.",
+    )
     args = parser.parse_args()
 
     db_engine = get_engine(args.database_url)
@@ -730,6 +757,7 @@ def main() -> None:
         target_engine=db_engine,
         reset=args.reset,
         drop_and_recreate=args.drop,
+        from_sql_file=args.from_sql_file,
     )
     summary = ", ".join(f"{name}={count}" for name, count in counts.items())
     print(f"Database seed complete ({len(counts)} tables): {summary}")

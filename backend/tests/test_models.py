@@ -26,7 +26,7 @@ from db.models import (
     UserPreferredTag,
     UserSettings,
 )
-from db.seed_data import seed_database
+from db.seed_data import SEED_SQL_PATH, seed_database
 
 EXPECTED_TABLES = {
     "users",
@@ -416,3 +416,18 @@ def test_seed_database_populates_all_tables(db_session):
     # Running with reset=True clears and reseeds cleanly
     reset_counts = seed_database(db_session, reset=True)
     assert reset_counts == counts
+
+
+def test_seed_sql_file_contains_all_tables():
+    """Verify seed.sql exists and includes INSERT statements for all 13 tables."""
+    seed_sql_content = SEED_SQL_PATH.read_text(encoding="utf-8")
+    for table_name in EXPECTED_TABLES:
+        assert f"INSERT INTO {table_name}" in seed_sql_content
+
+
+def test_seed_sql_file_contains_all_tables():
+    """Verify seed.sql exists and includes INSERT statements for all 13 tables."""
+    seed_sql_content = SEED_SQL_PATH.read_text(encoding="utf-8")
+    for table_name in EXPECTED_TABLES:
+        assert f"INSERT INTO {table_name}" in seed_sql_content
+
