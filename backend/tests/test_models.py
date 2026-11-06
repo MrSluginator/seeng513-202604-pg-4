@@ -26,6 +26,7 @@ from db.models import (
     UserPreferredTag,
     UserSettings,
 )
+from db.seed_data import seed_database
 
 EXPECTED_TABLES = {
     "users",
@@ -399,3 +400,19 @@ def test_event_price_range_constraints(db_session):
     db_session.add(max_without_min)
     with pytest.raises(IntegrityError):
         db_session.commit()
+
+
+def test_seed_database_populates_all_tables(db_session):
+    """Verify seed_database populates all 13 tables and supports idempotent/reset."""
+    counts = seed_database(db_session)
+    assert set(counts.keys()) == EXPECTED_TABLES
+    for table_name, count in counts.items():
+        assert count > 0, f"Expected {table_name} to have seeded rows"
+
+    # Running again without reset is idempotent
+    second_counts = seed_database(db_session, reset=False)
+    assert second_counts == counts
+
+    # Running with reset=True clears and reseeds cleanly
+    reset_counts = seed_database(db_session, reset=True)
+    assert reset_counts == counts
