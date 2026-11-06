@@ -13,8 +13,8 @@ import {
   ToggleButton,
   Widget,
 } from '../molecules';
-import EventGrid from '../components/event-grid';
 import { Event } from '../components/event-card';
+import EventGrid from '../components/event-grid';
 
 function Testing() {
   const [size, setSize] = useState('md');
@@ -52,7 +52,7 @@ function Testing() {
     rating: 2.3,
     reviews: 120,
     time: { start, end },
-    location: 'here',
+    location: 'here this asidoiwn 123798 asd',
     tags: tags,
     description:
       "this is a description about sushi and it's kinda long or something idk guys this is silly",
@@ -74,7 +74,7 @@ function Testing() {
     rating: 2.3,
     reviews: 120,
     time: { start, end },
-    location: 'here',
+    location: 'here12387a sda987 33e2e',
     tags: tags,
     description:
       "this is a description about sushi and it's kinda long or something idk guys this is silly",
@@ -282,7 +282,7 @@ function Testing() {
           {pins.map((pin) => (
             <Pin
               key={pin.id}
-              number={pin.count}
+              number={pin.number}
               selected={selectedId === pin.id}
               onClick={() => setSelectedId(pin.id)}
               onDeselect={() => setSelectedId(null)}

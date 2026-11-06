@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styles from '../assets/styles/nav-bar.module.css';
-import { Button, Icon, TextInput } from '../molecules';
+import { Button, Icon, Logo, TextInput } from '../molecules';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 interface NavBarProps {
   signedIn: boolean;
-  defaultValue: 'home' | 'map' | 'saved' | 'post' | 'settings';
 }
 
 function NavItem({
@@ -30,8 +29,7 @@ function NavItem({
   );
 }
 
-function NavBar({ signedIn, defaultValue }: NavBarProps) {
-  const [value, onChange] = useState(defaultValue);
+function NavBar({ signedIn }: NavBarProps) {
   const navigate = useNavigate();
   const onSettingsClick = () => navigate('/settings');
   const onSignInClick = () => navigate('/sign_in');
@@ -58,7 +56,7 @@ function NavBar({ signedIn, defaultValue }: NavBarProps) {
       <div className={styles.desktop}>
         <div className={styles.holder}>
           <NavItem to="/" end>
-            <div>Logo</div>
+            <Logo size="m" />
           </NavItem>
           <NavItem to="/map">
             <div>Heat Map</div>

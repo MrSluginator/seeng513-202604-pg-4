@@ -16,6 +16,9 @@
   border: 1px solid var(--p2);
   background: var(--p1);
   color: var(--n7);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
 
   &:hover {
     border-color: var(--p3);
@@ -45,5 +48,5 @@
   min-width: var(--width, 72px);
   min-height: 60px;
   padding: 8px;
-  gap: 10px
+  gap: 10px;
 }

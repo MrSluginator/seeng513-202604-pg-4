@@ -17,6 +17,9 @@
   font-weight: var(--body-weight);
   line-height: var(--body-line-height);
   cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
 
   .icon {
     color: var(--n7);
@@ -30,7 +33,7 @@
   }
 
   &.iconOnly {
-    min-width: 0;
+    min-width: 32px;
     padding: 0;
     aspect-ratio: 1 / 1;
   }
