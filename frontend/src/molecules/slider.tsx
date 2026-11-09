@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import styles from '../assets/styles/slider.module.css';
 
-type RangeValue = [number, number];
+export type RangeValue = [number, number];
 type SliderValue = number | RangeValue;
 
 export interface SliderProps<T extends SliderValue = SliderValue> {
@@ -98,14 +98,16 @@ function Slider<T extends SliderValue>({
     if (disabled) return;
 
     // a thumb can't cross its neighbour
-    const lo: number = isRange && index === 1 ? values[0] as number : min;
-    const hi: number = isRange && index === 0 ? values[1] as number : max;
+    const lo: number = isRange && index === 1 ? (values[0] as number) : min;
+    const hi: number = isRange && index === 0 ? (values[1] as number) : max;
     const clamped = clamp(next, lo, hi);
     if (clamped === values[index]) return;
 
     const arr = [...values];
     arr[index] = clamped;
-    const out: SliderValue = isRange ? [arr[0], arr[1]] as RangeValue : arr[0] as number;
+    const out: SliderValue = isRange
+      ? ([arr[0], arr[1]] as RangeValue)
+      : (arr[0] as number);
 
     if (!isControlled) setInner(out);
     // `out` has the same shape as `defaultValue`, which is what T was inferred from.

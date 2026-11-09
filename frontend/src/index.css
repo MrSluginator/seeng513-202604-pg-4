@@ -204,10 +204,26 @@ body {
 .row {
   display: flex;
   align-self: stretch;
+
+  & .between {
+    justify-content: space-between;
+  }
+
+  & .evenly {
+    justify-content: space-evenly;
+  }
 }
 
 .column {
   display: flex;
   flex-direction: column;
   align-self: stretch;
+
+  & .between {
+    justify-content: space-between;
+  }
+
+  & .evenly {
+    justify-content: space-evenly;
+  }
 }

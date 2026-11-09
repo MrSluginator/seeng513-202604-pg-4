@@ -39,6 +39,7 @@ export type Color =
   | 'b1'
   | 'b2'
   | 'b3';
+export type ColorGroup = 'p' | 's' | 'n' | 't' | 'o' | 'y' | 'g' | 'b';
 export type Category =
   | 'Food & Drink'
   | 'Sights'
@@ -47,3 +48,4 @@ export type Category =
   | 'Nightlife'
   | 'Exciting';
 export type Location = { name: string; latitude: number; longitute: number };
+export type DateRange = { start: Date; end: Date };
