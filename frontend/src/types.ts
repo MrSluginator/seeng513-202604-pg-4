@@ -39,3 +39,11 @@ export type Color =
   | 'b1'
   | 'b2'
   | 'b3';
+export type Category =
+  | 'Food & Drink'
+  | 'Sights'
+  | 'Events'
+  | 'Activities'
+  | 'Nightlife'
+  | 'Exciting';
+export type Location = { name: string; latitude: number; longitute: number };

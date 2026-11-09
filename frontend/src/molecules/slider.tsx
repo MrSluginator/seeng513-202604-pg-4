@@ -98,14 +98,14 @@ function Slider<T extends SliderValue>({
     if (disabled) return;
 
     // a thumb can't cross its neighbour
-    const lo = isRange && index === 1 ? values[0] : min;
-    const hi = isRange && index === 0 ? values[1] : max;
+    const lo: number = isRange && index === 1 ? values[0] as number : min;
+    const hi: number = isRange && index === 0 ? values[1] as number : max;
     const clamped = clamp(next, lo, hi);
     if (clamped === values[index]) return;
 
     const arr = [...values];
     arr[index] = clamped;
-    const out: SliderValue = isRange ? [arr[0], arr[1]] : arr[0];
+    const out: SliderValue = isRange ? [arr[0], arr[1]] as RangeValue : arr[0] as number;
 
     if (!isControlled) setInner(out);
     // `out` has the same shape as `defaultValue`, which is what T was inferred from.
@@ -127,9 +127,10 @@ function Slider<T extends SliderValue>({
 
     let index = 0;
     if (isRange) {
-      const d0 = Math.abs(v - values[0]);
-      const d1 = Math.abs(v - values[1]);
-      index = d0 < d1 || (d0 === d1 && v < values[0]) ? 0 : 1;
+      const range = values as RangeValue;
+      const d0 = Math.abs(v - range[0]);
+      const d1 = Math.abs(v - range[1]);
+      index = d0 < d1 || (d0 === d1 && v < range[0]) ? 0 : 1;
     }
 
     activeIndex.current = index;
@@ -153,7 +154,7 @@ function Slider<T extends SliderValue>({
     (index: number) => (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (disabled) return;
 
-      const v = values[index];
+      const v = values[index] as number;
       const targets: Partial<Record<string, number>> = {
         ArrowRight: v + step,
         ArrowUp: v + step,
@@ -173,8 +174,8 @@ function Slider<T extends SliderValue>({
 
   const ticks = buildTicks(min, majorStep, majorSteps, minorSteps);
 
-  const fillStart = isRange ? toPercent(values[0]) : 0;
-  const fillEnd = toPercent(values[values.length - 1]);
+  const fillStart = isRange ? toPercent(values[0] as number) : 0;
+  const fillEnd = toPercent(values[values.length - 1] as number);
   const fillStyle: React.CSSProperties = {
     left: isRange ? inRail(fillStart) : 0,
     right: inRail(100 - fillEnd),

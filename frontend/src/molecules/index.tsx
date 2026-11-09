@@ -10,3 +10,4 @@ export { default as Slider } from './slider';
 export { default as TabGroup } from './tab-group';
 export { default as Widget } from './widget';
 export { default as Logo } from './logo';
+export { default as FilterButton } from './filter-button';

@@ -69,7 +69,7 @@ function NavBar({ signedIn }: NavBarProps) {
           </NavItem>
         </div>
         <div className={styles.holder}>
-          <TextInput icon="search" placeholder="Search"></TextInput>
+          <TextInput icon="search" placeholder="Search this page"></TextInput>
           <Button icon="settings" onClick={onSettingsClick}></Button>
           {!signedIn && (
             <Button text="Sign In" onClick={onSignInClick}></Button>
