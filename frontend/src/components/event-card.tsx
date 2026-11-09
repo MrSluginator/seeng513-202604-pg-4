@@ -4,12 +4,13 @@ import { Button, Icon, Widget } from '../molecules';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Rating from './rating';
 import Carousel from './carousel';
+import { DateRange } from '../types';
+import { formatTime, formatTimeRange } from '../../util/format';
 
 export type PriceRange = {
   low: number;
   high: number;
 };
-export type TimeRange = { start: Date; end: Date } | Date;
 
 export interface Event {
   id: string;
@@ -17,7 +18,7 @@ export interface Event {
   rating: number;
   reviews: number;
   defaultSaved: boolean;
-  time: TimeRange;
+  time: DateRange | Date;
   location: string;
   price?: PriceRange;
   tags: Array<string>;
@@ -61,16 +62,6 @@ function Price({ price, className }: PriceProps) {
   );
 }
 
-const timeFormatter = new Intl.DateTimeFormat('en-US', {
-  hour: 'numeric',
-  minute: '2-digit',
-});
-
-function formatTimeRange(time: TimeRange): string {
-  if (time instanceof Date) return timeFormatter.format(time);
-  return `${timeFormatter.format(time.start)} - ${timeFormatter.format(time.end)}`;
-}
-
 function EventImage({ event, gallery }: { event: Event; gallery: boolean }) {
   return (
     <div className={styles.image}>
@@ -101,7 +92,7 @@ function EventStats({
   location,
 }: {
   price?: PriceRange;
-  time: TimeRange;
+  time: DateRange | Date;
   location: string;
 }) {
   return (
@@ -109,7 +100,11 @@ function EventStats({
       <Price className={styles.price} price={price}></Price>
       <div className={styles.time}>
         <Icon name="clock" />
-        <small>{formatTimeRange(time)}</small>
+        <small>
+          {time instanceof Date
+            ? formatTime(time)
+            : formatTimeRange(time)}
+        </small>
       </div>
       <div className={styles.location}>
         <Icon name="pin" />
