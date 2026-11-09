@@ -53,34 +53,46 @@ function RangeFilter({
   highLabel,
   format,
   slider,
+  onChange,
 }: {
   defaultEnabled: boolean;
   lowLabel: string;
   highLabel: string;
   format: (value: number) => string;
   slider: SliderProps<[number, number]>;
+  /** Called with the range when enabled, or null when the filter is turned off */
+  onChange?: (range: [number, number] | null) => void;
 }) {
   const [enabled, setEnabled] = useState(defaultEnabled);
-  const [low, setLow] = useState(slider.defaultValue[0]);
-  const [high, setHigh] = useState(slider.defaultValue[1]);
+  const [[low, high], setRange] = useState<[number, number]>(slider.defaultValue);
+
+  const handleToggle = (next: boolean) => {
+    setEnabled(next);
+    onChange?.(next ? [low, high] : null);
+  };
+
+  const handleSlide = (next: [number, number]) => {
+    setRange(next);
+    if (enabled) onChange?.(next);
+  };
 
   return (
     <div className={styles.rangeFilter} aria-disabled={!enabled}>
-      <ToggleButton pressed={enabled} />
+      <ToggleButton pressed={enabled} onChange={handleToggle} />
       <div className={styles.content}>
         <TextInput
           className={styles.input}
           label={lowLabel}
           value={format(low)}
-          readonly={true}
+          readonly
           disabled={!enabled}
         />
-        <Slider {...slider} disabled={!enabled} />
+          <Slider {...slider} onChange={handleSlide} disabled={!enabled} />
         <TextInput
           className={styles.input}
           label={highLabel}
           value={format(high)}
-          readonly={true}
+          readonly
           disabled={!enabled}
         />
       </div>
