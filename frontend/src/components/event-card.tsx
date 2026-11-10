@@ -101,9 +101,7 @@ function EventStats({
       <div className={styles.time}>
         <Icon name="clock" />
         <small>
-          {time instanceof Date
-            ? formatTime(time)
-            : formatTimeRange(time)}
+          {time instanceof Date ? formatTime(time) : formatTimeRange(time)}
         </small>
       </div>
       <div className={styles.location}>

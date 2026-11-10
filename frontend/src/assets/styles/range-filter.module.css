@@ -1,0 +1,27 @@
+.rangeFilter {
+  display: flex;
+  padding: 10px;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  flex: 1 0 0;
+  border-radius: 8px;
+  border: 1px solid var(--p2);
+  background: var(--p1);
+
+  &[aria-disabled='true'] {
+    border-color: var(--n2);
+    background-color: var(--n1);
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 0 0;
+  }
+
+  .input {
+    width: 120px;
+  }
+}

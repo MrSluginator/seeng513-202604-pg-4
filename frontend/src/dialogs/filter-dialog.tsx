@@ -1,21 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { Category, ColorGroup, Location } from '../types';
-import {
-  Button,
-  Pin,
-  RadioGroup,
-  TextInput,
-  ToggleButton,
-  Widget,
-} from '../molecules';
+import type { Location } from '../types';
+import { Button, Pin, RadioGroup, TextInput, Widget } from '../molecules';
 import styles from '../assets/styles/filter-dialog.module.css';
-import { IconName } from '../molecules/icon';
-import Slider, { SliderProps } from '../molecules/slider';
 import { formatTime, number2Time } from '../../util/format';
+import { RangeFilter } from '../components';
+import { AllCategories, Category } from '../molecules/category';
 
 const sortOptions = {
-  recommended: 'recommended',
+  recommended: 'Recommended',
   price: 'Price',
   time: 'Time',
   distance: 'Distance from me',
@@ -23,82 +16,6 @@ const sortOptions = {
 };
 
 type Sort = keyof typeof sortOptions;
-
-function CategoryWidgets({ active }: { active: Array<Category> }) {
-  const categoryProps: {
-    [key: string]: { text: string; icon: IconName; color: ColorGroup };
-  } = {
-    food: { text: 'Food', icon: 'food', color: 'p' },
-    sights: { text: 'Sights', icon: 'sun', color: 'o' },
-    events: { text: 'Events', icon: 'event', color: 'b' },
-    activities: { text: 'Activities', icon: 'park', color: 'g' },
-    nightlife: { text: 'Nightlife', icon: 'wine', color: 's' },
-    other: { text: 'Exciting', icon: 'load', color: 'y' },
-  };
-
-  return Object.entries(categoryProps).map(([key, value]) => (
-    <Widget
-      key={key}
-      text={value.text}
-      icon={value.icon}
-      iconPosition="top"
-      className={styles[value.color]}
-    />
-  ));
-}
-
-function RangeFilter({
-  defaultEnabled,
-  lowLabel,
-  highLabel,
-  format,
-  slider,
-  onChange,
-}: {
-  defaultEnabled: boolean;
-  lowLabel: string;
-  highLabel: string;
-  format: (value: number) => string;
-  slider: SliderProps<[number, number]>;
-  /** Called with the range when enabled, or null when the filter is turned off */
-  onChange?: (range: [number, number] | null) => void;
-}) {
-  const [enabled, setEnabled] = useState(defaultEnabled);
-  const [[low, high], setRange] = useState<[number, number]>(slider.defaultValue);
-
-  const handleToggle = (next: boolean) => {
-    setEnabled(next);
-    onChange?.(next ? [low, high] : null);
-  };
-
-  const handleSlide = (next: [number, number]) => {
-    setRange(next);
-    if (enabled) onChange?.(next);
-  };
-
-  return (
-    <div className={styles.rangeFilter} aria-disabled={!enabled}>
-      <ToggleButton pressed={enabled} onChange={handleToggle} />
-      <div className={styles.content}>
-        <TextInput
-          className={styles.input}
-          label={lowLabel}
-          value={format(low)}
-          readonly
-          disabled={!enabled}
-        />
-          <Slider {...slider} onChange={handleSlide} disabled={!enabled} />
-        <TextInput
-          className={styles.input}
-          label={highLabel}
-          value={format(high)}
-          readonly
-          disabled={!enabled}
-        />
-      </div>
-    </div>
-  );
-}
 
 export interface FilterProps {
   sort: Sort;
@@ -136,7 +53,7 @@ function FilterDialog({
   // Close on Escape, lock page scroll while open, focus the close button
   useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e) => e.key === 'Escape' && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -159,10 +76,19 @@ function FilterDialog({
     value: key,
     label: value,
   }));
-  const onSortChange = () => { };
+  const setSort = (next: Sort) =>
+    setFilters((prev) => ({ ...prev, sort: next }));
   const removeTag = (tag: string) => {
-    filters.tags = filters.tags.filter(t => t !== tag);
+    filters.tags = filters.tags.filter((t) => t !== tag);
   };
+
+  const toggleCategory = (category: Category, pressed: boolean) =>
+    setFilters((prev) => ({
+      ...prev,
+      categories: pressed
+        ? [...prev.categories.filter((c) => c !== category), category]
+        : prev.categories.filter((c) => c !== category),
+    }));
 
   // Portal renders the modal at the end of <body>, so parent
   // overflow/z-index/transform styles can't clip it
@@ -185,36 +111,53 @@ function FilterDialog({
             <div className={'column'} style={{ gap: '16px' }}>
               <h3>Categories</h3>
               <div className={'row between'}>
-                <CategoryWidgets active={filters.categories} />
+                <AllCategories
+                  active={filters.categories}
+                  onToggle={toggleCategory}
+                />
               </div>
             </div>
 
-            <div className={'column'}>
+            <div className={'column'} style={{ flex: 1 }}>
               <div className={'row between'}>
                 <h3>Tags</h3>
                 <TextInput placeholder="Search tags..." icon="search" />
               </div>
               <div className={'column'}>
-                <div className={styles.rows}>
+                <p>Active Tags:</p>
+                <div className={styles.tags}>
                   {filters.tags.map((tag) => (
-                    <Widget key={tag} text={tag} onChange={() => removeTag(tag)} defaultPressed={true} icon='times' label={`remove ${tag} tag from filters`} />
+                    <Widget
+                      key={tag}
+                      text={tag}
+                      onChange={() => removeTag(tag)}
+                      defaultPressed={true}
+                      icon="times"
+                      label={`remove ${tag} tag from filters`}
+                    />
                   ))}
                 </div>
               </div>
             </div>
-            <div className={'column'}>
+            <div className={'column'} style={{ flex: 1 }}>
               <div className={'row between'}>
                 <h3>Location</h3>
                 <TextInput placeholder="Search location..." icon="search" />
               </div>
-            </div>
-            <div className={styles.locations}>
-              {filters.locations.map((loc, i) => (
-                <div key={loc.name} className={styles.row}>
-                  <Pin number={i + 1} onClick={() => { }} />
-                  {loc.name}
-                </div>
-              ))}
+              <small className={styles.locationInfo}>
+                If the {/*<p>*/}Distance{/*</p>*/} filter is active, the feed
+                will show events within the specified range from the following
+                locations, otherwise we simply prioritize events near these
+                locations.
+              </small>
+              <div className={styles.locations}>
+                {filters.locations.map((loc, i) => (
+                  <div key={loc.name} className={styles.row}>
+                    <Pin number={i + 1} onClick={() => {}} />
+                    {loc.name}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -223,7 +166,7 @@ function FilterDialog({
             <RadioGroup
               options={sortOrderOptions}
               value={filters.sort}
-              onChange={onSortChange}
+              onChange={setSort}
             />
           </div>
 
@@ -235,15 +178,23 @@ function FilterDialog({
                 lowLabel="Start Time"
                 highLabel="End Time"
                 format={(value) => formatTime(number2Time(value))}
+                onChange={(n) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    timeRange: n
+                      ? { start: number2Time(n[0]), end: number2Time(n[1]) }
+                      : undefined,
+                  }))
+                }
                 slider={{
                   min: 0,
                   max: 24,
                   step: 0.25,
                   defaultValue: filters.timeRange
                     ? [
-                      filters.timeRange.start.getHours(),
-                      filters.timeRange.end.getHours(),
-                    ]
+                        filters.timeRange.start.getHours(),
+                        filters.timeRange.end.getHours(),
+                      ]
                     : [9, 18],
                 }}
               />
@@ -255,6 +206,12 @@ function FilterDialog({
                 lowLabel="Lowest Price"
                 highLabel="Highest Price"
                 format={(value) => `$ ${value}`}
+                onChange={(n) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    priceRange: n ? { lowest: n[0], highest: n[1] } : undefined,
+                  }))
+                }
                 slider={{
                   min: 0,
                   max: 200,
@@ -272,15 +229,23 @@ function FilterDialog({
                 lowLabel="Shortest Distance"
                 highLabel="Furthest Distance"
                 format={(value) => `${value} km`}
+                onChange={(n) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    distanceRange: n
+                      ? { nearest: n[0], furthest: n[1] }
+                      : undefined,
+                  }))
+                }
                 slider={{
                   min: 0,
                   max: 200,
                   step: 5,
                   defaultValue: filters.distanceRange
                     ? [
-                      filters.distanceRange.nearest,
-                      filters.distanceRange.furthest,
-                    ]
+                        filters.distanceRange.nearest,
+                        filters.distanceRange.furthest,
+                      ]
                     : [0, 50],
                 }}
               />
