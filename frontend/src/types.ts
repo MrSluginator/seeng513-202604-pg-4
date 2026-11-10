@@ -40,12 +40,6 @@ export type Color =
   | 'b2'
   | 'b3';
 export type ColorGroup = 'p' | 's' | 'n' | 't' | 'o' | 'y' | 'g' | 'b';
-export type Category =
-  | 'Food & Drink'
-  | 'Sights'
-  | 'Events'
-  | 'Activities'
-  | 'Nightlife'
-  | 'Exciting';
 export type Location = { name: string; latitude: number; longitute: number };
 export type DateRange = { start: Date; end: Date };
+export type State<T> = { value: T; onChange: (next: T) => void };
