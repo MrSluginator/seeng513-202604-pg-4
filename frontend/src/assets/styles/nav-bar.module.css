@@ -25,7 +25,10 @@
 .desktop {
   display: flex;
   justify-content: space-between;
-  flex: 1 0 0;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
 
   border-radius: 16px;
   background-color: color-mix(in srgb, var(--p1) 70%, transparent);
