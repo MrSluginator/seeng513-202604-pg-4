@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Footer from '../assets/components/footer';
+
 import {
   Button,
   MenuButton,
@@ -123,6 +125,8 @@ function Landing() {
           <Widget icon="food" text="food"></Widget>
         </div>
       </div>
+
+    <Footer />
     </div>
   );
 }
