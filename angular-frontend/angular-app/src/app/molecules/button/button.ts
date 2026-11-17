@@ -1,9 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
+import { IconName } from '../icon/icons';
+import { Icon } from '../icon/icon';
 
 @Component({
-  imports: [],
-  selector: 'app-button',
-  styleUrl: './button.css',
+  selector: 'f-button',
+  imports: [Icon],
   templateUrl: './button.html',
+  styleUrl: './button.css',
 })
-export class Button {}
+export class Button {
+  text = input<string>();
+  icon = input<IconName>();
+  iconPosition = input<'left' | 'right'>('right');
+  disabled = input(false);
+  pressed = input<boolean | undefined>(undefined);
+  label = input<string>();
+
+  clicked = output<MouseEvent>();
+
+  isToggle = computed(() => this.pressed() !== undefined);
+}

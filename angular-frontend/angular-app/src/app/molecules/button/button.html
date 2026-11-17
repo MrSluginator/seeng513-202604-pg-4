@@ -1,1 +1,20 @@
-<p>button works!</p>
+<button
+  type="button"
+  class="button"
+  [class.iconOnly]="!text()"
+  [disabled]="disabled()"
+  [attr.aria-pressed]="isToggle() ? pressed() : null"
+  [attr.aria-label]="label() ?? null"
+  [attr.data-pressed]="isToggle() ? pressed() : null"
+  (click)="clicked.emit($event)"
+>
+  @if (icon() && iconPosition() === 'left') {
+    <app-icon [name]="icon()!" [fill]="pressed()" />
+  }
+  @if (text()) {
+    <span class="text">{{ text() }}</span>
+  }
+  @if (icon() && iconPosition() === 'right') {
+    <app-icon [name]="icon()!" [fill]="pressed()" />
+  }
+</button>
