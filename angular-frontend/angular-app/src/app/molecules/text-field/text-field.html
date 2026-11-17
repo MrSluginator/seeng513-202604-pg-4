@@ -1,1 +1,14 @@
-<p>text-field works!</p>
+<div class="wrapper">
+  @if (label()) {
+    <label [for]="id()" class="label">{{ label() }}</label>
+  }
+  <textarea
+    [id]="id()"
+    class="input"
+    [placeholder]="placeholder() ?? ''"
+    [disabled]="disabled()"
+    [value]="value()"
+    (input)="handleInput($event)"
+    (blur)="onTouched()"
+  ></textarea>
+</div>
