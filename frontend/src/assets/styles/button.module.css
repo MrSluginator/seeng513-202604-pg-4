@@ -57,10 +57,10 @@
 .button:disabled {
   border-color: var(--n3);
   background-color: var(--n2);
-  color: var(--p5);
+  color: var(--n5);
   cursor: not-allowed;
 
   .icon {
-    color: var(--p5);
+    color: var(--n5);
   }
 }

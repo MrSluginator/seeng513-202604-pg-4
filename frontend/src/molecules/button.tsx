@@ -8,6 +8,8 @@ interface ButtonProps {
   icon?: IconName;
   iconPosition?: 'left' | 'right';
   disabled?: boolean;
+  pressed?: boolean;
+  label?: string;
 }
 
 function Button({
@@ -16,17 +18,28 @@ function Button({
   icon,
   iconPosition = 'right',
   disabled = false,
+  pressed,
+  label,
 }: ButtonProps) {
+  const isToggle = pressed !== undefined;
+
   return (
     <button
       type="button"
       className={`${styles.button} ${!text ? styles.iconOnly : ''}`}
       onClick={onClick}
       disabled={disabled}
+      aria-pressed={isToggle ? pressed : undefined}
+      aria-label={label}
+      data-pressed={isToggle ? pressed : undefined}
     >
-      {icon && iconPosition === 'left' && <Icon name={icon}></Icon>}
+      {icon && iconPosition === 'left' && (
+        <Icon name={icon} fill={pressed}></Icon>
+      )}
       {text && <span className={styles.text}>{text}</span>}
-      {icon && iconPosition === 'right' && <Icon name={icon}></Icon>}
+      {icon && iconPosition === 'right' && (
+        <Icon name={icon} fill={pressed}></Icon>
+      )}
     </button>
   );
 }

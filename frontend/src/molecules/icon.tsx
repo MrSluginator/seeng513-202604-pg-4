@@ -1,5 +1,6 @@
 import bookmark from '../assets/icons/bookmark.svg?react';
 import check from '../assets/icons/check.svg?react';
+import clock from '../assets/icons/clock.svg?react';
 import comment from '../assets/icons/comment.svg?react';
 import dollar from '../assets/icons/dollar.svg?react';
 import down from '../assets/icons/down.svg?react';
@@ -14,6 +15,7 @@ import left from '../assets/icons/left.svg?react';
 import load from '../assets/icons/load.svg?react';
 import map from '../assets/icons/map.svg?react';
 import park from '../assets/icons/park.svg?react';
+import pin from '../assets/icons/pin.svg?react';
 import plus from '../assets/icons/plus.svg?react';
 import profile from '../assets/icons/profile.svg?react';
 import right from '../assets/icons/right.svg?react';
@@ -30,6 +32,7 @@ import { Color, Size } from '../global';
 const icons = {
   bookmark: bookmark,
   check: check,
+  clock: clock,
   comment: comment,
   dollar: dollar,
   down: down,
@@ -44,6 +47,7 @@ const icons = {
   load: load,
   map: map,
   park: park,
+  pin: pin,
   plus: plus,
   profile: profile,
   right: right,
@@ -63,9 +67,10 @@ interface IconProps {
   name: IconName;
   size?: Size;
   color?: Color;
+  fill?: boolean;
 }
 
-function Icon({ name, size = 'xs', color }: IconProps) {
+function Icon({ name, size = 'xs', color, fill = false }: IconProps) {
   const SvgIcon = icons[name];
 
   if (!SvgIcon) {
@@ -79,6 +84,7 @@ function Icon({ name, size = 'xs', color }: IconProps) {
     <SvgIcon
       style={{
         color: color ? resolvedColor : undefined,
+        fill: fill ? 'currentColor' : undefined,
         flexShrink: 0,
         width: resolvedSize,
         height: resolvedSize,
