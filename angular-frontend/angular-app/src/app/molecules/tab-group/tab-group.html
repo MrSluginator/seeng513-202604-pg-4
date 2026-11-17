@@ -1,1 +1,19 @@
-<p>tab-group works!</p>
+<fieldset class="group" [disabled]="disabled()">
+  <div class="options">
+    @for (option of options(); track option.value) {
+      <label class="option" [class.optionDisabled]="option.disabled || disabled()">
+        <input
+          type="radio"
+          class="input"
+          [name]="groupName"
+          [value]="option.value"
+          [checked]="value() === option.value"
+          [disabled]="option.disabled"
+          (change)="select(option)"
+          (blur)="onTouched()"
+        />
+        <span class="label">{{ option.label }}</span>
+      </label>
+    }
+  </div>
+</fieldset>
