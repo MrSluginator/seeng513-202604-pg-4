@@ -1,9 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
+import { WidgetComponent } from '../../atoms/widget/widget';
+import { categories, CategoryName } from './categories';
 
 @Component({
-  imports: [],
   selector: 'f-category',
-  styleUrl: './category.css',
+  imports: [WidgetComponent],
   templateUrl: './category.html',
+  styleUrl: './category.css',
 })
-export class Category {}
+export class CategoryWidget {
+  category = input.required<CategoryName>();
+  pressed = model(false);
+
+  protected config = computed(() => categories[this.category()]);
+}

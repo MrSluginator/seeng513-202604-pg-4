@@ -1,0 +1,7 @@
+@for (key of keys; track key) {
+  <f-category
+    [category]="key"
+    [pressed]="active().includes(key)"
+    (pressedChange)="toggled.emit({ category: key, pressed: $event })"
+  />
+}
