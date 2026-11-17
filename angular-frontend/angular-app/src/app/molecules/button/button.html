@@ -9,12 +9,12 @@
   (click)="clicked.emit($event)"
 >
   @if (icon() && iconPosition() === 'left') {
-    <app-icon [name]="icon()!" [fill]="pressed()" />
+    <f-icon [name]="icon()!" [fill]="pressed()" />
   }
   @if (text()) {
     <span class="text">{{ text() }}</span>
   }
   @if (icon() && iconPosition() === 'right') {
-    <app-icon [name]="icon()!" [fill]="pressed()" />
+    <f-icon [name]="icon()!" [fill]="pressed()" />
   }
 </button>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-heat-map',
+  selector: 'f-heat-map',
   styleUrl: './heat-map.css',
   templateUrl: './heat-map.html',
 })

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-category',
+  selector: 'f-category',
   styleUrl: './category.css',
   templateUrl: './category.html',
 })

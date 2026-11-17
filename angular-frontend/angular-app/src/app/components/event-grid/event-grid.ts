@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-event-grid',
+  selector: 'f-event-grid',
   styleUrl: './event-grid.css',
   templateUrl: './event-grid.html',
 })

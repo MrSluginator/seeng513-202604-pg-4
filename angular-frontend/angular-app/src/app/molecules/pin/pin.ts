@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-pin',
+  selector: 'f-pin',
   styleUrl: './pin.css',
   templateUrl: './pin.html',
 })

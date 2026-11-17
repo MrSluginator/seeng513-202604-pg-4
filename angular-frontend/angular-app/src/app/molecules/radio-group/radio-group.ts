@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-radio-group',
+  selector: 'f-radio-group',
   styleUrl: './radio-group.css',
   templateUrl: './radio-group.html',
 })

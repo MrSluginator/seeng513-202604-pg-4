@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-saved',
+  selector: 'f-saved',
   styleUrl: './saved.css',
   templateUrl: './saved.html',
 })

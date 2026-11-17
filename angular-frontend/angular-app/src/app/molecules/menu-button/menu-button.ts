@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-menu-button',
+  selector: 'f-menu-button',
   styleUrl: './menu-button.css',
   templateUrl: './menu-button.html',
 })

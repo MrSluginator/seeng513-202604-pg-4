@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-text-input',
+  selector: 'f-text-input',
   styleUrl: './text-input.css',
   templateUrl: './text-input.html',
 })

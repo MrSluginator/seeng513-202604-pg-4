@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-index',
+  selector: 'f-index',
   styleUrl: './index.css',
   templateUrl: './index.html',
 })

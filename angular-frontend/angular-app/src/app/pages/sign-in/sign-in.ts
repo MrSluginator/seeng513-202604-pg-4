@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-sign-in',
+  selector: 'f-sign-in',
   styleUrl: './sign-in.css',
   templateUrl: './sign-in.html',
 })

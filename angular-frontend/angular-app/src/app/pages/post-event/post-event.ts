@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-post-event',
+  selector: 'f-post-event',
   styleUrl: './post-event.css',
   templateUrl: './post-event.html',
 })

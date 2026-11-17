@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-toggle-button',
+  selector: 'f-toggle-button',
   styleUrl: './toggle-button.css',
   templateUrl: './toggle-button.html',
 })

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-range-filter',
+  selector: 'f-range-filter',
   styleUrl: './range-filter.css',
   templateUrl: './range-filter.html',
 })

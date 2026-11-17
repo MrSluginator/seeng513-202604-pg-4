@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-landing',
+  selector: 'f-landing',
   styleUrl: './landing.css',
   templateUrl: './landing.html',
 })

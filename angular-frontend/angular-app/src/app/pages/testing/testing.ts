@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-testing',
+  selector: 'f-testing',
   styleUrl: './testing.css',
   templateUrl: './testing.html',
 })

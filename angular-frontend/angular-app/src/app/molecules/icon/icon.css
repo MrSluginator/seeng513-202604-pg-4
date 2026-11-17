@@ -1,4 +1,4 @@
-/* <app-icon> itself: keeps the icon from shrinking inside flex parents like Button */
+/* <f-icon> itself: keeps the icon from shrinking inside flex parents like Button */
 :host {
   display: inline-flex;
   flex-shrink: 0;
