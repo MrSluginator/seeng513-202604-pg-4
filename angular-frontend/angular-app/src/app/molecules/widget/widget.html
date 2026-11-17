@@ -1,1 +1,19 @@
-<p>widget works!</p>
+<button
+  type="button"
+  role="switch"
+  class="widget"
+  [class.bigget]="bigget()"
+  [attr.aria-checked]="pressed()"
+  [attr.aria-label]="label()"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  (blur)="onTouched()"
+>
+  @if (icon() && iconFirst()) {
+    <f-icon [name]="icon()!" />
+  }
+  {{ text() }}
+  @if (icon() && !iconFirst()) {
+    <f-icon [name]="icon()!" />
+  }
+</button>
