@@ -1,1 +1,49 @@
-<p>slider works!</p>
+<div
+  class="slider"
+  [attr.data-labels]="labelsPosition()"
+  [attr.data-disabled]="disabled()"
+>
+  <div
+    class="rail"
+    (pointerdown)="handlePointerDown($event)"
+    (pointermove)="handlePointerMove($event)"
+    (pointerup)="endDrag()"
+    (pointercancel)="endDrag()"
+  >
+    <div class="track"></div>
+    <div class="fill" [style.left]="fill().left" [style.right]="fill().right"></div>
+
+    <div class="inset" #inset>
+      <div class="ticks" aria-hidden="true">
+        @for (tick of ticks(); track $index) {
+          <span class="tick" [attr.data-major]="tick.major"></span>
+        }
+      </div>
+
+      <div class="labels" aria-hidden="true">
+        @for (l of labels(); track $index) {
+          <span class="label" [style.left]="l.left">{{ l.text }}</span>
+        }
+      </div>
+
+      @for (thumb of thumbs(); track $index) {
+        <div
+          class="thumb"
+          role="slider"
+          [attr.tabindex]="disabled() ? -1 : 0"
+          [attr.aria-label]="thumb.ariaLabel"
+          [attr.aria-valuemin]="min()"
+          [attr.aria-valuemax]="max()"
+          [attr.aria-valuenow]="thumb.value"
+          [attr.aria-valuetext]="thumb.text"
+          aria-orientation="horizontal"
+          [attr.aria-disabled]="disabled()"
+          [attr.data-dragging]="!disabled() && dragging() === $index"
+          [style.left]="thumb.left"
+          (keydown)="handleKeyDown($event, $index)"
+          (blur)="onTouched()"
+        ></div>
+      }
+    </div>
+  </div>
+</div>
