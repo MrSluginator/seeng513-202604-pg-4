@@ -1,1 +1,10 @@
-<p>icon works!</p>
+<span
+  class="icon"
+  role="img"
+  [attr.aria-label]="name()"
+  [class.filled]="fill()"
+  [style.color]="color() ? 'var(--' + color() + ')' : null"
+  [style.width]="'var(--icon-' + size() + ')'"
+  [style.height]="'var(--icon-' + size() + ')'"
+  [innerHTML]="svg()"
+></span>
