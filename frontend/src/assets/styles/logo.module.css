@@ -1,9 +1,22 @@
+:host {
+  display: inline-block;
+  line-height: 0;
+}
+
 .logo {
-  display: flex;
+  display: inline-flex;
+  box-sizing: border-box;
   padding: 0px 8px 4px;
   justify-content: center;
   align-items: center;
 
   border-radius: 8px;
   background: color-mix(in srgb, var(--p5) 20%, transparent);
+}
+
+.logo ::ng-deep svg {
+  display: block;
+  flex: none;
+  height: 100%;
+  width: auto;
 }

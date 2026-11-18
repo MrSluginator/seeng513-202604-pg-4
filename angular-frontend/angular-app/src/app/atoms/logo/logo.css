@@ -1,3 +1,7 @@
+:host {
+  display: inline-block;
+}
+
 .logo {
   display: flex;
   padding: 0px 8px 4px;
@@ -6,4 +10,16 @@
 
   border-radius: 8px;
   background: color-mix(in srgb, var(--p5) 20%, transparent);
+}
+
+.icon {
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+/* ::ng-deep is needed because [innerHTML] content isn't scoped to this component */
+.icon ::ng-deep svg {
+  display: block;
+  height: 100%;
+  width: auto;
 }
