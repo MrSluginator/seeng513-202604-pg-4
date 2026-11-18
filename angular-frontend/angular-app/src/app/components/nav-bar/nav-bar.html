@@ -1,1 +1,27 @@
-<p>nav-bar works!</p>
+<div class="box">
+  <div class="mobile">
+    <a class="link" routerLink="/map" routerLinkActive="active"><f-icon name="map" /></a>
+    <a class="link" routerLink="/saved" routerLinkActive="active"><f-icon name="bookmark" /></a>
+    <a class="link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><f-icon name="home" /></a>
+    <a class="link" routerLink="/post" routerLinkActive="active"><f-icon name="event" /></a>
+    <a class="link" routerLink="/settings" routerLinkActive="active"><f-icon name="settings" /></a>
+  </div>
+
+  <div class="desktop">
+    <div class="holder">
+      <a class="link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><f-logo size="m" /></a>
+      <a class="link" routerLink="/map" routerLinkActive="active">Heat Map</a>
+      <a class="link" routerLink="/saved" routerLinkActive="active">Saved Events</a>
+      <a class="link" routerLink="/post" routerLinkActive="active">Post Event</a>
+    </div>
+
+    <div class="holder">
+      <f-search-bar [(query)]="query" [results]="results()" (resultSelected)="resultSelected"/>
+      @if (signedIn()) {
+        <div>Profile Button</div>
+      } @else {
+        <f-button text="Sign In" (click)="onSignInClick()" />
+      }
+    </div>
+  </div>
+</div>
