@@ -14,6 +14,7 @@
     class="menu"
     [class.menu-end]="align() === 'end'"
     role="menu"
+    tabindex="-1"
     [attr.aria-label]="label() ?? text()"
     (keydown)="onMenuKeydown($event)"
   >
