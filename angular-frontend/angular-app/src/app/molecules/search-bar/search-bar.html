@@ -1,9 +1,10 @@
 <f-text-input
   icon="search"
   [placeholder]="placeholder()"
-  [value]="query()"
-  (valueChange)="onQueryChange($event)"
-  (focus)="open()"
+  [ngModel]="query()"
+  [ngModelOptions]="{ standalone: true }"
+  (ngModelChange)="onQueryChange($event)"
+  (focusin)="open()"
   (keydown)="onKeydown($event)"
 />
 

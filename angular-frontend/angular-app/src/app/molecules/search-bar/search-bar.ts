@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TextInput } from '../../atoms/text-input/text-input';
 import { Icon } from '../../atoms/icon/icon';
+import { FormsModule } from '@angular/forms';
 
 export interface SearchResult {
   id: string;
@@ -11,7 +12,7 @@ export interface SearchResult {
 
 @Component({
   selector: 'f-search-bar',
-  imports: [TextInput, Icon],
+  imports: [FormsModule, TextInput, Icon],
   styleUrl: './search-bar.css',
   templateUrl: './search-bar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +25,7 @@ export class SearchBar {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   // API
-  readonly placeholder = input('Search this page');
+  readonly placeholder = input('Search...');
   readonly results = input<SearchResult[]>([]);
   readonly query = model('');
   readonly resultSelected = output<SearchResult>();
@@ -51,6 +52,7 @@ export class SearchBar {
 
   protected onKeydown(event: KeyboardEvent): void {
     const count = this.results().length;
+    if (count === 0) return;
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
