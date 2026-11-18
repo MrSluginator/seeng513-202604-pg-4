@@ -1,0 +1,8 @@
+<div class="price">
+  <div class="icons" [class.free]="!price()" [class.rich]="tier() === 4">
+    @for (i of dollars(); track i) {
+      <f-icon name="dollar" />
+    }
+  </div>
+  <small>{{ range() }}</small>
+</div>

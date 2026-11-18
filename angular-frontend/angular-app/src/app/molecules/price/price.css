@@ -1,0 +1,25 @@
+.price {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 124px;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+
+  & > * + * {
+    margin-inline-start: -8px;
+    /* overlap the dollar icons */
+  }
+}
+
+.free {
+  color: var(--n0);
+}
+
+.rich {
+  color: var(--y3);
+}
