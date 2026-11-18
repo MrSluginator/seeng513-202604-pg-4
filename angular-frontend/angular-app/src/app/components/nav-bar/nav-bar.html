@@ -16,7 +16,12 @@
     </div>
 
     <div class="holder">
-      <f-search-bar [(query)]="query" [results]="results()" (resultSelected)="resultSelected"/>
+      <f-search-bar
+        [(query)]="query"
+        [placeholder]="placeholder()"
+        [results]="results()"
+        (resultSelected)="onResultSelected($event)"
+      />
       @if (signedIn()) {
         <div>Profile Button</div>
       } @else {
