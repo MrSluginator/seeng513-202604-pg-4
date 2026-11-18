@@ -1,4 +1,4 @@
-import { DateRange, Location, PriceRange } from "./types";
+import { DateRange, Location, PriceRange } from './types';
 
 export interface Event {
   id: string;

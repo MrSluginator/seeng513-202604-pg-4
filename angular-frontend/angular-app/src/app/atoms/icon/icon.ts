@@ -18,6 +18,6 @@ export class Icon {
 
   // Safe to trust: these strings come from your own bundled SVG files
   svg = computed(() =>
-    this.sanitizer.bypassSecurityTrustHtml(icons[this.name()] ?? ''),
+    this.sanitizer.bypassSecurityTrustHtml(icons[this.name()] ?? '')
   );
 }

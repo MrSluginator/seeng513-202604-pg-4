@@ -36,10 +36,10 @@ export class Widget implements ControlValueAccessor {
   disabled = model(false);
 
   protected bigget = computed(
-    () => this.iconPosition() === 'top' || this.iconPosition() === 'bottom',
+    () => this.iconPosition() === 'top' || this.iconPosition() === 'bottom'
   );
   protected iconFirst = computed(
-    () => this.iconPosition() === 'top' || this.iconPosition() === 'left',
+    () => this.iconPosition() === 'top' || this.iconPosition() === 'left'
   );
 
   private onChange: (value: boolean) => void = () => {};

@@ -1,4 +1,4 @@
-import { DateRange } from "../models/types";
+import { DateRange } from '../models/types';
 
 const timeFormatter = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',

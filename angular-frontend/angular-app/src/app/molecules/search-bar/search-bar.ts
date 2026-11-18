@@ -1,5 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, computed, inject, input, model, output, signal,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  inject,
+  input,
+  model,
+  output,
+  signal,
 } from '@angular/core';
 import { TextInput } from '../../atoms/text-input/text-input';
 import { Icon } from '../../atoms/icon/icon';
@@ -33,7 +41,9 @@ export class SearchBar {
   // Internal UI state
   protected readonly isOpen = signal(false);
   protected readonly activeIndex = signal(-1);
-  protected readonly showMenu = computed(() => this.isOpen() && this.query().trim().length > 0);
+  protected readonly showMenu = computed(
+    () => this.isOpen() && this.query().trim().length > 0
+  );
 
   protected open(): void {
     this.isOpen.set(true);

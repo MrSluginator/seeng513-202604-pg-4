@@ -22,8 +22,17 @@ import {
 import { PinComponent } from '../../atoms/pin/pin';
 import { AllCategories } from '../../molecules/category/all-categories';
 import { RadioGroupComponent } from '../../atoms/radio-group/radio-group';
-import { DEFAULT_FILTERS, FilterProps, Sort, SORT_OPTIONS } from '../../../models/filters';
-import { categoriesList, CategoryForm, CategoryName } from '../../molecules/category/categories';
+import {
+  DEFAULT_FILTERS,
+  FilterProps,
+  Sort,
+  SORT_OPTIONS,
+} from '../../../models/filters';
+import {
+  categoriesList,
+  CategoryForm,
+  CategoryName,
+} from '../../molecules/category/categories';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 const toHours = (d: Date) => d.getHours() + d.getMinutes() / 60;
@@ -71,7 +80,7 @@ export class FilterDialog {
   });
 
   protected readonly sortOptions = Object.entries(SORT_OPTIONS).map(
-    ([value, label]) => ({ value, label }),
+    ([value, label]) => ({ value, label })
   );
 
   // RangeFilter works in numbers (null = off); the filters hold Dates/objects
@@ -126,12 +135,10 @@ export class FilterDialog {
     });
 
     // form -> draft
-    this.categoryForm.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        const value = this.categoryForm.getRawValue();
-        this.patch({ categories: categoriesList.filter((c) => value[c]) });
-      });
+    this.categoryForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      const value = this.categoryForm.getRawValue();
+      this.patch({ categories: categoriesList.filter((c) => value[c]) });
+    });
   }
 
   // Fires on Escape and on el.close(). Only report closes the user caused;
@@ -172,7 +179,9 @@ export class FilterDialog {
 
   protected setTimeRange(n: RangeFilterValue): void {
     this.patch({
-      timeRange: n ? { start: number2Time(n[0]), end: number2Time(n[1]) } : undefined,
+      timeRange: n
+        ? { start: number2Time(n[0]), end: number2Time(n[1]) }
+        : undefined,
     });
   }
 

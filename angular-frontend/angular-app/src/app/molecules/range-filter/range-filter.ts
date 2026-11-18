@@ -50,13 +50,15 @@ export class RangeFilter implements ControlValueAccessor {
   readonly sliderLabel = input('Range');
 
   protected readonly enabled = signal(false);
-  protected readonly range = linkedSignal<Range<number>>(() => this.defaultValue());
+  protected readonly range = linkedSignal<Range<number>>(() =>
+    this.defaultValue()
+  );
   private readonly formDisabled = signal(false);
 
   /** The toggle and slider are inert when the form control is disabled. */
   protected readonly disabled = this.formDisabled.asReadonly();
   protected readonly inactive = computed(
-    () => this.formDisabled() || !this.enabled(),
+    () => this.formDisabled() || !this.enabled()
   );
 
   protected readonly lowText = computed(() => this.format()(this.range()[0]));

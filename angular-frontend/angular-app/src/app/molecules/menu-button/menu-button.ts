@@ -40,10 +40,9 @@ export class MenuButton<T = string> {
 
   // Button passthrough
   text = input<string>();
-  icon = computed<IconName>(() => this.open() ? "up" : "down");
+  icon = computed<IconName>(() => (this.open() ? 'up' : 'down'));
   disabled = input(false);
   label = input<string>();
-
 
   // Menu
   options = input.required<MenuOption<T>[]>();
@@ -83,7 +82,9 @@ export class MenuButton<T = string> {
 
   protected onMenuKeydown(event: KeyboardEvent): void {
     const enabled = this.enabledItems();
-    const current = enabled.indexOf(document.activeElement as HTMLButtonElement);
+    const current = enabled.indexOf(
+      document.activeElement as HTMLButtonElement
+    );
 
     switch (event.key) {
       case 'ArrowDown':
@@ -113,7 +114,10 @@ export class MenuButton<T = string> {
   }
 
   protected onDocumentPointerDown(event: PointerEvent): void {
-    if (this.open() && !this.host.nativeElement.contains(event.target as Node)) {
+    if (
+      this.open() &&
+      !this.host.nativeElement.contains(event.target as Node)
+    ) {
       this.close();
     }
   }

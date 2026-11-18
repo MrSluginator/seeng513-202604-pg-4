@@ -21,4 +21,6 @@ export type CategoryName = keyof typeof categories;
 
 export const categoriesList = Object.keys(categories) as CategoryName[];
 
-export type CategoryForm = FormGroup<Record<CategoryName, FormControl<boolean>>>;
+export type CategoryForm = FormGroup<
+  Record<CategoryName, FormControl<boolean>>
+>;

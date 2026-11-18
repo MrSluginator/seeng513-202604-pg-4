@@ -12,7 +12,9 @@
           class="slide"
           role="group"
           aria-roledescription="slide"
-          [attr.aria-label]="itemLabel() + ' ' + ($index + 1) + ' of ' + items().length"
+          [attr.aria-label]="
+            itemLabel() + ' ' + ($index + 1) + ' of ' + items().length
+          "
         >
           <ng-container
             [ngTemplateOutlet]="template()"

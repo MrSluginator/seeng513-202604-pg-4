@@ -29,9 +29,35 @@ import up from '../../../assets/icons/up.svg';
 import wine from '../../../assets/icons/wine.svg';
 
 export const icons = {
-  bookmark, check, clock, comment, dollar, down, event, eyeClosed, eyeOpen,
-  filter, food, home, info, left, load, map, park, pin, plus, profile,
-  right, search, settings, share, spark, sun, times, up, wine,
+  bookmark,
+  check,
+  clock,
+  comment,
+  dollar,
+  down,
+  event,
+  eyeClosed,
+  eyeOpen,
+  filter,
+  food,
+  home,
+  info,
+  left,
+  load,
+  map,
+  park,
+  pin,
+  plus,
+  profile,
+  right,
+  search,
+  settings,
+  share,
+  spark,
+  sun,
+  times,
+  up,
+  wine,
 };
 
 export type IconName = keyof typeof icons;

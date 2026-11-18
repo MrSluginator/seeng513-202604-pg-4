@@ -33,10 +33,11 @@ export class PinComponent {
   protected readonly hasNumber = computed(() => this.number() !== undefined);
   protected readonly text = computed(() => String(this.number() ?? ''));
   protected readonly ariaLabel = computed(
-    () => this.label() ?? (this.hasNumber() ? `Pin ${this.text()}` : 'Pin'),
+    () => this.label() ?? (this.hasNumber() ? `Pin ${this.text()}` : 'Pin')
   );
   protected readonly width = computed(() => `var(--pin-${this.size()})`);
   protected readonly height = computed(
-    () => `calc(var(--pin-${this.size()}) * ${VIEWBOX_HEIGHT} / ${VIEWBOX_WIDTH})`,
+    () =>
+      `calc(var(--pin-${this.size()}) * ${VIEWBOX_HEIGHT} / ${VIEWBOX_WIDTH})`
   );
 }

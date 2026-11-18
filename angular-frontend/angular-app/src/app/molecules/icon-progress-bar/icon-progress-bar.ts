@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { Icon } from '../../atoms/icon/icon';
 import { IconName } from '../../atoms/icon/icons';
 import { Color } from '../../../models/types';
@@ -20,7 +25,7 @@ export class IconProgressBar {
   readonly label = input<string>();
 
   protected readonly clamped = computed(() =>
-    Math.min(this.max(), Math.max(this.min(), this.value())),
+    Math.min(this.max(), Math.max(this.min(), this.value()))
   );
 
   // One entry per icon, 0 to 100: how much of that icon is filled
@@ -29,7 +34,7 @@ export class IconProgressBar {
     const offset = this.clamped() - this.min();
     return Array.from(
       { length: count },
-      (_, i) => Math.min(1, Math.max(0, offset - i)) * 100,
+      (_, i) => Math.min(1, Math.max(0, offset - i)) * 100
     );
   });
 }

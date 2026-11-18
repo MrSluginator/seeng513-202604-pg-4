@@ -53,10 +53,12 @@ export class EventGrid {
   });
 
   protected readonly toggleLabel = computed(() =>
-    this.hidden() ? 'Show more' : 'Show less',
+    this.hidden() ? 'Show more' : 'Show less'
   );
 
-  protected readonly toggleIcon = computed(() => (this.hidden() ? 'down' : 'up'));
+  protected readonly toggleIcon = computed(() =>
+    this.hidden() ? 'down' : 'up'
+  );
 
   protected readonly getKey = (event: Event) => event.id;
 

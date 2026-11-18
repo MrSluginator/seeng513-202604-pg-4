@@ -76,7 +76,7 @@ export class Slider implements ControlValueAccessor {
   private majorCount = computed(() => Math.max(2, this.majorSteps()));
 
   private majorStep = computed(
-    () => (this.max() - this.min()) / (this.majorCount() - 1),
+    () => (this.max() - this.min()) / (this.majorCount() - 1)
   );
 
   protected ticks = computed<Tick[]>(() => {
@@ -108,7 +108,7 @@ export class Slider implements ControlValueAccessor {
       .map((t) => ({
         text: this.formatLabel()(t.value),
         left: `${this.toPercent(t.value)}%`,
-      })),
+      }))
   );
 
   protected thumbs = computed(() => {

@@ -40,9 +40,11 @@ export class RadioGroupComponent<T = unknown> implements ControlValueAccessor {
   private readonly formDisabled = signal(false);
   private readonly generatedName = `radio-group-${nextId++}`;
 
-  protected readonly groupName = computed(() => this.id() ?? this.generatedName);
+  protected readonly groupName = computed(
+    () => this.id() ?? this.generatedName
+  );
   protected readonly isDisabled = computed(
-    () => this.disabledInput() || this.formDisabled(),
+    () => this.disabledInput() || this.formDisabled()
   );
 
   // ControlValueAccessor callbacks

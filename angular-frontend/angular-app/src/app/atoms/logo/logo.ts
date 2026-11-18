@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Color, Size } from '../../../models/types';
 import flareLogo1 from '../../../assets/icons/flare-logo-1.svg';

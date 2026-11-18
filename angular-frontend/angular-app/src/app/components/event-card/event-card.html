@@ -25,7 +25,11 @@
           itemLabel="photo"
         >
           <ng-template let-src let-i="index">
-            <img [src]="src" [alt]="altFor(i)" [attr.loading]="i === 0 ? 'eager' : 'lazy'" />
+            <img
+              [src]="src"
+              [alt]="altFor(i)"
+              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+            />
           </ng-template>
         </f-carousel>
       } @else {
@@ -40,7 +44,9 @@
         @if (size() === 'xl') {
           {{ event().title }}
         } @else {
-          <a class="link" [routerLink]="['/event', event().id]">{{ event().title }}</a>
+          <a class="link" [routerLink]="['/event', event().id]">{{
+            event().title
+          }}</a>
         }
       </h3>
       <div class="box">

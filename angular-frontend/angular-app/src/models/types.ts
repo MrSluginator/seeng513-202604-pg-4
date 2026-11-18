@@ -42,5 +42,5 @@ export type Color =
 export type ColorGroup = 'p' | 's' | 'n' | 't' | 'o' | 'y' | 'g' | 'b';
 export type Location = { name: string; latitude: number; longitude: number };
 export type DateRange = { start: Date; end: Date };
-export type PriceRange = { low: number, high: number };
+export type PriceRange = { low: number; high: number };
 export type Range<T> = [T, T];

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { Icon } from '../../atoms/icon/icon';
 
 export interface PriceRange {
@@ -31,6 +36,6 @@ export class Price {
   });
 
   protected readonly dollars = computed(() =>
-    Array.from({ length: this.tier() }, (_, i) => i),
+    Array.from({ length: this.tier() }, (_, i) => i)
   );
 }
