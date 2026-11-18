@@ -1,1 +1,40 @@
-<p>range-filter works!</p>
+<div class="range-filter" [attr.aria-disabled]="inactive()">
+  <f-toggle-button
+    [pressed]="enabled()"
+    [disabled]="disabled()"
+    (pressedChange)="handleToggle($event)"
+  />
+
+  <div class="content">
+    <f-text-input
+      class="input"
+      [label]="lowLabel()"
+      [value]="lowText()"
+      [readonly]="true"
+      [disabled]="inactive()"
+    />
+
+    <f-slider
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [majorSteps]="majorSteps()"
+      [minorSteps]="minorSteps()"
+      [labelsPosition]="labelsPosition()"
+      [formatLabel]="format()"
+      [label]="sliderLabel()"
+      [disabled]="inactive()"
+      [ngModel]="range()"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="handleSlide($event)"
+    />
+
+    <f-text-input
+      class="input"
+      [label]="highLabel()"
+      [value]="highText()"
+      [readonly]="true"
+      [disabled]="inactive()"
+    />
+  </div>
+</div>

@@ -145,7 +145,7 @@ export class Slider implements ControlValueAccessor {
 
     let index = 0;
     if (this.isRange()) {
-      const [a, b] = this.values() as RangeValue;
+      const [a, b] = this.values() as Range<number>;
       const d0 = Math.abs(v - a);
       const d1 = Math.abs(v - b);
       index = d0 < d1 || (d0 === d1 && v < a) ? 0 : 1;
@@ -231,7 +231,7 @@ export class Slider implements ControlValueAccessor {
 
   // ControlValueAccessor
   writeValue(value: SliderValue | null): void {
-    this.raw.set(Array.isArray(value) ? ([...value] as RangeValue) : value);
+    this.raw.set(Array.isArray(value) ? ([...value] as Range<number>) : value);
   }
 
   registerOnChange(fn: (value: SliderValue) => void): void {
