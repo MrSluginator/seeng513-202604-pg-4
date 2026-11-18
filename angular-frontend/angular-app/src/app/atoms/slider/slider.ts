@@ -59,8 +59,8 @@ export class Slider implements ControlValueAccessor {
   private activeIndex: number | null = null;
   private inset = viewChild.required<ElementRef<HTMLDivElement>>('inset');
 
-  private onChange: (value: SliderValue) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange!: (value: SliderValue) => void;
+  protected onTouched!: () => void;
 
   // ---- derived state ----
 

@@ -35,8 +35,8 @@ export class TabGroup implements ControlValueAccessor {
   protected value = signal<unknown>(undefined);
   protected disabled = signal(false);
 
-  private onChange: (value: unknown) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange!: (value: unknown) => void;
+  protected onTouched!: () => void;
 
   protected select(option: TabOption): void {
     if (this.disabled() || option.disabled) return;

@@ -36,8 +36,8 @@ export class TextInput implements ControlValueAccessor {
   protected value = signal('');
   protected disabled = signal(false);
 
-  private onChange: (value: string) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange!: (value: string) => void;
+  protected onTouched!: () => void;
 
   protected handleInput(event: Event): void {
     const next = (event.target as HTMLInputElement).value;

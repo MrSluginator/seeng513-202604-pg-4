@@ -64,8 +64,8 @@ export class RangeFilter implements ControlValueAccessor {
   protected readonly lowText = computed(() => this.format()(this.range()[0]));
   protected readonly highText = computed(() => this.format()(this.range()[1]));
 
-  private onChange: (value: RangeFilterValue) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange!: (value: RangeFilterValue) => void;
+  private onTouched!: () => void;
 
   // ---- UI handlers ----
 

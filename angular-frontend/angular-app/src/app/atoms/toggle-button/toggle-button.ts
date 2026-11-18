@@ -26,8 +26,8 @@ export class ToggleButton implements ControlValueAccessor {
   protected pressed = signal(false);
   protected disabled = signal(false);
 
-  private onChange: (value: boolean) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange!: (value: boolean) => void;
+  protected onTouched!: () => void;
 
   protected toggle(): void {
     const next = !this.pressed();

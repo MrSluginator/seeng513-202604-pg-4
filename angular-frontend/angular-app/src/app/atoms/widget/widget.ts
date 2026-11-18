@@ -42,8 +42,8 @@ export class Widget implements ControlValueAccessor {
     () => this.iconPosition() === 'top' || this.iconPosition() === 'left'
   );
 
-  private onChange: (value: boolean) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange!: (value: boolean) => void;
+  protected onTouched!: () => void;
 
   protected toggle(): void {
     const next = !this.pressed();
