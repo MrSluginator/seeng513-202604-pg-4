@@ -21,12 +21,12 @@ export type IconPosition = 'left' | 'right' | 'top' | 'bottom';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => WidgetComponent),
+      useExisting: forwardRef(() => Widget),
       multi: true,
     },
   ],
 })
-export class WidgetComponent implements ControlValueAccessor {
+export class Widget implements ControlValueAccessor {
   text = input<string>();
   icon = input<IconName>();
   iconPosition = input<IconPosition>('right');
