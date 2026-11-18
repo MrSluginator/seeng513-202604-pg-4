@@ -9,9 +9,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Range } from '../../../models/types';
 
-export type RangeValue = [number, number];
-export type SliderValue = number | RangeValue;
+export type SliderValue = number | Range<number>;
 
 interface Tick {
   value: number;
