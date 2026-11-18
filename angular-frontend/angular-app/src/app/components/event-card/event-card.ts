@@ -7,16 +7,16 @@ import { Icon } from '../../atoms/icon/icon';
 import { Button } from '../../atoms/button/button';
 import { Carousel } from '../../molecules/carousel/carousel';
 import { Widget } from '../../atoms/widget/widget';
-import { Rating } from '../../molecules/rating/rating';
 import { Price } from '../../molecules/price/price';
 import { Event } from '../../../models/event'
 import { formatNumber, formatTime, formatTimeRange } from '../../../utils/format';
+import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
 @Component({
   imports: [
-    NgTemplateOutlet, RouterLink, Icon, Button, Carousel, Widget, Rating, Price,
+    NgTemplateOutlet, RouterLink, Icon, Button, Carousel, Widget, Price, IconProgressBar
   ],
   selector: 'f-event-card',
   styleUrl: './event-card.css',
@@ -41,6 +41,9 @@ export class EventCard {
     return time instanceof Date ? formatTime(time) : formatTimeRange(time);
   });
 
+  protected readonly ratingLabel = computed(() =>
+    `${this.event().rating}/5.0`
+  );
   protected readonly reviewsLabel = computed(() => {
     return formatNumber(this.event().reviews);
   })

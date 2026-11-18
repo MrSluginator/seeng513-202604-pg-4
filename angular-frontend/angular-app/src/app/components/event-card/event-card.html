@@ -23,11 +23,11 @@
           [items]="event().imageUrls"
           [getKey]="getKey"
           itemLabel="photo"
-          [itemTemplate]="slide"
-        />
-        <ng-template #slide let-src let-i="index">
-          <img [src]="src" [alt]="altFor(i)" [attr.loading]="i === 0 ? 'eager' : 'lazy'" />
-        </ng-template>
+        >
+          <ng-template let-src let-i="index">
+            <img [src]="src" [alt]="altFor(i)" [attr.loading]="i === 0 ? 'eager' : 'lazy'" />
+          </ng-template>
+        </f-carousel>
       } @else {
         <img [src]="event().imageUrl" alt="" />
       }
@@ -47,13 +47,13 @@
         @if (reviewsLabel(); as reviews) {
           <small>{{ reviews }}</small>
         }
-        <f-progress-bar
-          [value]="rating()"
-          [max]="max"
+        <f-icon-progress-bar
+          [value]="event().rating"
+          [max]="5"
           iconName="spark"
           backgroundColor="n5"
           fillColor="y1"
-          [label]="label()"
+          [label]="ratingLabel()"
         />
       </div>
     </div>
