@@ -4,33 +4,41 @@ stages:
   - build
 
 # ----------------------------------------------------
-# Frontend Jobs (Node.js / pnpm)
+# Frontend Jobs (Angular / pnpm)
 # ----------------------------------------------------
-frontend:lint:
-  stage: lint
-  image: node:20-alpine
+.frontend:
+  image: node:22-alpine
+  variables:
+    NG_CLI_ANALYTICS: "false"
+    PNPM_STORE: "$CI_PROJECT_DIR/.pnpm-store"
+  cache:
+    key:
+      files:
+        - angular-frontend/angular-app/pnpm-lock.yaml
+    paths:
+      - .pnpm-store
   before_script:
     - corepack enable
-    - corepack prepare pnpm@10 --activate
-    - cd frontend
+    - cd angular-frontend/angular-app
+    - pnpm config set store-dir "$PNPM_STORE"
     - pnpm install --frozen-lockfile
+
+frontend:lint:
+  extends: .frontend
+  stage: lint
   script:
     - pnpm run lint
     - pnpm run format:check
 
 frontend:build:
+  extends: .frontend
   stage: build
-  image: node:20-alpine
-  before_script:
-    - corepack enable
-    - corepack prepare pnpm@10 --activate
-    - cd frontend
-    - pnpm install --frozen-lockfile
   script:
+    - node scripts/set-env.mjs
     - pnpm run build
   artifacts:
     paths:
-      - frontend/dist/
+      - angular-frontend/angular-app/dist/angular-app/browser/
     expire_in: 1 week
 
 # ----------------------------------------------------
