@@ -10,7 +10,7 @@ import { Color } from '../../../models/types';
   styleUrl: './icon-progress-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProgressBar {
+export class IconProgressBar {
   readonly value = input.required<number>();
   readonly min = input(0);
   readonly max = input(5);
