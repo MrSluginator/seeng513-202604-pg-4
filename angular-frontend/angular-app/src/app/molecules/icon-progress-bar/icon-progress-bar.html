@@ -1,0 +1,17 @@
+<div
+  class="bar"
+  role="meter"
+  [attr.aria-label]="label()"
+  [attr.aria-valuemin]="min()"
+  [attr.aria-valuemax]="max()"
+  [attr.aria-valuenow]="clamped()"
+>
+  @for (fill of fills(); track $index) {
+    <span class="item" aria-hidden="true">
+      <f-icon [name]="iconName()" [color]="backgroundColor()" [fill]="true" />
+      <span class="filled" [style.width.%]="fill">
+        <f-icon [name]="iconName()" [color]="fillColor()" [fill]="true" />
+      </span>
+    </span>
+  }
+</div>
