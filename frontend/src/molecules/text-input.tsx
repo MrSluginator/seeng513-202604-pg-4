@@ -9,6 +9,7 @@ interface TextInputProps {
   iconPosition?: 'left' | 'right';
   disabled?: boolean;
   id?: string;
+  className?: string;
 }
 
 const TextInput = forwardRef(function TextInput(
@@ -19,6 +20,7 @@ const TextInput = forwardRef(function TextInput(
     iconPosition = 'right',
     disabled = false,
     id,
+    className,
   }: TextInputProps,
   ref
 ) {
@@ -32,7 +34,7 @@ const TextInput = forwardRef(function TextInput(
   ) : null;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${className ?? ''}`}>
       {label && (
         <label htmlFor={inputId} className={styles.label}>
           {label}

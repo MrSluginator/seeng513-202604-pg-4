@@ -1,19 +1,18 @@
-/* image-carousel.module.css */
 .carousel {
+  container-type: inline-size;
+  --slide-w: min(100cqw, var(--slide-max-w, 100cqw));
+  --side-space: max(0px, calc((100cqw - var(--slide-w)) / 2));
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  border-radius: 32px;
   width: 100%;
   height: 100%;
-  /* fill the .image wrapper */
   position: relative;
 
   &.overlay {
     position: relative;
 
     .slide {
-      padding-bottom: 0px;
+      margin-bottom: 0px;
     }
 
     .controls {
@@ -21,17 +20,18 @@
       bottom: 0;
       background-color: color-mix(in srgb, var(--p1) 20%, transparent);
       backdrop-filter: blur(12px);
+      padding: 10px 32px;
     }
   }
 }
 
 .slide {
-  flex: 0 0 100%;
+  flex: 0 0 var(--slide-w);
   min-width: 0;
   height: 100%;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   scroll-snap-stop: always;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .slide img {
@@ -48,6 +48,7 @@
 }
 
 .track {
+  position: relative;
   display: flex;
   gap: 20px;
   height: 100%;
@@ -55,18 +56,13 @@
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
+  box-sizing: border-box;
+  padding-inline: var(--side-space);
+  align-items: flex-end;
 }
 
 .track::-webkit-scrollbar {
   display: none;
-}
-
-.track img {
-  flex: 0 0 100%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  scroll-snap-align: start;
 }
 
 /* frosted bar along the bottom */
@@ -74,7 +70,7 @@
   display: flex;
   box-sizing: border-box;
   inset: auto 0 0 0;
-  padding: 8px 32px;
+  padding: 0px 32px 10px;
   justify-content: space-between;
   align-items: center;
 }

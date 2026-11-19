@@ -14,6 +14,7 @@ import {
   Widget,
 } from '../molecules';
 import { Event } from '../components/event-card';
+import EventGrid from '../components/event-grid';
 
 function Testing() {
   const [size, setSize] = useState('md');
@@ -180,6 +181,32 @@ function Testing() {
     <div>
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
+      <EventGrid
+        size="m"
+        display={{ type: 'grid', hidden: true }}
+        events={events}
+        filters={tags}
+        onFilterRemove={() => {}}
+      />
+      <EventGrid
+        size="s"
+        display={{ type: 'grid', hidden: false }}
+        events={events}
+        onFilterRemove={() => {}}
+      />
+      <EventGrid
+        size="s"
+        display={{ type: 'carousel', controls: false }}
+        events={events}
+        onFilterRemove={() => {}}
+      />
+      <EventGrid
+        size="l"
+        display={{ type: 'carousel', controls: true }}
+        events={events}
+        filters={tags}
+        onFilterRemove={() => {}}
+      />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div
           style={{

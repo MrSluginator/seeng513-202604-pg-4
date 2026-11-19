@@ -90,6 +90,12 @@
   }
 }
 
+.input:hover:checked + .circle {
+  .dot {
+    background-color: var(--p4);
+  }
+}
+
 .input:disabled + .circle {
   border-color: var(--n3);
   background-color: var(--n2);
