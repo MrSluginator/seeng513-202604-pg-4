@@ -1,3 +1,7 @@
+:host {
+  display: contents;
+}
+
 .box {
   display: flex;
   padding: 20px;
@@ -13,7 +17,7 @@
 .mobile {
   display: flex;
   padding: 10px;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   flex: 1 0 0;
 
