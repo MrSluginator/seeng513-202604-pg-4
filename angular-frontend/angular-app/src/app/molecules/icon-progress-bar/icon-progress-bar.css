@@ -1,8 +1,31 @@
 .bar {
   display: flex;
-  background-color: color-mix(in srgb, var(--p7) 20%, transparent);
+  background-color: color-mix(in srgb, var(--n5) 20%, transparent);
   padding: 4px;
   border-radius: 8px;
+  justify-content: space-between;
+
+  .disabled {
+    opacity: 0.5;
+  }
+}
+
+.selectable {
+  background-color: color-mix(in srgb, var(--p5) 20%, transparent);
+  .item {
+    cursor: pointer;
+  }
+
+  .selectable:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
 
 .item {

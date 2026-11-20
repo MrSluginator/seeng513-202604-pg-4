@@ -1,16 +1,39 @@
 <div
   class="bar"
-  role="meter"
+  [class.selectable]="interactive()"
+  [class.disabled]="disabled()"
+  [attr.role]="selectable() ? 'slider' : 'meter'"
+  [attr.tabindex]="interactive() ? 0 : null"
   [attr.aria-label]="label()"
   [attr.aria-valuemin]="min()"
   [attr.aria-valuemax]="max()"
   [attr.aria-valuenow]="clamped()"
+  [attr.aria-disabled]="disabled() || null"
+  (keydown)="onKeydown($event)"
+  (mouseleave)="clearPreview()"
+  (blur)="markTouched()"
+  [style.padding]="padding()"
 >
   @for (fill of fills(); track $index) {
-    <span class="item" aria-hidden="true">
-      <f-icon [name]="iconName()" [color]="backgroundColor()" [fill]="true" />
+    <span
+      class="item"
+      aria-hidden="true"
+      (click)="select($index)"
+      (mouseenter)="preview($index)"
+    >
+      <f-icon
+        [name]="iconName()"
+        [color]="backgroundColor()"
+        [size]="size()"
+        [fill]="true"
+      />
       <span class="filled" [style.width.%]="fill">
-        <f-icon [name]="iconName()" [color]="fillColor()" [fill]="true" />
+        <f-icon
+          [name]="iconName()"
+          [color]="fillColor()"
+          [size]="size()"
+          [fill]="true"
+        />
       </span>
     </span>
   }
