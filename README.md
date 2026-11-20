@@ -36,6 +36,11 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 │   └── .env.example      # Example frontend environment variables
 ├── backend/              # FastAPI application
 │   ├── main.py           # FastAPI entrypoint & routes
+│   ├── db/               # Database configuration, ORM models & SQL scripts
+│   │   ├── database.py   # SQLAlchemy engine & session setup
+│   │   ├── models/       # SQLAlchemy ORM models for clean DB access
+│   │   ├── schema.sql    # PostgreSQL DDL schema script
+│   │   └── seed.sql      # PostgreSQL dummy data seed script
 │   ├── tests/            # Pytest test suite
 │   ├── requirements.txt  # Production Python dependencies
 │   ├── requirements-dev.txt # Development/linting dependencies
@@ -105,6 +110,36 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
    uvicorn main:app --reload --port 8000
    ```
    The backend API will be available at `http://localhost:8000` (Swagger docs at `http://localhost:8000/docs`).
+
+### Database Schema Initialization & Seeding (`db/schema.sql` & `db/seed.sql`)
+
+The database tables and sample data are built and seeded using the raw PostgreSQL scripts [`backend/db/schema.sql`](backend/db/schema.sql) and [`backend/db/seed.sql`](backend/db/seed.sql), while the application accesses the database through the SQLAlchemy ORM models in [`backend/db/models/`](backend/db/models/) and the session dependency in [`backend/db/database.py`](backend/db/database.py).
+
+#### 1. Initialize the Schema (`db/schema.sql`)
+
+- **Against a local or remote PostgreSQL instance**:
+  ```bash
+  psql "postgresql://flare_user:flare_password@localhost:5432/flare_db" -f backend/db/schema.sql
+  ```
+  *(Or using `DATABASE_URL`: `psql "$DATABASE_URL" -f backend/db/schema.sql`)*
+
+- **Against the Docker Compose `db` container**:
+  ```bash
+  docker compose exec -T db psql -U flare_user -d flare_db < backend/db/schema.sql
+  ```
+
+#### 2. Seed Dummy Data (`db/seed.sql`)
+
+To populate (or reset and re-seed) the database with sample users, settings, friendships, tags, events, photos, reviews, saved events, and scraped events:
+
+- **Against a local or remote PostgreSQL instance**:
+  ```bash
+  psql "postgresql://flare_user:flare_password@localhost:5432/flare_db" -f backend/db/seed.sql
+  ```
+- **Against the Docker Compose `db` container**:
+  ```bash
+  docker compose exec -T db psql -U flare_user -d flare_db < backend/db/seed.sql
+  ```
 
 ---
 
