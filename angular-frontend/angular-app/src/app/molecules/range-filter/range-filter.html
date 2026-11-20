@@ -8,7 +8,7 @@
 
   <div class="content">
     <f-text-input
-      class="input"
+      class="low"
       [label]="lowLabel()"
       [readonly]="true"
       [ngModel]="lowText()"
@@ -17,13 +17,14 @@
     />
 
     <f-slider
+      class="slider"
       [min]="min()"
       [max]="max()"
       [step]="step()"
       [majorSteps]="majorSteps()"
       [minorSteps]="minorSteps()"
       [labelsPosition]="labelsPosition()"
-      [formatLabel]="format()"
+      [formatLabel]="(x) => `${x}`"
       [label]="sliderLabel()"
       [disabled]="inactive()"
       [ngModel]="range()"
@@ -32,7 +33,7 @@
     />
 
     <f-text-input
-      class="input"
+      class="high"
       [label]="highLabel()"
       [readonly]="true"
       [ngModel]="highText()"
