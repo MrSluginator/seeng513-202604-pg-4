@@ -51,7 +51,6 @@ const toFormValue = (active: readonly CategoryName[]) => {
     FormsModule,
     Button,
     PinComponent,
-    TextInput,
     Widget,
     AllCategories,
     RadioGroupComponent,

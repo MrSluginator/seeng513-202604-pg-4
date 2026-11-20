@@ -34,7 +34,7 @@ frontend:build:
   extends: .frontend
   stage: build
   script:
-    - node scripts/set-env.mjs
+    - node src/scripts/set-env.mjs
     - pnpm run build
   artifacts:
     paths:
