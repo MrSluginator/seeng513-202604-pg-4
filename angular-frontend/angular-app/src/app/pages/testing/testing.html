@@ -1,1 +1,217 @@
-<p>testing works!</p>
+<main class="testing">
+  <h1>Component testing</h1>
+
+  <!-- ================= Range filter ================= -->
+  <section>
+    <h2>f-range-filter</h2>
+    <div class="row">
+      <div class="demo">
+        <f-range-filter
+          [formControl]="priceControl"
+          lowLabel="Min price"
+          highLabel="Max price"
+          sliderLabel="Price range"
+          [format]="formatPrice"
+          [min]="0"
+          [max]="100"
+          [defaultValue]="[20, 80]"
+          [step]="5"
+        />
+      </div>
+      <div class="state">
+        <pre>value: {{ priceControl.value | json }}
+touched: {{ priceControl.touched }}
+disabled: {{ priceControl.disabled }}</pre>
+        <div class="actions">
+          <button (click)="setPrice()">setValue([30, 60])</button>
+          <button (click)="resetPrice()">reset()</button>
+          <button (click)="toggleDisabled(priceControl)">toggle disabled</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Menu button ================= -->
+  <section>
+    <h2>f-menu-button</h2>
+    <div class="row">
+      <div class="demo menu-demo">
+        <f-menu-button
+          text="Actions"
+          label="Event actions"
+          [options]="menuOptions"
+          [align]="menuAlign()"
+          [disabled]="menuDisabled()"
+          (selected)="lastMenuSelection.set($event)"
+        />
+      </div>
+      <div class="state">
+        <pre>last selected: {{ lastMenuSelection() | json }}</pre>
+        <div class="actions">
+          <button (click)="menuAlign.set(menuAlign() === 'start' ? 'end' : 'start')">
+            align: {{ menuAlign() }}
+          </button>
+          <button (click)="menuDisabled.set(!menuDisabled())">
+            disabled: {{ menuDisabled() }}
+          </button>
+        </div>
+        <p class="hint">
+          Try: arrow keys, Home/End, Escape (focus returns), Tab (closes),
+          clicking outside.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Icon progress bar ================= -->
+  <section>
+    <h2>f-icon-progress-bar</h2>
+
+    <h3>Read-only (fractional values)</h3>
+    <div class="demo stack">
+      <f-icon-progress-bar iconName="spark" [value]="0" label="0" backgroundColor="n7" fillColor="n1" />
+      <f-icon-progress-bar iconName="profile" [value]="2.5" label="2.5" />
+      <f-icon-progress-bar iconName="spark" [value]="4.3" label="4.3" />
+      <f-icon-progress-bar iconName="spark" [value]="9" label="9 (clamped to max)" size="l"/>
+      <f-icon-progress-bar iconName="spark" [value]="7" [max]="10" label="7 of 10" />
+    </div>
+
+    <h3>Selectable + reactive form</h3>
+    <div class="row">
+      <div class="demo">
+        <f-icon-progress-bar
+          iconName="spark"
+          label="Rating"
+          [formControl]="ratingControl"
+          [selectable]="true"
+          [allowClear]="allowClear()"
+          size="l"
+        />
+      </div>
+      <div class="state">
+        <pre>value: {{ ratingControl.value }}
+touched: {{ ratingControl.touched }}
+disabled: {{ ratingControl.disabled }}</pre>
+        <div class="actions">
+          <button (click)="ratingControl.setValue(5)">setValue(5)</button>
+          <button (click)="ratingControl.reset()">reset()</button>
+          <!-- <button (click)="toggleDisabled(ratingControl)">toggle disabled</button> -->
+          <button (click)="allowClear.set(!allowClear())">
+            allowClear: {{ allowClear() }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <h3>Two-way binding [(value)]</h3>
+    <div class="row">
+      <div class="demo">
+        <f-icon-progress-bar
+          iconName="up"
+          label="Two-way"
+          [(value)]="twoWayValue"
+          [selectable]="true"
+        />
+      </div>
+      <div class="state">
+        <pre>signal value: {{ twoWayValue() }}</pre>
+        <div class="actions">
+          <button (click)="twoWayValue.set(1)">set 1</button>
+          <button (click)="twoWayValue.set(4.5)">set 4.5</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Filter button ================= -->
+  <section>
+    <h2>f-filter-button</h2>
+    <div class="demo">
+      <f-filter-button />
+    </div>
+  </section>
+
+  <!-- ================= Event card ================= -->
+  <section>
+    <h2>f-event-card</h2>
+    <div class="controls">
+      <label>
+        Size
+        <select #sizeSelect (change)="onSizeChange(sizeSelect.value)">
+          @for (s of cardSizes; track s) {
+            <option [value]="s" [selected]="s === cardSize()">{{ s }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Event
+        <select (change)="cardEventIndex.set($any($event))">
+          @for (e of events; track e.id; let i = $index) {
+            <option [value]="i" [selected]="i === cardEventIndex()">
+              #{{ e.id }}
+            </option>
+          }
+        </select>
+      </label>
+    </div>
+    <div class="demo">
+      <f-event-card [event]="cardEvent()" [size]="cardSize()" />
+    </div>
+    <p class="hint">
+      Check the console for share / review output. Switching the event should
+      reset the saved state.
+    </p>
+  </section>
+
+  <!-- ================= Event grid ================= -->
+  <section>
+    <h2>f-event-grid</h2>
+    <div class="controls">
+      <label>
+        Size
+        <select (change)="gridSize.set($any($event))">
+          @for (s of gridSizes; track s) {
+            <option [value]="s" [selected]="s === gridSize()">{{ s }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Display
+        <select (change)="gridType.set($any($event))">
+          <option value="grid" [selected]="gridType() === 'grid'">grid</option>
+          <option value="carousel" [selected]="gridType() === 'carousel'">
+            carousel
+          </option>
+        </select>
+      </label>
+      <label>
+        Events
+        <input
+          type="number"
+          min="0"
+          [max]="events.length"
+          [value]="eventCount()"
+          (input)="eventCount.set($any($event))"
+        />
+      </label>
+
+      @if (gridType() === 'grid') {
+        <button (click)="gridHidden.set(!gridHidden())">
+          hidden: {{ gridHidden() }}
+        </button>
+      } @else {
+        <button (click)="carouselControls.set(!carouselControls())">
+          controls: {{ carouselControls() }}
+        </button>
+      }
+    </div>
+    <pre>display: {{ gridDisplay() | json }}</pre>
+    <div class="demo">
+      <f-event-grid
+        [size]="gridSize()"
+        [events]="gridEvents()"
+        [display]="gridDisplay()"
+      />
+    </div>
+  </section>
+</main>
