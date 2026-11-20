@@ -32,7 +32,7 @@ let nextId = 0;
 export class RadioGroupComponent<T = unknown> implements ControlValueAccessor {
   // Inputs
   readonly options = input.required<RadioOption<T>[]>();
-  readonly disabledInput = input<boolean>(false, { alias: 'disabled' });
+  readonly disabled = input<boolean>(false);
   readonly id = input<string | undefined>(undefined);
 
   // Internal state
@@ -44,12 +44,12 @@ export class RadioGroupComponent<T = unknown> implements ControlValueAccessor {
     () => this.id() ?? this.generatedName
   );
   protected readonly isDisabled = computed(
-    () => this.disabledInput() || this.formDisabled()
+    () => this.disabled() || this.formDisabled()
   );
 
   // ControlValueAccessor callbacks
-  private onChange: (value: T) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange!: (value: T) => void;
+  protected onTouched!: () => void;
 
   writeValue(value: T | null): void {
     this.value.set(value);

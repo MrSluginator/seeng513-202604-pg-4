@@ -49,10 +49,12 @@ export class FilterService {
   }
 
   queryTags(query: string): SearchResult[] {
+    console.log(query);
     return [];
   }
 
   queryLocations(query: string): SearchResult[] {
+    console.log(query);
     return [];
   }
 }
