@@ -5,6 +5,7 @@ import {
   inject,
   input,
   linkedSignal,
+  signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -20,6 +21,10 @@ import {
   formatTimeRange,
 } from '../../../utils/format';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
+import {
+  ReviewDialog,
+  ReviewResult,
+} from '../../dialogs/review-dialog/review-dialog';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -33,6 +38,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
     Widget,
     Price,
     IconProgressBar,
+    ReviewDialog,
   ],
   selector: 'f-event-card',
   styleUrl: './event-card.css',
@@ -44,6 +50,7 @@ export class EventCard {
 
   readonly event = input.required<Event>();
   readonly size = input.required<EventSize>();
+  protected readonly reviewOpen = signal(false);
 
   // Starts from event().defaultSaved and resets if a different event is passed in
   protected readonly saved = linkedSignal(() => this.event().defaultSaved);
@@ -59,7 +66,7 @@ export class EventCard {
 
   protected readonly ratingLabel = computed(() => `${this.event().rating}/5.0`);
   protected readonly reviewsLabel = computed(() => {
-    return formatNumber(this.event().reviews);
+    return `${formatNumber(this.event().reviews)} reviews`;
   });
 
   protected readonly getKey = (src: string, i: number) => `${i}:${src}`;
@@ -77,6 +84,16 @@ export class EventCard {
     this.saved.update((prev) => !prev);
   }
 
-  protected onRate(): void {}
-  protected onShare(): void {}
+  protected onReview(): void {
+    this.reviewOpen.set(true);
+  }
+
+  protected onReviewSubmit(result: ReviewResult): void {
+    this.reviewOpen.set(false);
+    console.log(result);
+  }
+
+  protected onShare(): void {
+    console.log('share');
+  }
 }

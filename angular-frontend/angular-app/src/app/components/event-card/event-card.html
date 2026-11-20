@@ -1,6 +1,6 @@
 <ng-template #interactables>
   <div class="interactables">
-    <f-button icon="spark" label="Rate event" (click)="onRate()" />
+    <f-button icon="spark" label="Rate event" (click)="onReview()" />
     <f-button icon="share" label="Share event" (click)="onShare()" />
     <f-button
       icon="bookmark"
@@ -11,6 +11,13 @@
   </div>
 </ng-template>
 
+@if (reviewOpen()) {
+  <f-review-dialog
+    [event]="event()"
+    (submitted)="onReviewSubmit($event)"
+    (cancelled)="reviewOpen.set(false)"
+  />
+}
 <div class="card" [class]="size()">
   @if (size() === 'm') {
     <ng-container [ngTemplateOutlet]="interactables" />
@@ -24,7 +31,7 @@
           [getKey]="getKey"
           itemLabel="photo"
         >
-          <ng-template let-src let-i="index">
+          <ng-template let-src let-i="index" class="image-template">
             <img
               [src]="src"
               [alt]="altFor(i)"
@@ -39,7 +46,7 @@
   }
 
   <div class="info">
-    <div class="titleBar">
+    <div class="title-bar">
       <h3>
         @if (size() === 'xl') {
           {{ event().title }}
@@ -49,13 +56,12 @@
           }}</a>
         }
       </h3>
-      <div class="box">
+      <div class="rating">
         @if (reviewsLabel(); as reviews) {
           <small>{{ reviews }}</small>
         }
         <f-icon-progress-bar
           [value]="event().rating"
-          [max]="5"
           iconName="spark"
           backgroundColor="n5"
           fillColor="y1"

@@ -12,7 +12,7 @@
   gap: 10px;
 }
 
-.eventGrid {
+.event-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -28,7 +28,7 @@
   gap: 10px;
 }
 
-.filterBox {
+.filter-box {
   display: flex;
   align-content: center;
   gap: 4px;
