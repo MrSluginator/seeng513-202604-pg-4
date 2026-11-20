@@ -30,7 +30,7 @@
           icon="left"
           [disabled]="isFirst()"
           [label]="'Previous ' + itemLabel()"
-          (clicked)="step(-1)"
+          (click)="step(-1)"
         />
 
         <div class="dots">
@@ -50,7 +50,7 @@
           icon="right"
           [disabled]="isLast()"
           [label]="'Next ' + itemLabel()"
-          (clicked)="step(1)"
+          (click)="step(1)"
         />
       </div>
     }
