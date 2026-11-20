@@ -17,7 +17,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import { Event } from '../../../models/event';
+import { Event } from '../../../models/event.schema';
 import { Range } from '../../../models/types';
 import { Slider } from '../../atoms/slider/slider';
 import { formatTime, number2Time } from '../../../utils/format';

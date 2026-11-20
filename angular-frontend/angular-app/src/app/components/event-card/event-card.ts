@@ -14,7 +14,7 @@ import { Button } from '../../atoms/button/button';
 import { Carousel } from '../../molecules/carousel/carousel';
 import { Widget } from '../../atoms/widget/widget';
 import { Price } from '../../molecules/price/price';
-import { Event } from '../../../models/event';
+import { Event } from '../../../models/event.schema';
 import {
   formatNumber,
   formatTime,
@@ -53,7 +53,7 @@ export class EventCard {
   protected readonly reviewOpen = signal(false);
 
   // Starts from event().defaultSaved and resets if a different event is passed in
-  protected readonly saved = linkedSignal(() => this.event().defaultSaved);
+  protected readonly saved = linkedSignal(() => this.event().saved);
 
   protected readonly saveLabel = computed(() =>
     this.saved() ? 'Remove from saved' : 'Save event'

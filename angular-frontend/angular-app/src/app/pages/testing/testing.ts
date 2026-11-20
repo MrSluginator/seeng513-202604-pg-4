@@ -12,7 +12,7 @@ import {
   MenuOption,
 } from '../../molecules/menu-button/menu-button';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import { Event } from '../../../models/event';
+import { Event } from '../../../models/event.schema';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import {
   EventGrid,
