@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type Size = 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 export type Color =
   | 'p1'
@@ -54,3 +56,8 @@ export interface PriceRange {
   high: number;
 }
 export type Range<T> = [T, T];
+
+export const IsoDate = z.iso.datetime().transform((s) => new Date(s));
+export const Decimal = z
+  .union([z.number(), z.string().regex(/^-?\d+(\.\d+)?$/)])
+  .transform(Number);
