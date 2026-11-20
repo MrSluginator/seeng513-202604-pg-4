@@ -28,7 +28,7 @@
     background-color 150ms ease;
 }
 
-.optionDisabled {
+.option-disabled {
   cursor: not-allowed;
   color: var(--n5);
 }
