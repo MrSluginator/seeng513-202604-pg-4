@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   linkedSignal,
+  signal,
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
@@ -34,6 +35,7 @@ import {
   CategoryName,
 } from '../../molecules/category/categories';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
 
 const toHours = (d: Date) => d.getHours() + d.getMinutes() / 60;
 
@@ -54,7 +56,8 @@ const toFormValue = (active: readonly CategoryName[]) => {
     AllCategories,
     RadioGroupComponent,
     RangeFilter,
-  ],
+    SearchBar
+],
   templateUrl: './filter-dialog.html',
   styleUrl: './filter-dialog.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -78,6 +81,20 @@ export class FilterDialog {
     }),
     computation: ({ applied }) => applied,
   });
+
+  protected readonly tagQuery = signal('');
+  protected readonly locationQuery = signal('');
+
+  protected tagResults = computed(() => this.filterService.queryTags(this.tagQuery()))
+  protected locationResults = computed(() => this.filterService.queryLocations(this.tagQuery()))
+
+  protected onTagSelected(result: SearchResult): void {
+    this.filterService.filters().tags.push(result.label);
+  }
+
+  protected onLocationSelected(result: SearchResult): void {
+    this.filterService.filters().tags.push(result.label);
+  }
 
   protected readonly sortOptions = Object.entries(SORT_OPTIONS).map(
     ([value, label]) => ({ value, label })

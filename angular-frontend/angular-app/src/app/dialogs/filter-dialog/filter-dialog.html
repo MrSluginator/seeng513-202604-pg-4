@@ -1,6 +1,6 @@
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
 <dialog
   #dialog
-  class="filter-dialog"
   aria-labelledby="filter-dialog-title"
   (close)="onNativeClose()"
   (click)="onBackdropClick($event)"
@@ -16,7 +16,7 @@
         <div class="cats">
           <div class="column" style="gap: 16px">
             <h3>Categories</h3>
-            <div class="row between">
+            <div class="categories">
               <f-all-categories [form]="categoryForm" />
             </div>
           </div>
@@ -24,7 +24,12 @@
           <div class="column" style="flex: 1">
             <div class="row between">
               <h3>Tags</h3>
-              <f-text-input placeholder="Search tags..." icon="search" />
+              <f-search-bar
+                placeholder="Search tags..."
+                [(query)]="tagQuery"
+                [results]="tagResults()"
+                (resultSelected)="onTagSelected($event)"
+              />
             </div>
             <div class="column">
               <p>Active Tags:</p>
@@ -45,7 +50,12 @@
           <div class="column" style="flex: 1">
             <div class="row between">
               <h3>Location</h3>
-              <f-text-input placeholder="Search location..." icon="search" />
+              <f-search-bar
+                placeholder="Search locations..."
+                [(query)]="locationQuery"
+                [results]="locationResults()"
+                (resultSelected)="onLocationSelected($event)"
+              />
             </div>
             <small class="location-info">
               If the Distance filter is active, the feed will show events within

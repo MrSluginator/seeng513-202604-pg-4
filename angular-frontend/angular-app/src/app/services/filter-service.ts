@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { DEFAULT_FILTERS, FilterProps } from '../../models/filters';
+import { SearchResult } from '../molecules/search-bar/search-bar';
 
 @Injectable({ providedIn: 'root' })
 export class FilterService {
@@ -45,5 +46,13 @@ export class FilterService {
   /** For removable tag chips outside the dialog. */
   removeTag(tag: string): void {
     this.patch({ tags: this._filters().tags.filter((t) => t !== tag) });
+  }
+
+  queryTags(query: string): SearchResult[] {
+    return [];
+  }
+
+  queryLocations(query: string): SearchResult[] {
+    return [];
   }
 }
