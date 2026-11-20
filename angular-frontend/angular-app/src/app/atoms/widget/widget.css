@@ -1,5 +1,7 @@
 .widget {
-  --width: 48px;
+  --_light: var(--w-light, var(--p3));
+  --_dark: var(--w-dark, var(--p4));
+
   display: inline-flex;
   height: 26px;
   width: fit-content;
@@ -13,27 +15,21 @@
   cursor: pointer;
 
   border-radius: 8px;
-  border: 1px solid var(--p2);
-  background: var(--p1);
+  border: 1px solid var(--_dark);
+  background: color-mix(in srgb, var(--_light) 20%, transparent);
   color: var(--n7);
   transition:
     border-color 150ms ease,
-    background-color 150ms ease;
+    background-color 150ms ease,
+    color 150ms ease;
 
   &:hover {
-    border-color: var(--p3);
-    background-color: var(--p2);
+    color: var(--_dark);
   }
 
   &[aria-checked='true'] {
-    border-color: var(--p4);
-    background-color: var(--p3);
+    background-color: var(--_light);
   }
-
-  /* &[aria-checked='true']:hover {
-    border-color: var(--p5);
-    background-color: var(--p4);
-  } */
 
   &:disabled {
     border-color: var(--n3);
