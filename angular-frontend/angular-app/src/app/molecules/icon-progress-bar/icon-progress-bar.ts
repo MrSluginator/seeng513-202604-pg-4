@@ -36,7 +36,7 @@ export class IconProgressBar implements ControlValueAccessor {
   readonly fillColor = input<Color>('n1');
   readonly label = input<string>();
   readonly size = input<Size>('xs');
-  readonly padding = computed(() => `var(--padding-${this.size()})`)
+  readonly padding = computed(() => `var(--padding-${this.size()})`);
 
   /** When true, the user can click / use the keyboard to change the value */
   readonly selectable = input(false);

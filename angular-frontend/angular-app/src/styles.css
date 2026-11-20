@@ -170,7 +170,8 @@ body {
   background-color: var(--n0);
 }
 
-dialog, [popover] {
+dialog,
+[popover] {
   color: inherit;
   background-color: var(--n0);
   border-radius: 32px;

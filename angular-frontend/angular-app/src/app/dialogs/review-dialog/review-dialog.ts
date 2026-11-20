@@ -50,10 +50,12 @@ export class ReviewDialog {
   readonly submitted = output<ReviewResult>();
   readonly cancelled = output<void>();
 
-  private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
+  private readonly dialog =
+    viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
   protected readonly maxComment = 500;
-  protected readonly format: (time: number) => string = (time) => formatTime(number2Time(time));
+  protected readonly format: (time: number) => string = (time) =>
+    formatTime(number2Time(time));
 
   protected readonly form = inject(NonNullableFormBuilder).group({
     rating: [3, [Validators.min(0), Validators.max(5)]],

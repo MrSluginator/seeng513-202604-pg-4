@@ -7,7 +7,7 @@
   align-self: stretch;
   background: var(--n0);
   max-width: 1360px;
-  height: min-content
+  height: min-content;
 }
 
 .header {

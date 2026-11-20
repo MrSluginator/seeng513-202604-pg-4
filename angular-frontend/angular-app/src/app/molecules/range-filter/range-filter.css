@@ -32,7 +32,8 @@
   }
 }
 
-.low, .high {
+.low,
+.high {
   display: flex;
   flex-direction: column;
   width: 120px;

@@ -14,11 +14,17 @@ import {
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
 import { Event } from '../../../models/event';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
-import { EventGrid, EventGridDisplay } from '../../components/event-grid/event-grid';
+import {
+  EventGrid,
+  EventGridDisplay,
+} from '../../components/event-grid/event-grid';
 import { EventCard, EventSize } from '../../components/event-card/event-card';
 
 // Adjust the fields to match your real Event model
-const makeEvent = (id: number, overrides: Record<string, unknown> = {}): Event =>
+const makeEvent = (
+  id: number,
+  overrides: Record<string, unknown> = {}
+): Event =>
   ({
     id,
     title: `Test event ${id}`,
@@ -35,7 +41,7 @@ const makeEvent = (id: number, overrides: Record<string, unknown> = {}): Event =
     defaultSaved: false,
     tags: ['music', 'outdoor', 'family'],
     ...overrides,
-  } as unknown as Event);
+  }) as unknown as Event;
 
 @Component({
   imports: [
@@ -84,8 +90,15 @@ export class Testing {
   // ---------- Events ----------
   protected readonly events: Event[] = [
     makeEvent(1),
-    makeEvent(2, { title: 'Saved by default', defaultSaved: true, rating: 4.9 }),
-    makeEvent(3, { title: 'A very long event title that should wrap or truncate nicely', reviews: 1250000 }),
+    makeEvent(2, {
+      title: 'Saved by default',
+      defaultSaved: true,
+      rating: 4.9,
+    }),
+    makeEvent(3, {
+      title: 'A very long event title that should wrap or truncate nicely',
+      reviews: 1250000,
+    }),
     makeEvent(4, { rating: 2.5, reviews: 0 }),
     makeEvent(5),
     makeEvent(6),

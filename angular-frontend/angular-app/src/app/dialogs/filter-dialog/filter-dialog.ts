@@ -56,8 +56,8 @@ const toFormValue = (active: readonly CategoryName[]) => {
     AllCategories,
     RadioGroupComponent,
     RangeFilter,
-    SearchBar
-],
+    SearchBar,
+  ],
   templateUrl: './filter-dialog.html',
   styleUrl: './filter-dialog.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,8 +85,12 @@ export class FilterDialog {
   protected readonly tagQuery = signal('');
   protected readonly locationQuery = signal('');
 
-  protected tagResults = computed(() => this.filterService.queryTags(this.tagQuery()))
-  protected locationResults = computed(() => this.filterService.queryLocations(this.tagQuery()))
+  protected tagResults = computed(() =>
+    this.filterService.queryTags(this.tagQuery())
+  );
+  protected locationResults = computed(() =>
+    this.filterService.queryLocations(this.tagQuery())
+  );
 
   protected onTagSelected(result: SearchResult): void {
     this.filterService.filters().tags.push(result.label);

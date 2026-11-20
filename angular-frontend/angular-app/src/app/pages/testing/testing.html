@@ -19,13 +19,16 @@
         />
       </div>
       <div class="state">
-        <pre>value: {{ priceControl.value | json }}
+        <pre>
+value: {{ priceControl.value | json }}
 touched: {{ priceControl.touched }}
 disabled: {{ priceControl.disabled }}</pre>
         <div class="actions">
           <button (click)="setPrice()">setValue([30, 60])</button>
           <button (click)="resetPrice()">reset()</button>
-          <button (click)="toggleDisabled(priceControl)">toggle disabled</button>
+          <button (click)="toggleDisabled(priceControl)">
+            toggle disabled
+          </button>
         </div>
       </div>
     </div>
@@ -48,7 +51,9 @@ disabled: {{ priceControl.disabled }}</pre>
       <div class="state">
         <pre>last selected: {{ lastMenuSelection() | json }}</pre>
         <div class="actions">
-          <button (click)="menuAlign.set(menuAlign() === 'start' ? 'end' : 'start')">
+          <button
+            (click)="menuAlign.set(menuAlign() === 'start' ? 'end' : 'start')"
+          >
             align: {{ menuAlign() }}
           </button>
           <button (click)="menuDisabled.set(!menuDisabled())">
@@ -69,11 +74,27 @@ disabled: {{ priceControl.disabled }}</pre>
 
     <h3>Read-only (fractional values)</h3>
     <div class="demo stack">
-      <f-icon-progress-bar iconName="spark" [value]="0" label="0" backgroundColor="n7" fillColor="n1" />
+      <f-icon-progress-bar
+        iconName="spark"
+        [value]="0"
+        label="0"
+        backgroundColor="n7"
+        fillColor="n1"
+      />
       <f-icon-progress-bar iconName="profile" [value]="2.5" label="2.5" />
       <f-icon-progress-bar iconName="spark" [value]="4.3" label="4.3" />
-      <f-icon-progress-bar iconName="spark" [value]="9" label="9 (clamped to max)" size="l"/>
-      <f-icon-progress-bar iconName="spark" [value]="7" [max]="10" label="7 of 10" />
+      <f-icon-progress-bar
+        iconName="spark"
+        [value]="9"
+        label="9 (clamped to max)"
+        size="l"
+      />
+      <f-icon-progress-bar
+        iconName="spark"
+        [value]="7"
+        [max]="10"
+        label="7 of 10"
+      />
     </div>
 
     <h3>Selectable + reactive form</h3>
@@ -89,7 +110,8 @@ disabled: {{ priceControl.disabled }}</pre>
         />
       </div>
       <div class="state">
-        <pre>value: {{ ratingControl.value }}
+        <pre>
+value: {{ ratingControl.value }}
 touched: {{ ratingControl.touched }}
 disabled: {{ ratingControl.disabled }}</pre>
         <div class="actions">
