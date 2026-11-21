@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  align-self: stretch;
+  justify-self: stretch;
+  background: var(--divider-color, var(--P4, #e7483a));
+  opacity: 0.6;
+}
+
+:host(.horizontal) {
+  height: var(--divider-size, 1px);
+}
+
+:host(.vertical) {
+  width: var(--divider-size, 1px);
+}

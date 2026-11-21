@@ -112,6 +112,14 @@
   --padding-m: 12px;
   --padding-l: 16px;
   --padding-xl: 20px;
+  --padding-xxl: 32px;
+
+  --divider-xs: 1px;
+  --divider-s: 2px;
+  --divider-m: 3px;
+  --divider-l: 4px;
+  --divider-xl: 6px;
+  --divider-xxl: 8px;
 }
 
 h1 {
