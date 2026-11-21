@@ -1,22 +1,24 @@
 import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
- 
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
- 
+
 import db.models  # noqa: F401  (registers every model)
 from db.database import Base, get_db
 from db.models.event import Event
+from db.models.event_tag import EventTag
+from db.models.tag import Tag
 from main import app
- 
+
 # SQLite has no native Decimal type; SQLAlchemy warns about it.
 pytestmark = pytest.mark.filterwarnings("ignore:Dialect sqlite")
- 
- 
+
+
 @pytest.fixture()
 def session():
     engine = create_engine(
@@ -24,57 +26,77 @@ def session():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    Base.metadata.create_all(engine, tables=[Event.__table__])
+    Base.metadata.create_all(
+        engine,
+        tables=[
+            Event.__table__,
+            Tag.__table__,
+            EventTag.__table__,
+        ],
+    )
     with sessionmaker(bind=engine, autoflush=False)() as s:
         yield s
     engine.dispose()
- 
- 
+
+
 @pytest.fixture()
 def client(session):
     def override_get_db():
         yield session
- 
+
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     app.dependency_overrides.clear()
- 
- 
+
+
 def dt(day, hour=18):
     return datetime(2026, 12, day, hour, 0, tzinfo=timezone.utc)
- 
- 
+
+
 def add_event(session, **fields):
     event = Event(**{"title": "Untitled", **fields})
     session.add(event)
     session.commit()
     return event
- 
- 
+
+
+def add_tag(session, name, slug):
+    tag = Tag(name=name, slug=slug)
+    session.add(tag)
+    session.commit()
+    return tag
+
+
+def add_event_tag(session, event, tag):
+    link = EventTag(event_id=event.id, tag_id=tag.id)
+    session.add(link)
+    session.commit()
+
+
 def titles(response):
     return [item["title"] for item in response.json()["items"]]
- 
- 
+
+
 def test_empty_database_returns_empty_list(client):
     body = client.get("/events").json()
     assert body == {"total": 0, "items": []}
- 
- 
+
+
 def test_default_order_is_soonest_first_with_undated_last(client, session):
     add_event(session, title="Later", start_time=dt(20))
     add_event(session, title="Undated")
     add_event(session, title="Sooner", start_time=dt(2))
     assert titles(client.get("/events")) == ["Sooner", "Later", "Undated"]
- 
- 
+
+
 def test_undated_events_stay_last_when_descending(client, session):
     add_event(session, title="Later", start_time=dt(20))
     add_event(session, title="Undated")
     add_event(session, title="Sooner", start_time=dt(2))
     response = client.get("/events", params={"order": "desc"})
     assert titles(response) == ["Later", "Sooner", "Undated"]
- 
- 
+
+
 def test_list_numbers_come_back_as_numbers(client, session):
     add_event(
         session,
@@ -90,8 +112,8 @@ def test_list_numbers_come_back_as_numbers(client, session):
     assert item["price_min"] == pytest.approx(12.5)
     assert item["rating"] == pytest.approx(4.25)
     assert isinstance(item["latitude"], float)
- 
- 
+
+
 @pytest.mark.parametrize(
     "field,value",
     [
@@ -106,8 +128,8 @@ def test_search_matches_each_text_field(client, session, field, value):
     add_event(session, title="Unrelated")
     response = client.get("/events", params={"q": "JAZZ"})
     assert response.json()["total"] == 1
- 
- 
+
+
 def test_search_treats_percent_and_underscore_literally(client, session):
     add_event(session, title="100% fun")
     add_event(session, title="100 percent")
@@ -115,8 +137,8 @@ def test_search_treats_percent_and_underscore_literally(client, session):
     add_event(session, title="axb")
     assert titles(client.get("/events", params={"q": "100%"})) == ["100% fun"]
     assert titles(client.get("/events", params={"q": "a_b"})) == ["a_b"]
- 
- 
+
+
 def test_date_range_filters(client, session):
     add_event(session, title="Early", start_time=dt(1))
     add_event(session, title="Middle", start_time=dt(10))
@@ -129,8 +151,8 @@ def test_date_range_filters(client, session):
         },
     )
     assert titles(response) == ["Middle"]
- 
- 
+
+
 def test_max_price_keeps_free_cheap_and_unpriced(client, session):
     add_event(session, title="Free", price_min=Decimal("0"))
     add_event(session, title="Cheap", price_min=Decimal("10"))
@@ -138,51 +160,51 @@ def test_max_price_keeps_free_cheap_and_unpriced(client, session):
     add_event(session, title="Unpriced")
     response = client.get("/events", params={"max_price": 10, "sort": "title"})
     assert titles(response) == ["Cheap", "Free", "Unpriced"]
- 
- 
+
+
 def test_min_rating_filter_drops_unrated(client, session):
     add_event(session, title="Great", rating=Decimal("4.5"))
     add_event(session, title="Meh", rating=Decimal("3.0"))
     add_event(session, title="Unrated")
     assert titles(client.get("/events", params={"min_rating": 4})) == ["Great"]
- 
- 
+
+
 def test_sort_by_title_descending(client, session):
     for name in ("Bravo", "Alpha", "Charlie"):
         add_event(session, title=name)
     response = client.get("/events", params={"sort": "title", "order": "desc"})
     assert titles(response) == ["Charlie", "Bravo", "Alpha"]
- 
- 
+
+
 def test_sort_by_rating_descending_puts_unrated_last(client, session):
     add_event(session, title="Mid", rating=Decimal("3.0"))
     add_event(session, title="Unrated")
     add_event(session, title="Top", rating=Decimal("4.8"))
     response = client.get("/events", params={"sort": "rating", "order": "desc"})
     assert titles(response) == ["Top", "Mid", "Unrated"]
- 
- 
+
+
 def test_sort_by_visits(client, session):
     add_event(session, title="Quiet", visits_count=1)
     add_event(session, title="Busy", visits_count=99)
     response = client.get("/events", params={"sort": "visits_count", "order": "desc"})
     assert titles(response) == ["Busy", "Quiet"]
- 
- 
+
+
 def test_paging_keeps_total_and_slices_items(client, session):
     for i in range(5):
         add_event(session, title=f"Event {i}", start_time=dt(i + 1))
     body = client.get("/events", params={"limit": 2, "offset": 2}).json()
     assert body["total"] == 5
     assert [item["title"] for item in body["items"]] == ["Event 2", "Event 3"]
- 
- 
+
+
 def test_offset_past_the_end_returns_no_items_but_real_total(client, session):
     add_event(session, title="Only")
     body = client.get("/events", params={"offset": 10}).json()
     assert body == {"total": 1, "items": []}
- 
- 
+
+
 @pytest.mark.parametrize(
     "params",
     [
@@ -198,8 +220,8 @@ def test_offset_past_the_end_returns_no_items_but_real_total(client, session):
 )
 def test_invalid_query_parameters_are_rejected(client, params):
     assert client.get("/events", params=params).status_code == 422
- 
- 
+
+
 def test_get_one_event_includes_detail_fields(client, session):
     event = add_event(
         session,
@@ -219,13 +241,154 @@ def test_get_one_event_includes_detail_fields(client, session):
     assert body["recurrence_pattern"] == "none"
     assert body["currency"] == "USD"
     assert body["latitude"] == pytest.approx(51.047)
- 
- 
+
+
 def test_unknown_event_returns_404(client):
     response = client.get(f"/events/{uuid.uuid4()}")
     assert response.status_code == 404
     assert response.json()["detail"] == "Event not found"
- 
- 
+
+
 def test_malformed_event_id_is_rejected(client):
     assert client.get("/events/not-a-uuid").status_code == 422
+
+
+def test_event_without_tags_returns_empty_tag_list(client, session):
+    add_event(session, title="No Tags")
+
+    response = client.get("/events")
+
+    assert response.status_code == 200
+    item = response.json()["items"][0]
+    assert item["title"] == "No Tags"
+    assert item["tags"] == []
+
+
+def test_event_with_one_tag_includes_tag_details(client, session):
+    event = add_event(session, title="Jazz Night")
+    tag = add_tag(session, "Live Music", "live-music")
+    add_event_tag(session, event, tag)
+
+    response = client.get("/events")
+
+    assert response.status_code == 200
+    item = response.json()["items"][0]
+
+    assert len(item["tags"]) == 1
+    assert item["tags"][0] == {
+        "id": str(tag.id),
+        "name": "Live Music",
+        "slug": "live-music",
+    }
+
+
+def test_event_with_multiple_tags_returns_all_tags(client, session):
+    event = add_event(session, title="Music Festival")
+
+    music = add_tag(session, "Music", "music")
+    nightlife = add_tag(session, "Nightlife", "nightlife")
+
+    add_event_tag(session, event, music)
+    add_event_tag(session, event, nightlife)
+
+    response = client.get("/events")
+
+    assert response.status_code == 200
+    item = response.json()["items"][0]
+
+    returned_slugs = {tag["slug"] for tag in item["tags"]}
+
+    assert returned_slugs == {"music", "nightlife"}
+
+
+def test_filter_events_by_tag_slug(client, session):
+    music_event = add_event(session, title="Jazz Night")
+    food_event = add_event(session, title="Food Festival")
+    unrelated_event = add_event(session, title="Art Exhibition")
+
+    music = add_tag(session, "Music", "music")
+    food = add_tag(session, "Food", "food")
+    art = add_tag(session, "Art", "art")
+
+    add_event_tag(session, music_event, music)
+    add_event_tag(session, food_event, food)
+    add_event_tag(session, unrelated_event, art)
+
+    response = client.get("/events", params={"tag": "music"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    assert titles(response) == ["Jazz Night"]
+
+
+def test_filter_by_tag_slug_returns_empty_when_no_events_match(client, session):
+    add_event(session, title="Jazz Night")
+    add_tag(session, "Food", "food")
+
+    response = client.get("/events", params={"tag": "food"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 0
+    assert response.json()["items"] == []
+
+
+def test_filter_by_unknown_tag_returns_empty_list(client, session):
+    add_event(session, title="Jazz Night")
+
+    response = client.get("/events", params={"tag": "does-not-exist"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 0
+    assert response.json()["items"] == []
+
+
+def test_tag_filter_can_be_combined_with_search(client, session):
+    jazz_event = add_event(session, title="Jazz Night")
+    rock_event = add_event(session, title="Rock Concert")
+    food_event = add_event(session, title="Jazz-themed Dinner")
+
+    music = add_tag(session, "Music", "music")
+    food = add_tag(session, "Food", "food")
+
+    add_event_tag(session, jazz_event, music)
+    add_event_tag(session, rock_event, music)
+    add_event_tag(session, food_event, food)
+
+    response = client.get(
+        "/events",
+        params={"tag": "music", "q": "jazz"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    assert titles(response) == ["Jazz Night"]
+
+
+def test_get_one_event_includes_tags(client, session):
+    event = add_event(session, title="Night Market")
+    food = add_tag(session, "Food", "food")
+    nightlife = add_tag(session, "Nightlife", "nightlife")
+
+    add_event_tag(session, event, food)
+    add_event_tag(session, event, nightlife)
+
+    response = client.get(f"/events/{event.id}")
+
+    assert response.status_code == 200
+
+    body = response.json()
+    returned_slugs = {tag["slug"] for tag in body["tags"]}
+
+    assert returned_slugs == {"food", "nightlife"}
+
+
+def test_tag_filter_is_case_insensitive(client, session):
+    event = add_event(session, title="Jazz Night")
+    tag = add_tag(session, "Music", "music")
+    add_event_tag(session, event, tag)
+
+    response = client.get("/events", params={"tag": "MUSIC"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    assert titles(response) == ["Jazz Night"]
