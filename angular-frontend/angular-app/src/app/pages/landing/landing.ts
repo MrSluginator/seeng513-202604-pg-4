@@ -1,5 +1,13 @@
 import { Sort } from './../../../models/filters';
-import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { EventGrid } from '../../components/event-grid/event-grid';
 import { FilterService } from '../../services/filter-service';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
@@ -16,7 +24,11 @@ import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
 import { Footer } from '../../components/footer/footer';
 import { AllCategories } from '../../molecules/category/all-categories';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { categoriesList, CategoryForm, CategoryName } from '../../molecules/category/categories';
+import {
+  categoriesList,
+  CategoryForm,
+  CategoryName,
+} from '../../molecules/category/categories';
 import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
@@ -28,8 +40,8 @@ import { FormControl, FormGroup } from '@angular/forms';
     MenuButton,
     SearchBar,
     Footer,
-    AllCategories
-],
+    AllCategories,
+  ],
   selector: 'f-landing',
   styleUrl: './landing.css',
   templateUrl: './landing.html',
@@ -41,7 +53,8 @@ export class Landing {
 
   protected readonly featured = this.eventApi.getFeatured();
   protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
-  private readonly feedSection = viewChild.required<ElementRef<HTMLElement>>('feedSection');
+  private readonly feedSection =
+    viewChild.required<ElementRef<HTMLElement>>('feedSection');
 
   protected readonly sortOptions: MenuOption[] = Object.entries(
     SORT_OPTIONS
@@ -73,14 +86,12 @@ export class Landing {
 
   constructor() {
     // form -> filters
-    this.categoryForm.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        const raw = this.categoryForm.getRawValue();
-        const categories = categoriesList.filter((c) => raw[c]);
-        this.filterSvc.patch({ categories });
-        this.scrollToFeed();
-      });
+    this.categoryForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      const raw = this.categoryForm.getRawValue();
+      const categories = categoriesList.filter((c) => raw[c]);
+      this.filterSvc.patch({ categories });
+      this.scrollToFeed();
+    });
 
     // filters -> form (so the filter dialog or reset() updates the chips too)
     effect(() => {
