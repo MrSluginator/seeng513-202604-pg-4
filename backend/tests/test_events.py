@@ -11,7 +11,9 @@ from sqlalchemy.pool import StaticPool
 import db.models  # noqa: F401  (registers every model)
 from db.database import Base, get_db
 from db.models.event import Event
+from db.models.event_photo import EventPhoto
 from db.models.event_tag import EventTag
+from db.models.photo import Photo
 from db.models.tag import Tag
 from main import app
 
@@ -32,6 +34,8 @@ def session():
             Event.__table__,
             Tag.__table__,
             EventTag.__table__,
+            Photo.__table__,
+            EventPhoto.__table__,
         ],
     )
     with sessionmaker(bind=engine, autoflush=False)() as s:
@@ -69,6 +73,29 @@ def add_tag(session, name, slug):
 
 def add_event_tag(session, event, tag):
     link = EventTag(event_id=event.id, tag_id=tag.id)
+    session.add(link)
+    session.commit()
+
+
+def add_photo(session, url, name="photo.jpg"):
+    photo = Photo(
+        file_name=name,
+        file_url=url,
+        file_size_bytes=1024,
+        mime_type="image/jpeg",
+    )
+    session.add(photo)
+    session.commit()
+    return photo
+
+
+def add_event_photo(session, event, photo, is_cover=False, display_order=0):
+    link = EventPhoto(
+        event_id=event.id,
+        photo_id=photo.id,
+        is_cover=is_cover,
+        display_order=display_order,
+    )
     session.add(link)
     session.commit()
 
@@ -392,3 +419,109 @@ def test_tag_filter_is_case_insensitive(client, session):
     assert response.status_code == 200
     assert response.json()["total"] == 1
     assert titles(response) == ["Jazz Night"]
+
+
+def test_event_without_photos_returns_empty_photo_list(client, session):
+    add_event(session, title="No Photos")
+
+    item = client.get("/events").json()["items"][0]
+
+    assert item["photos"] == []
+
+
+def test_event_with_one_photo_includes_photo_details(client, session):
+    event = add_event(session, title="Jazz Night")
+    photo = add_photo(session, "https://img.example/jazz.jpg")
+    add_event_photo(session, event, photo, is_cover=True, display_order=0)
+
+    item = client.get("/events").json()["items"][0]
+
+    assert item["photos"] == [
+        {
+            "id": str(photo.id),
+            "url": "https://img.example/jazz.jpg",
+            "is_cover": True,
+            "display_order": 0,
+        }
+    ]
+
+
+def test_cover_photo_comes_first_then_display_order(client, session):
+    event = add_event(session, title="Night Market")
+    third = add_photo(session, "https://img.example/3.jpg")
+    cover = add_photo(session, "https://img.example/cover.jpg")
+    first = add_photo(session, "https://img.example/1.jpg")
+    second = add_photo(session, "https://img.example/2.jpg")
+    add_event_photo(session, event, third, display_order=3)
+    add_event_photo(session, event, first, display_order=1)
+    add_event_photo(session, event, cover, is_cover=True, display_order=9)
+    add_event_photo(session, event, second, display_order=2)
+
+    item = client.get("/events").json()["items"][0]
+
+    assert [photo["url"] for photo in item["photos"]] == [
+        "https://img.example/cover.jpg",
+        "https://img.example/1.jpg",
+        "https://img.example/2.jpg",
+        "https://img.example/3.jpg",
+    ]
+
+
+def test_each_event_only_gets_its_own_photos(client, session):
+    jazz = add_event(session, title="Jazz Night", start_time=dt(1))
+    market = add_event(session, title="Night Market", start_time=dt(2))
+    add_event_photo(session, jazz, add_photo(session, "https://img.example/j.jpg"))
+    add_event_photo(session, market, add_photo(session, "https://img.example/m.jpg"))
+
+    items = client.get("/events").json()["items"]
+
+    assert [item["title"] for item in items] == ["Jazz Night", "Night Market"]
+    assert [[p["url"] for p in item["photos"]] for item in items] == [
+        ["https://img.example/j.jpg"],
+        ["https://img.example/m.jpg"],
+    ]
+
+
+def test_photos_and_tags_do_not_duplicate_events(client, session):
+    event = add_event(session, title="Busy Event")
+    for i in range(3):
+        photo = add_photo(session, f"https://img.example/{i}.jpg")
+        add_event_photo(session, event, photo, display_order=i)
+    for slug in ("music", "food"):
+        add_event_tag(session, event, add_tag(session, slug.title(), slug))
+
+    body = client.get("/events").json()
+
+    assert body["total"] == 1
+    assert len(body["items"]) == 1
+    assert len(body["items"][0]["photos"]) == 3
+    assert len(body["items"][0]["tags"]) == 2
+
+
+def test_get_one_event_includes_photos_in_order(client, session):
+    event = add_event(session, title="Night Market")
+    later = add_photo(session, "https://img.example/later.jpg")
+    cover = add_photo(session, "https://img.example/cover.jpg")
+    add_event_photo(session, event, later, display_order=1)
+    add_event_photo(session, event, cover, is_cover=True, display_order=5)
+
+    response = client.get(f"/events/{event.id}")
+
+    assert response.status_code == 200
+    assert [p["url"] for p in response.json()["photos"]] == [
+        "https://img.example/cover.jpg",
+        "https://img.example/later.jpg",
+    ]
+
+
+def test_tag_filter_still_returns_photos(client, session):
+    event = add_event(session, title="Jazz Night")
+    add_event_tag(session, event, add_tag(session, "Music", "music"))
+    add_event_photo(session, event, add_photo(session, "https://img.example/j.jpg"))
+
+    body = client.get("/events", params={"tag": "music"}).json()
+
+    assert body["total"] == 1
+    assert [p["url"] for p in body["items"][0]["photos"]] == [
+        "https://img.example/j.jpg"
+    ]

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from db.database import get_db
 from db.models.event import Event
+from db.models.event_photo import EventPhoto
 from db.models.tag import Tag
 from schemas import EventDetail, EventList, EventSummary
 
@@ -19,6 +20,14 @@ SORT_COLUMNS = {
     "rating": Event.rating,
     "visits_count": Event.visits_count,
 }
+
+
+def _load_options():
+    """Fetch tags and photos in bulk: a fixed number of queries per request."""
+    return (
+        selectinload(Event.tags),
+        selectinload(Event.event_photo_links).selectinload(EventPhoto.photo),
+    )
 
 
 def _escape_like(text: str) -> str:
@@ -76,7 +85,7 @@ def list_events(
     direction = column.desc() if order == "desc" else column.asc()
     stmt = (
         select(Event)
-        .options(selectinload(Event.tags))
+        .options(*_load_options())
         .where(*conditions)
         .order_by(direction.nulls_last(), Event.id)
         .limit(limit)
@@ -92,7 +101,7 @@ def list_events(
 
 @router.get("/{event_id}", response_model=EventDetail)
 def get_event(event_id: uuid.UUID, db: Session = Depends(get_db)) -> EventDetail:
-    stmt = select(Event).options(selectinload(Event.tags)).where(Event.id == event_id)
+    stmt = select(Event).options(*_load_options()).where(Event.id == event_id)
 
     event = db.scalars(stmt).one_or_none()
 
