@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { Button } from '../../atoms/button/button';
 import { Carousel } from '../../molecules/carousel/carousel';
-import { Event } from '../../../models/event.schema';
+import { Event, EventDetail } from '../../../models/event.schema';
 import { EventCard } from '../event-card/event-card';
 
 export interface CarouselDisplay {

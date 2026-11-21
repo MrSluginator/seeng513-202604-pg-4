@@ -12,7 +12,7 @@ import {
   MenuOption,
 } from '../../molecules/menu-button/menu-button';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import { EventDetails } from '../../../models/event.schema';
+import { Event, EventDetail } from '../../../models/event.schema';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import {
   EventGrid,
@@ -25,7 +25,7 @@ import { Divider } from '../../atoms/divider/divider';
 const makeEvent = (
   id: number,
   overrides: Record<string, unknown> = {}
-): EventDetails => ({
+): EventDetail => ({
   id: '',
   creator_id: '',
   title: `Test event ${id}`,
@@ -47,6 +47,7 @@ const makeEvent = (
   saved: false,
   created_at: new Date(),
   updated_at: new Date(),
+  photo: { id: '', url: `https://picsum.photos/seed/${id}a/600/400` },
   creator: {},
   photos: [
     { id: '', url: `https://picsum.photos/seed/${id}a/600/400` },
@@ -109,7 +110,7 @@ export class Testing {
   protected readonly allowClear = signal(true);
 
   // ---------- Events ----------
-  protected readonly events: EventDetails[] = [
+  protected readonly events: EventDetail[] = [
     makeEvent(1),
     makeEvent(2, {
       title: 'Saved by default',

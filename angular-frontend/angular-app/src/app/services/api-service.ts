@@ -1,6 +1,6 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { EventDetailsSchema, EventSchema } from '../../models/event.schema';
+import { EventDetailSchema, EventSchema } from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
 import { FilterProps } from '../../models/filters';
 import { z } from 'zod';
@@ -55,7 +55,7 @@ export class EventService {
       () => {
         return isUUID(id()) ? `/api/events/${id()}` : undefined;
       },
-      { parse: EventDetailsSchema.parse }
+      { parse: EventDetailSchema.parse }
     );
   }
 

@@ -27,6 +27,7 @@ export const EventSchema = z.object({
   shares_count: z.number().int().nonnegative(),
   review_count: z.number().int().nonnegative(),
   rating: Decimal.pipe(z.number().min(0).max(5)).nullable(),
+  photo: PhotoSchema.nullable(),
 
   saved: z.boolean(),
 
@@ -34,7 +35,7 @@ export const EventSchema = z.object({
   updated_at: IsoDate,
 });
 
-export const EventDetailsSchema = EventSchema.extend({
+export const EventDetailSchema = EventSchema.extend({
   creator: UserSchema,
   photos: z.array(PhotoSchema),
   reviews: z.array(ReviewSchema),
@@ -43,4 +44,4 @@ export const EventDetailsSchema = EventSchema.extend({
 });
 
 export type Event = z.infer<typeof EventSchema>;
-export type EventDetails = z.infer<typeof EventDetailsSchema>;
+export type EventDetail = z.infer<typeof EventDetailSchema>;
