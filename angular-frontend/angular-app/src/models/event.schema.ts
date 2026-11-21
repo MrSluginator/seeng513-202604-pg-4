@@ -40,7 +40,7 @@ export const EventDetailsSchema = EventSchema.extend({
   reviews: z.array(ReviewSchema),
   tags: z.array(TagSchema),
   scrapped_source: ScrapedEventSchema.nullable(),
-})
+});
 
 export type Event = z.infer<typeof EventSchema>;
 export type EventDetails = z.infer<typeof EventDetailsSchema>;

@@ -12,7 +12,7 @@ import {
   MenuOption,
 } from '../../molecules/menu-button/menu-button';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import { Event, EventDetails } from '../../../models/event.schema';
+import { EventDetails } from '../../../models/event.schema';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import {
   EventGrid,
@@ -25,46 +25,43 @@ import { Divider } from '../../atoms/divider/divider';
 const makeEvent = (
   id: number,
   overrides: Record<string, unknown> = {}
-): EventDetails =>
-  ({
-    id: '',
-    creator_id: '',
-    title: `Test event ${id}`,
-    summary: 'shit',
-    description: 'A sample event used for testing the card layout.',
-    time: {
-      start_time: new Date(2026, 11, 5, 19, 30),
-      end_time: new Date(2026, 11, 5, 19, 30),
-      recurrence_pattern: 'none',
-      recurrence_end_date: null,
-    },
-    price: null,
-    location: null,
-    crowd_by_hour: null,
-    visits_count: 1,
-    shares_count: 1,
-    review_count: 1,
-    rating: 4.3,
-    saved: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-    creator: {},
-    photos: [
-      {id: '', url: `https://picsum.photos/seed/${id}a/600/400`},
-      {id: '', url: `https://picsum.photos/seed/${id}b/600/400`},
-      {id: '', url: `https://picsum.photos/seed/${id}c/600/400`},
-    ],
-    reviews: [
-
-    ],
-    tags: [
-      {id: '', label: 'music'},
-      {id: '', label: 'outdoor'},
-      {id: '', label: 'family'}
-    ],
-    scrapped_source: null,
-    ...overrides,
-  });
+): EventDetails => ({
+  id: '',
+  creator_id: '',
+  title: `Test event ${id}`,
+  summary: 'shit',
+  description: 'A sample event used for testing the card layout.',
+  time: {
+    start_time: new Date(2026, 11, 5, 19, 30),
+    end_time: new Date(2026, 11, 5, 19, 30),
+    recurrence_pattern: 'none',
+    recurrence_end_date: null,
+  },
+  price: null,
+  location: null,
+  crowd_by_hour: null,
+  visits_count: 1,
+  shares_count: 1,
+  review_count: 1,
+  rating: 4.3,
+  saved: false,
+  created_at: new Date(),
+  updated_at: new Date(),
+  creator: {},
+  photos: [
+    { id: '', url: `https://picsum.photos/seed/${id}a/600/400` },
+    { id: '', url: `https://picsum.photos/seed/${id}b/600/400` },
+    { id: '', url: `https://picsum.photos/seed/${id}c/600/400` },
+  ],
+  reviews: [],
+  tags: [
+    { id: '', label: 'music' },
+    { id: '', label: 'outdoor' },
+    { id: '', label: 'family' },
+  ],
+  scrapped_source: null,
+  ...overrides,
+});
 
 @Component({
   imports: [

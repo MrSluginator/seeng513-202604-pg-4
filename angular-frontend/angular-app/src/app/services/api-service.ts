@@ -5,7 +5,6 @@ import { isUUID } from '../../utils/validation';
 import { FilterProps } from '../../models/filters';
 import { z } from 'zod';
 
-
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
 function filtersToParams(f: FilterProps): Record<string, Param> {
@@ -43,33 +42,39 @@ export class EventService {
   private readonly http = inject(HttpClient);
 
   getEvent(id: () => string) {
-    return httpResource(() => {
-      return isUUID(id()) ? `/api/events/${id()}` : undefined;
-    }, { parse: EventSchema.parse });
+    return httpResource(
+      () => {
+        return isUUID(id()) ? `/api/events/${id()}` : undefined;
+      },
+      { parse: EventSchema.parse }
+    );
   }
 
   getEventDetails(id: () => string) {
-    return httpResource(() => {
-      return isUUID(id()) ? `/api/events/${id()}` : undefined;
-    }, { parse: EventDetailsSchema.parse });
+    return httpResource(
+      () => {
+        return isUUID(id()) ? `/api/events/${id()}` : undefined;
+      },
+      { parse: EventDetailsSchema.parse }
+    );
   }
 
   getEventFeed(filters: () => FilterProps) {
-    return httpResource(() => ({
+    return httpResource(
+      () => ({
         url: '/api/events',
         params: filtersToParams(filters()),
       }),
       {
         parse: z.array(EventSchema).parse,
         defaultValue: [],
-      },
+      }
     );
   }
 
   getFeatured() {
-    return httpResource(
-      () => '/api/events/featured',
-      { parse: z.array(EventSchema).parse }
-    )
+    return httpResource(() => '/api/events/featured', {
+      parse: z.array(EventSchema).parse,
+    });
   }
 }

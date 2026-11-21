@@ -15,10 +15,7 @@ import { Carousel } from '../../molecules/carousel/carousel';
 import { Widget } from '../../atoms/widget/widget';
 import { Price } from '../../molecules/price/price';
 import { Event, EventDetails } from '../../../models/event.schema';
-import {
-  formatNumber,
-  formatTimeRange,
-} from '../../../utils/format';
+import { formatNumber, formatTimeRange } from '../../../utils/format';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
 import {
   ReviewDialog,

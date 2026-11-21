@@ -1,4 +1,4 @@
-import { Time } from "../models/time.schema";
+import { Time } from '../models/time.schema';
 
 const timeFormatter = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',
@@ -18,7 +18,8 @@ export function formatTime(date: Date): string {
 
 export function formatTimeRange(time: Time): string {
   if (time.start_time === null && time.end_time === null) return 'Invalid time';
-  if (time.start_time === null) return timeFormatter.format(time.end_time as Date);
+  if (time.start_time === null)
+    return timeFormatter.format(time.end_time as Date);
   if (time.end_time === null) return timeFormatter.format(time.start_time);
   return `${timeFormatter.format(time.start_time)} - ${timeFormatter.format(time.end_time)}`;
 }

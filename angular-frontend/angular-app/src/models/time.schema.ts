@@ -6,7 +6,7 @@ export const TimeSchema = z.object({
   end_time: IsoDate.nullable(),
 
   recurrence_pattern: z.string(),
-  recurrence_end_date: IsoDate.nullable()
+  recurrence_end_date: IsoDate.nullable(),
 });
 
-export type Time = z.infer<typeof TimeSchema>
+export type Time = z.infer<typeof TimeSchema>;
