@@ -1,8 +1,10 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Service, computed, signal } from '@angular/core';
 import { DEFAULT_FILTERS, FilterProps } from '../../models/filters';
 import { SearchResult } from '../molecules/search-bar/search-bar';
+import { Tag } from '../../models/tag.schema';
+import { Location } from '../../models/location.schema';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class FilterService {
   private readonly _filters = signal<FilterProps>(DEFAULT_FILTERS);
   private readonly _dialogOpen = signal(false);
@@ -44,16 +46,16 @@ export class FilterService {
   }
 
   /** For removable tag chips outside the dialog. */
-  removeTag(tag: string): void {
-    this.patch({ tags: this._filters().tags.filter((t) => t !== tag) });
+  removeTag(tag: Tag): void {
+    this.patch({ tags: this._filters().tags.filter((t) => t.id !== tag.id) });
   }
 
-  queryTags(query: string): SearchResult[] {
+  queryTags(query: string): SearchResult<Tag>[] {
     console.log(query);
     return [];
   }
 
-  queryLocations(query: string): SearchResult[] {
+  queryLocations(query: string): SearchResult<Location>[] {
     console.log(query);
     return [];
   }

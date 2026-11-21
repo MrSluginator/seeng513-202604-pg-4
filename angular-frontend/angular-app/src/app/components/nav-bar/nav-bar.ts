@@ -10,6 +10,7 @@ import { Button } from '../../atoms/button/button';
 import { Icon } from '../../atoms/icon/icon';
 import { Logo } from '../../atoms/logo/logo';
 import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
+import { NavbarService } from '../../services/navbar-service';
 
 @Component({
   selector: 'f-nav-bar',
@@ -18,17 +19,14 @@ import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
   styleUrl: './nav-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavBar {
+export class NavBar<T> {
   private readonly router = inject(Router);
-
-  readonly signedIn = input.required<boolean>();
-  readonly placeholder = input('Search this page');
-  readonly results = input<SearchResult[]>([]);
+  protected readonly nav = inject(NavbarService);
 
   // Bound to the search bar with [(query)]
   protected readonly query = signal('');
 
-  protected onResultSelected(result: SearchResult): void {
+  protected onResultSelected(result: SearchResult<T>): void {
     this.router.navigate(['/search'], { queryParams: { q: result.label } });
   }
 

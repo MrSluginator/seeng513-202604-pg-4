@@ -1,5 +1,6 @@
 import { CategoryName } from '../app/molecules/category/categories';
 import { Location } from './location.schema';
+import { Tag } from './tag.schema';
 
 export const SORT_OPTIONS = {
   recommended: 'Recommended',
@@ -15,7 +16,7 @@ export interface FilterProps {
   sort: Sort;
   sortDirection: 'asc' | 'desc';
   categories: CategoryName[];
-  tags: string[];
+  tags: Tag[];
   locations: Location[];
   timeRange?: { start: Date; end: Date };
   priceRange?: { lowest: number; highest: number };

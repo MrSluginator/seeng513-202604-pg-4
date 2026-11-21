@@ -10,7 +10,7 @@
 
 @if (showMenu()) {
   <div class="menu" role="listbox">
-    @for (result of results(); track result.id; let i = $index) {
+    @for (result of results(); track result.label; let i = $index) {
       <button
         type="button"
         class="option"

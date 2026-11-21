@@ -36,6 +36,8 @@ import {
 } from '../../molecules/category/categories';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
+import { Tag } from '../../../models/tag.schema';
+import { Location } from '../../../models/location.schema';
 
 const toHours = (d: Date) => d.getHours() + d.getMinutes() / 60;
 
@@ -91,12 +93,12 @@ export class FilterDialog {
     this.filterService.queryLocations(this.tagQuery())
   );
 
-  protected onTagSelected(result: SearchResult): void {
-    this.filterService.filters().tags.push(result.label);
+  protected onTagSelected(result: SearchResult<Tag>): void {
+    this.filterService.filters().tags.push(result.value);
   }
 
-  protected onLocationSelected(result: SearchResult): void {
-    this.filterService.filters().tags.push(result.label);
+  protected onLocationSelected(result: SearchResult<Location>): void {
+    this.filterService.filters().locations.push(result.value);
   }
 
   protected readonly sortOptions = Object.entries(SORT_OPTIONS).map(
@@ -193,8 +195,8 @@ export class FilterDialog {
     this.patch({ sort });
   }
 
-  protected removeTag(tag: string): void {
-    this.patch({ tags: this.draft().tags.filter((t) => t !== tag) });
+  protected removeTag(id: string): void {
+    this.patch({ tags: this.draft().tags.filter((t) => t.id !== id) });
   }
 
   protected setTimeRange(n: RangeFilterValue): void {

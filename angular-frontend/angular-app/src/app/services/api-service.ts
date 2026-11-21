@@ -15,7 +15,7 @@ function filtersToParams(f: FilterProps): Record<string, Param> {
 
   // Arrays: only send when non-empty. Angular repeats the key (?tag=a&tag=b)
   if (f.categories.length) params['category'] = f.categories;
-  if (f.tags.length) params['tag'] = f.tags;
+  if (f.tags.length) params['tag'] = f.tags.map((t) => t.id);
   if (f.locations.length) {
     params['location'] = f.locations.map((l) => `${l.latitude},${l.longitude}`);
   }

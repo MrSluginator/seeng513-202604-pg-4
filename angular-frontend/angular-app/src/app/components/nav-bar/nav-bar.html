@@ -44,11 +44,11 @@
     <div class="holder">
       <f-search-bar
         [(query)]="query"
-        [placeholder]="placeholder()"
-        [results]="results()"
-        (resultSelected)="onResultSelected($event)"
+        [placeholder]="nav.placeholder()"
+        [results]="nav.results()"
+        (resultSelected)="nav.select($event)"
       />
-      @if (signedIn()) {
+      @if (nav.signedIn()) {
         <div>Profile Button</div>
       } @else {
         <f-button text="Sign In" (click)="onSignInClick()" />
