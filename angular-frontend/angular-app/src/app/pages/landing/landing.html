@@ -1,1 +1,56 @@
-<p>landing works!</p>
+<div class="landing">
+  <div>Header</div>
+  <div class="content">
+    <div class="featured">
+      <h1>Our Picks:</h1>
+      <f-event-grid
+        size="l"
+        [events]="featured.hasValue() ? featured.value() : []"
+        [display]="{ type: 'carousel', controls: true }"
+        /* [loading]="featured.isLoading()" */
+      />
+    </div>
+    <f-divider />
+    <div class="feed">
+      <div class="header">
+        <div class="tags">
+          <small>Showing items with the following tags:</small>
+          @for (tag of filterSvc.filters().tags; track tag.id) {
+            <f-widget
+              [text]="tag.label"
+              icon="times"
+              (click)="filterSvc.removeTag(tag)"
+            />
+          }
+        </div>
+        <div class="filters">
+          <f-menu-button
+            class="sort"
+            [text]="`Sort: ${filterSvc.filters().sort}`"
+            label="Sort events"
+            [options]="sortOptions"
+            (selected)="onSortSelected($event)"
+          />
+          <f-search-bar
+            class="search"
+            placeholder="Search events..."
+            [(query)]="eventQuery"
+            [results]="eventResults()"
+            (resultSelected)="selectEvent($event)"
+          />
+          <f-filter-button />
+        </div>
+      </div>
+      <f-event-grid
+        size="m"
+        [events]="feed.hasValue() ? feed.value() : []"
+        [display]="{ type: 'grid', hidden: true }"
+        /* [loading]="feed.isLoading()" */
+      />
+    </div>
+  </div>
+  <div>
+    Footer
+    <f-button text="console filters" (click)="printFilters()"></f-button>
+  </div>
+</div>
