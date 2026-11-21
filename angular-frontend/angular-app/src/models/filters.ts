@@ -1,5 +1,5 @@
 import { CategoryName } from '../app/molecules/category/categories';
-import { Location } from './types';
+import { Location } from './location.schema';
 
 export const SORT_OPTIONS = {
   recommended: 'Recommended',

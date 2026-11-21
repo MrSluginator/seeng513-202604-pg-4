@@ -21,12 +21,14 @@ export const EventSchema = z.object({
   price: PriceSchema.nullable(),
   location: LocationSchema.nullable(),
 
-  crowd_by_hour: z.record(z.string(), z.unknown()),
+  crowd_by_hour: z.record(z.string(), z.unknown()).nullable(),
 
   visits_count: z.number().int().nonnegative(),
   shares_count: z.number().int().nonnegative(),
   review_count: z.number().int().nonnegative(),
   rating: Decimal.pipe(z.number().min(0).max(5)).nullable(),
+
+  saved: z.boolean(),
 
   created_at: IsoDate,
   updated_at: IsoDate,

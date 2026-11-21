@@ -14,10 +14,9 @@ import { Button } from '../../atoms/button/button';
 import { Carousel } from '../../molecules/carousel/carousel';
 import { Widget } from '../../atoms/widget/widget';
 import { Price } from '../../molecules/price/price';
-import { Event } from '../../../models/event.schema';
+import { Event, EventDetails } from '../../../models/event.schema';
 import {
   formatNumber,
-  formatTime,
   formatTimeRange,
 } from '../../../utils/format';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
@@ -48,7 +47,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 export class EventCard {
   private readonly router = inject(Router);
 
-  readonly event = input.required<Event>();
+  readonly event = input.required<EventDetails>();
   readonly size = input.required<EventSize>();
   protected readonly reviewOpen = signal(false);
 
@@ -61,19 +60,20 @@ export class EventCard {
 
   protected readonly timeLabel = computed(() => {
     const time = this.event().time;
-    return time instanceof Date ? formatTime(time) : formatTimeRange(time);
+    if (time === null) return '';
+    return formatTimeRange(time);
   });
 
   protected readonly ratingLabel = computed(() => `${this.event().rating}/5.0`);
   protected readonly reviewsLabel = computed(() => {
-    return `${formatNumber(this.event().reviews)} reviews`;
+    return `${formatNumber(this.event().review_count)} reviews`;
   });
 
   protected readonly getKey = (src: string, i: number) => `${i}:${src}`;
 
   protected altFor(index: number): string {
-    const { title, imageUrls } = this.event();
-    return `${title} photo ${index + 1} of ${imageUrls.length}`;
+    const { title, photos } = this.event();
+    return `${title} photo ${index + 1} of ${photos.length}`;
   }
 
   protected searchTag(tag: string): void {

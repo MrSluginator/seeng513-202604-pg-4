@@ -1,6 +1,6 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Event, EventDetails, EventDetailsSchema, EventSchema } from '../../models/event.schema';
+import { EventDetailsSchema, EventSchema } from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
 import { FilterProps } from '../../models/filters';
 import { z } from 'zod';

@@ -7,4 +7,4 @@ export const LocationSchema = z.object({
   longitude: Decimal.pipe(z.number().min(-180).max(180)).nullable(),
 });
 
-export type Location = z.infer<typeof Location>;
+export type Location = z.infer<typeof LocationSchema>;
