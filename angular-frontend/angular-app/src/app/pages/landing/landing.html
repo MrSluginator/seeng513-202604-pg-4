@@ -1,5 +1,13 @@
 <div class="landing">
-  <div>Header</div>
+  <header class="banner">
+    <div class="info">
+      <div class="slogan">Spark New Connections</div>
+      <h3>Browse nearby happenings, save favourites, and plan your next outing.</h3>
+    </div>
+    <div class="categories">
+      <f-all-categories [form]="categoryForm"/>
+    </div>
+  </header>
   <div class="content">
     <div class="featured">
       <h1>Our Picks:</h1>
@@ -11,8 +19,8 @@
       />
     </div>
     <f-divider />
-    <div class="feed">
-      <div class="header">
+    <div #feedSection class="feed">
+      <div class="feed-header">
         <div class="tags">
           <small>Showing items with the following tags:</small>
           @for (tag of filterSvc.filters().tags; track tag.id) {
@@ -49,8 +57,5 @@
       />
     </div>
   </div>
-  <div>
-    Footer
-    <f-button text="console filters" (click)="printFilters()"></f-button>
-  </div>
+  <f-footer/>
 </div>
