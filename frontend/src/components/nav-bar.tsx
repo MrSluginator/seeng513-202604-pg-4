@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from '../assets/styles/nav-bar.module.css';
 import { Button, Icon, Logo, TextInput } from '../molecules';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ interface NavBarProps {
 function NavItem({
   to,
   children,
-  end,
+  end = false,
 }: {
   to: string;
   children: React.ReactNode;
@@ -69,7 +69,7 @@ function NavBar({ signedIn }: NavBarProps) {
           </NavItem>
         </div>
         <div className={styles.holder}>
-          <TextInput icon="search" placeholder="Search"></TextInput>
+          <TextInput icon="search" placeholder="Search this page"></TextInput>
           <Button icon="settings" onClick={onSettingsClick}></Button>
           {!signedIn && (
             <Button text="Sign In" onClick={onSignInClick}></Button>

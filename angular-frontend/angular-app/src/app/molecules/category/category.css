@@ -1,0 +1,28 @@
+.category {
+  --width: 80px;
+}
+
+.p {
+  --w-light: var(--p3);
+  --w-dark: var(--p4);
+}
+.s {
+  --w-light: var(--s3);
+  --w-dark: var(--s4);
+}
+.o {
+  --w-light: var(--o1);
+  --w-dark: var(--o2);
+}
+.y {
+  --w-light: var(--y1);
+  --w-dark: var(--y2);
+}
+.g {
+  --w-light: var(--g1);
+  --w-dark: var(--g2);
+}
+.b {
+  --w-light: var(--b1);
+  --w-dark: var(--b2);
+}

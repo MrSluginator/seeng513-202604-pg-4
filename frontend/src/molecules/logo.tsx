@@ -1,6 +1,6 @@
 import flareLogo1 from '../assets/icons/flare-logo-1.svg?react';
 import styles from '../assets/styles/logo.module.css';
-import { Color, Size } from '../global';
+import { Color, Size } from '../types';
 
 interface LogoProps {
   size: Size;

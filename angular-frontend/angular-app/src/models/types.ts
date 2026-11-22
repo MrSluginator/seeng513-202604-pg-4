@@ -39,3 +39,18 @@ export type Color =
   | 'b1'
   | 'b2'
   | 'b3';
+export type ColorGroup = 'p' | 's' | 'n' | 't' | 'o' | 'y' | 'g' | 'b';
+export interface Location {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
+export interface PriceRange {
+  low: number;
+  high: number;
+}
+export type Range<T> = [T, T];

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Carousel, EventCard } from '../components';
+import { EventCard } from '../components';
 import {
   Button,
+  FilterButton,
   Icon,
   MenuButton,
   Pin,
@@ -14,6 +15,7 @@ import {
   Widget,
 } from '../molecules';
 import { Event } from '../components/event-card';
+import EventGrid from '../components/event-grid';
 
 function Testing() {
   const [size, setSize] = useState('md');
@@ -180,6 +182,27 @@ function Testing() {
     <div>
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
+      <FilterButton onApply={(_) => {}} />
+      <EventGrid
+        size="m"
+        display={{ type: 'grid', hidden: true }}
+        events={events}
+      />
+      <EventGrid
+        size="s"
+        display={{ type: 'grid', hidden: false }}
+        events={events}
+      />
+      <EventGrid
+        size="s"
+        display={{ type: 'carousel', controls: false }}
+        events={events}
+      />
+      <EventGrid
+        size="l"
+        display={{ type: 'carousel', controls: true }}
+        events={events}
+      />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div
           style={{

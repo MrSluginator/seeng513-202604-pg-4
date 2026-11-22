@@ -9,6 +9,8 @@ interface CarouselProps<T> {
   overlay?: boolean;
   label?: string;
   itemLabel?: string;
+  showControls?: boolean;
+  className?: string;
 }
 
 function Carousel<T>({
@@ -18,36 +20,65 @@ function Carousel<T>({
   overlay = true,
   label,
   itemLabel = 'item',
+  showControls = true,
+  className,
 }: CarouselProps<T>) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<number | null>(null); // slide we're currently animating to
   const [index, setIndex] = useState(0);
 
   if (items.length === 0) return null;
 
   const goTo = (i: number) => {
     const el = trackRef.current;
-    if (!el) return;
-    el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
+    const clamped = Math.max(0, Math.min(items.length - 1, i));
+    const slide = el?.children[clamped] as HTMLElement | undefined;
+    if (!el || !slide) return;
+    targetRef.current = clamped;
+    slide.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest', // don't scroll the page vertically
+    });
   };
+
+  const step = (delta: number) => goTo((targetRef.current ?? index) + delta);
 
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
-    setIndex(Math.round(el.scrollLeft / el.clientWidth));
+    const center = el.scrollLeft + el.clientWidth / 2;
+    let closest = 0;
+    let minDist = Infinity;
+    Array.from(el.children).forEach((child, i) => {
+      const c = child as HTMLElement;
+      const dist = Math.abs(c.offsetLeft + c.offsetWidth / 2 - center);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = i;
+      }
+    });
+    setIndex(closest);
+    if (closest === targetRef.current) targetRef.current = null; // arrived
+  };
+
+  // if the user grabs the track mid-animation, forget the pending target
+  const cancelTarget = () => {
+    targetRef.current = null;
   };
 
   const isFirst = index === 0;
   const isLast = index === items.length - 1;
 
   return (
-    <div className={`${styles.carousel} ${overlay ? styles.overlay : ''}`}>
+    <div
+      className={`${styles.carousel} ${overlay ? styles.overlay : ''} ${className}`}
+    >
       <div
         ref={trackRef}
         className={styles.track}
         onScroll={onScroll}
-        tabIndex={0}
-        role="group"
-        aria-roledescription="carousel"
-        aria-label={label}
+        onPointerDown={cancelTarget}
+        onWheel={cancelTarget}
       >
         {items.map((item, i) => (
           <div
@@ -62,11 +93,11 @@ function Carousel<T>({
         ))}
       </div>
 
-      {items.length > 1 && (
+      {showControls && (
         <div className={styles.controls}>
           <Button
             icon="left"
-            onClick={() => goTo(index - 1)}
+            onClick={() => step(-1)}
             disabled={isFirst}
             aria-label={`Previous ${itemLabel}`}
           />
@@ -85,7 +116,7 @@ function Carousel<T>({
 
           <Button
             icon="right"
-            onClick={() => goTo(index + 1)}
+            onClick={() => step(1)}
             disabled={isLast}
             aria-label={`Next ${itemLabel}`}
           />

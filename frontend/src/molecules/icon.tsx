@@ -27,7 +27,7 @@ import sun from '../assets/icons/sun.svg?react';
 import times from '../assets/icons/times.svg?react';
 import up from '../assets/icons/up.svg?react';
 import wine from '../assets/icons/wine.svg?react';
-import { Color, Size } from '../global';
+import { Color, Size } from '../types';
 
 const icons = {
   bookmark: bookmark,

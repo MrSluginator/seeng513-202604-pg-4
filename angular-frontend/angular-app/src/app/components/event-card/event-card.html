@@ -1,0 +1,109 @@
+<ng-template #interactables>
+  <div class="interactables">
+    <f-button icon="spark" label="Rate event" (click)="onReview()" />
+    <f-button icon="share" label="Share event" (click)="onShare()" />
+    <f-button
+      icon="bookmark"
+      [pressed]="saved()"
+      [label]="saveLabel()"
+      (click)="onSave()"
+    />
+  </div>
+</ng-template>
+
+@if (reviewOpen()) {
+  <f-review-dialog
+    [event]="event()"
+    (submitted)="onReviewSubmit($event)"
+    (cancelled)="reviewOpen.set(false)"
+  />
+}
+<div class="card" [class]="size()">
+  @if (size() === 'm') {
+    <ng-container [ngTemplateOutlet]="interactables" />
+  }
+
+  @if (size() !== 's') {
+    <div class="image">
+      @if (size() === 'xl') {
+        <f-carousel
+          [items]="event().imageUrls"
+          [getKey]="getKey"
+          itemLabel="photo"
+        >
+          <ng-template let-src let-i="index" class="image-template">
+            <img
+              [src]="src"
+              [alt]="altFor(i)"
+              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+            />
+          </ng-template>
+        </f-carousel>
+      } @else {
+        <img [src]="event().imageUrl" alt="" />
+      }
+    </div>
+  }
+
+  <div class="info">
+    <div class="title-bar">
+      <h3>
+        @if (size() === 'xl') {
+          {{ event().title }}
+        } @else {
+          <a class="link" [routerLink]="['/event', event().id]">{{
+            event().title
+          }}</a>
+        }
+      </h3>
+      <div class="rating">
+        @if (reviewsLabel(); as reviews) {
+          <small>{{ reviews }}</small>
+        }
+        <f-icon-progress-bar
+          [value]="event().rating"
+          iconName="spark"
+          backgroundColor="n5"
+          fillColor="y1"
+          [label]="ratingLabel()"
+        />
+      </div>
+    </div>
+
+    @if (size() !== 'm') {
+      <div class="tags">
+        @for (tag of event().tags; track tag) {
+          <f-widget
+            [text]="tag"
+            [label]="'Search for events matching the tag: ' + tag"
+            (pressedChange)="searchTag(tag)"
+          />
+        }
+      </div>
+
+      <div class="stats">
+        <f-price [price]="event().price" />
+        <div class="time">
+          <f-icon name="clock" />
+          <small>{{ timeLabel() }}</small>
+        </div>
+        <div class="location">
+          <f-icon name="pin" />
+          <small>{{ event().location }}</small>
+        </div>
+      </div>
+    } @else {
+      {{ event().summary }}
+    }
+
+    @if (size() === 'l' || size() === 'xl') {
+      <div class="description">
+        <div class="row">
+          <h3>About</h3>
+          <ng-container [ngTemplateOutlet]="interactables" />
+        </div>
+        <p>{{ event().description }}</p>
+      </div>
+    }
+  </div>
+</div>
