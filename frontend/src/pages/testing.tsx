@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Carousel, EventCard } from '../components';
+import { EventCard } from '../components';
 import {
   Button,
+  FilterButton,
   Icon,
   MenuButton,
   Pin,
@@ -181,31 +182,26 @@ function Testing() {
     <div>
       <h1>Flare</h1>
       <p>Welcome to Flare! React frontend is initialized.</p>
+      <FilterButton onApply={(_) => {}} />
       <EventGrid
         size="m"
         display={{ type: 'grid', hidden: true }}
         events={events}
-        filters={tags}
-        onFilterRemove={() => {}}
       />
       <EventGrid
         size="s"
         display={{ type: 'grid', hidden: false }}
         events={events}
-        onFilterRemove={() => {}}
       />
       <EventGrid
         size="s"
         display={{ type: 'carousel', controls: false }}
         events={events}
-        onFilterRemove={() => {}}
       />
       <EventGrid
         size="l"
         display={{ type: 'carousel', controls: true }}
         events={events}
-        filters={tags}
-        onFilterRemove={() => {}}
       />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div

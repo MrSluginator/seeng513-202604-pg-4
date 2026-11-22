@@ -1,0 +1,24 @@
+<div class="wrapper">
+  @if (label()) {
+    <label [for]="id()" class="label">{{ label() }}</label>
+  }
+  <div class="field" [attr.data-disabled]="disabled() || null">
+    @let ic = icon();
+    @if (ic && iconPosition() === 'left') {
+      <span class="icon" aria-hidden="true"><f-icon [name]="ic" /></span>
+    }
+    <input
+      [id]="id()"
+      class="input"
+      [placeholder]="placeholder() ?? ''"
+      [disabled]="disabled()"
+      [readOnly]="readonly()"
+      [value]="value()"
+      (input)="handleInput($event)"
+      (blur)="onTouched()"
+    />
+    @if (ic && iconPosition() === 'right') {
+      <span class="icon" aria-hidden="true"><f-icon [name]="ic" /></span>
+    }
+  </div>
+</div>

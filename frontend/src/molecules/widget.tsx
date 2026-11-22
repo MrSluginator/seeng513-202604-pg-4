@@ -11,6 +11,7 @@ interface WidgetProps {
   onChange?: React.Dispatch<any>;
   disabled?: boolean;
   label?: string;
+  className?: string;
 }
 
 function Widget({
@@ -22,6 +23,7 @@ function Widget({
   onChange,
   disabled = false,
   label,
+  className,
 }: WidgetProps) {
   const [internalPressed, setInternalPressed] = useState(defaultPressed);
 
@@ -44,7 +46,7 @@ function Widget({
       role="switch"
       aria-checked={isPressed}
       aria-label={label}
-      className={`${styles.widget} ${bigget ? styles.bigget : ''}`}
+      className={`${styles.widget} ${bigget ? styles.bigget : ''} ${className ?? ''}`}
       onClick={handleClick}
       disabled={disabled}
     >

@@ -1,0 +1,29 @@
+<f-text-input
+  icon="search"
+  [placeholder]="placeholder()"
+  [ngModel]="query()"
+  [ngModelOptions]="{ standalone: true }"
+  (ngModelChange)="onQueryChange($event)"
+  (focusin)="open()"
+  (keydown)="onKeydown($event)"
+/>
+
+@if (showMenu()) {
+  <div class="menu" role="listbox">
+    @for (result of results(); track result.id; let i = $index) {
+      <button
+        type="button"
+        class="option"
+        role="option"
+        [class.active]="i === activeIndex()"
+        [attr.aria-selected]="i === activeIndex()"
+        (click)="select(result)"
+      >
+        <f-icon name="search" />
+        {{ result.label }}
+      </button>
+    } @empty {
+      <div class="empty">No results</div>
+    }
+  </div>
+}

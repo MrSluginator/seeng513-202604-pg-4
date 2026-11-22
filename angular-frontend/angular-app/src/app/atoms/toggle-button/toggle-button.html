@@ -1,0 +1,12 @@
+<button
+  type="button"
+  role="switch"
+  class="toggle"
+  [attr.aria-checked]="pressed()"
+  [attr.aria-label]="label()"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  (blur)="onTouched()"
+>
+  <span class="circle"></span>
+</button>

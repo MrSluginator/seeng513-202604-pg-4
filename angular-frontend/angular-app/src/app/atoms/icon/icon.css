@@ -1,0 +1,19 @@
+/* <f-icon> itself: keeps the icon from shrinking inside flex parents like Button */
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.icon {
+  display: flex;
+}
+
+/* The SVG is injected via innerHTML, so it needs ::ng-deep to be styled */
+.icon ::ng-deep svg {
+  width: 100%;
+  height: 100%;
+}
+
+.icon.filled ::ng-deep svg {
+  fill: currentColor;
+}

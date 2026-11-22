@@ -1,0 +1,58 @@
+@if (items().length > 0) {
+  <div class="carousel" [class.overlay]="overlay()">
+    <div
+      #track
+      class="track"
+      (scroll)="onScroll($event)"
+      (pointerdown)="cancelTarget()"
+      (wheel)="cancelTarget()"
+    >
+      @for (item of items(); track getKey()(item, $index)) {
+        <div
+          class="slide"
+          role="group"
+          aria-roledescription="slide"
+          [attr.aria-label]="
+            itemLabel() + ' ' + ($index + 1) + ' of ' + items().length
+          "
+        >
+          <ng-container
+            [ngTemplateOutlet]="template()"
+            [ngTemplateOutletContext]="{ $implicit: item, index: $index }"
+          />
+        </div>
+      }
+    </div>
+
+    @if (showControls()) {
+      <div class="controls">
+        <f-button
+          icon="left"
+          [disabled]="isFirst()"
+          [label]="'Previous ' + itemLabel()"
+          (click)="step(-1)"
+        />
+
+        <div class="dots">
+          @for (item of items(); track getKey()(item, $index)) {
+            <button
+              type="button"
+              class="dot"
+              [class.active]="$index === index()"
+              [attr.aria-label]="'Go to ' + itemLabel() + ' ' + ($index + 1)"
+              [attr.aria-current]="$index === index()"
+              (click)="goTo($index)"
+            ></button>
+          }
+        </div>
+
+        <f-button
+          icon="right"
+          [disabled]="isLast()"
+          [label]="'Next ' + itemLabel()"
+          (click)="step(1)"
+        />
+      </div>
+    }
+  </div>
+}

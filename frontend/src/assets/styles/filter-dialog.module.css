@@ -1,0 +1,132 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(30, 20, 20, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.filterDialog {
+  display: flex;
+  padding: 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: 32px;
+  background: var(--n0);
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* .filterDialog {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1080px;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 32px;
+  border-radius: 32px;
+  background: var(--n0);
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.25);
+} */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+}
+
+.body {
+  display: grid;
+  grid-template-areas:
+    'cats sort'
+    'cats ranges';
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto 1fr;
+  gap: 32px 56px;
+  align-self: stretch;
+  height: 100%;
+}
+
+.cats {
+  grid-area: cats;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.sort {
+  grid-area: sort;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ranges {
+  grid-area: ranges;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.tags {
+  display: flex;
+  height: 1fr;
+  flex: 1 0 0;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-self: stretch;
+}
+
+.locations {
+  display: flex;
+  padding: 0 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 16px;
+  flex: 1 0 0;
+  align-self: stretch;
+  flex-wrap: wrap;
+}
+
+.locationInfo {
+  display: flex;
+  padding: 10px 0;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  align-self: stretch;
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  .body {
+    grid-template-areas:
+      'sort'
+      'cats'
+      'ranges';
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+}

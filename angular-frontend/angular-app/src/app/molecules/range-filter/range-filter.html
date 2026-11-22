@@ -1,0 +1,44 @@
+<div class="range-filter" [attr.aria-disabled]="inactive()">
+  <f-toggle-button
+    [ngModel]="enabled()"
+    [ngModelOptions]="{ standalone: true }"
+    [disabled]="disabled()"
+    (ngModelChange)="handleToggle($event)"
+  />
+
+  <div class="content">
+    <f-text-input
+      class="low"
+      [label]="lowLabel()"
+      [readonly]="true"
+      [ngModel]="lowText()"
+      [ngModelOptions]="{ standalone: true }"
+      [disabled]="inactive()"
+    />
+
+    <f-slider
+      class="slider"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [majorSteps]="majorSteps()"
+      [minorSteps]="minorSteps()"
+      [labelsPosition]="labelsPosition()"
+      [formatLabel]="(x) => `${x}`"
+      [label]="sliderLabel()"
+      [disabled]="inactive()"
+      [ngModel]="range()"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="handleSlide($event)"
+    />
+
+    <f-text-input
+      class="high"
+      [label]="highLabel()"
+      [readonly]="true"
+      [ngModel]="highText()"
+      [ngModelOptions]="{ standalone: true }"
+      [disabled]="inactive()"
+    />
+  </div>
+</div>

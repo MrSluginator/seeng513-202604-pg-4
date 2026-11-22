@@ -1,0 +1,79 @@
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #dialog
+  aria-labelledby="review-title"
+  (close)="onClose()"
+  (click)="onBackdropClick($event)"
+>
+  <form class="content" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <h2 id="review-title">Review '{{ event().title }}'</h2>
+
+    <div class="field">
+      <p>How would you rate this event?</p>
+      <f-icon-progress-bar
+        formControlName="rating"
+        iconName="spark"
+        size="xl"
+        label="Event rating"
+        fillColor="y1"
+        [selectable]="true"
+      />
+      @if (form.controls.rating.touched && form.controls.rating.invalid) {
+        <p class="error" role="alert">Please pick a rating.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="review-comment">Comment (optional)</label>
+      <f-text-field
+        id="review-comment"
+        rows="4"
+        formControlName="comment"
+        [attr.aria-invalid]="form.controls.comment.invalid"
+      />
+      <small>{{ form.controls.comment.value.length }} / {{ maxComment }}</small>
+      @if (form.controls.comment.hasError('maxlength')) {
+        <p class="error" role="alert">Comment is too long.</p>
+      }
+    </div>
+
+    <div class="field">
+      <p>When were you at this event?</p>
+      <f-slider
+        formControlName="time"
+        [min]="0"
+        [max]="24"
+        [step]="0.25"
+        [majorSteps]="5"
+        [minorSteps]="2"
+        [labelsPosition]="'bottom'"
+        [formatLabel]="format"
+        [label]="'time spent at event'"
+      />
+
+      @if (
+        form.controls.time.touched && form.controls.time.hasError('dateRange')
+      ) {
+        <p class="error" role="alert">The end must be after the start.</p>
+      }
+    </div>
+
+    <div class="field">
+      <p>How busy was this event?</p>
+      <f-icon-progress-bar
+        formControlName="crowdFactor"
+        iconName="profile"
+        size="xl"
+        backgroundColor="n0"
+        fillColor="b3"
+        label="Crowd factor"
+        [selectable]="true"
+      />
+    </div>
+
+    <div class="actions">
+      <f-button (click)="cancel()" text="Cancel" />
+      <f-button (click)="submit()" type="submit" text="Submit" />
+    </div>
+  </form>
+</dialog>

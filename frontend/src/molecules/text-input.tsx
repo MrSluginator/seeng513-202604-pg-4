@@ -1,29 +1,32 @@
-import { forwardRef, Ref, useId } from 'react';
+import { useId } from 'react';
 import styles from '../assets/styles/text-input.module.css';
 import Icon, { IconName } from './icon';
 
 interface TextInputProps {
   label?: string;
   placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   icon?: IconName;
   iconPosition?: 'left' | 'right';
   disabled?: boolean;
+  readonly?: boolean;
   id?: string;
   className?: string;
 }
 
-const TextInput = forwardRef(function TextInput(
-  {
-    label,
-    placeholder,
-    icon,
-    iconPosition = 'right',
-    disabled = false,
-    id,
-    className,
-  }: TextInputProps,
-  ref
-) {
+function TextInput({
+  label,
+  placeholder,
+  icon,
+  iconPosition = 'right',
+  disabled = false,
+  readonly = false,
+  value,
+  onChange,
+  id,
+  className,
+}: TextInputProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
 
@@ -43,16 +46,18 @@ const TextInput = forwardRef(function TextInput(
       <div className={styles.field} data-disabled={disabled || undefined}>
         {iconPosition === 'left' && iconEl}
         <input
-          ref={ref as Ref<HTMLInputElement>}
           id={inputId}
           className={styles.input}
           placeholder={placeholder}
           disabled={disabled}
+          readOnly={readonly}
+          value={value}
+          onChange={onChange}
         />
         {iconPosition === 'right' && iconEl}
       </div>
     </div>
   );
-});
+}
 
 export default TextInput;

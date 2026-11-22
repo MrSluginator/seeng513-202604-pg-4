@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styles from '../assets/styles/pin.module.css';
-import { Size as PinSize } from '../global';
+import { Size as PinSize } from '../types.js';
 
 const HEAD_CENTER = { x: 15.2, y: 15 };
 const VIEWBOX_WIDTH = 31;
