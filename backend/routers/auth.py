@@ -1,5 +1,7 @@
 """Signup and login."""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -16,6 +18,7 @@ from security import (
     verify_password,
 )
 
+logger = logging.getLogger("flare.auth")
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
@@ -38,6 +41,7 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)) -> AuthRespons
         )
     )
     if taken is not None:
+        logger.info("signup rejected: username or email already in use")
         raise HTTPException(status_code=409, detail="Username or email already in use")
 
     # account_type is never read from the request: new accounts are always
@@ -53,8 +57,10 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)) -> AuthRespons
     except IntegrityError:
         # Someone signed up with the same details between our check and the insert.
         db.rollback()
+        logger.info("signup rejected: username or email already in use")
         raise HTTPException(status_code=409, detail="Username or email already in use")
     db.refresh(user)
+    logger.info("signup ok: user=%s", user.id)
     return _auth_response(user)
 
 
@@ -65,7 +71,13 @@ def login(
     email = payload.email.lower()
     client_ip = request.client.host if request.client else "unknown"
     limit_key = f"{client_ip}|{email}"
-    login_limiter.check(limit_key)
+    try:
+        login_limiter.check(limit_key)
+    except HTTPException:
+        logger.warning(
+            "login blocked, too many failures: ip=%s email=%s", client_ip, email
+        )
+        raise
 
     user = db.scalar(select(User).where(func.lower(User.email) == email))
 
@@ -76,6 +88,7 @@ def login(
 
     if user is None or not password_ok:
         login_limiter.record_failure(limit_key)
+        logger.warning("login failed: ip=%s email=%s", client_ip, email)
         # The same message for "no such email" and "wrong password".
         raise HTTPException(
             status_code=401,
@@ -84,4 +97,5 @@ def login(
         )
 
     login_limiter.reset(limit_key)
+    logger.info("login ok: user=%s", user.id)
     return _auth_response(user)

@@ -2,8 +2,11 @@
 
 import uuid
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+AccountType = Literal["standard", "organizer", "admin"]
 
 
 class SignupRequest(BaseModel):
@@ -15,6 +18,10 @@ class SignupRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=1, max_length=128)
+
+
+class RoleUpdate(BaseModel):
+    account_type: AccountType
 
 
 class UserMe(BaseModel):
