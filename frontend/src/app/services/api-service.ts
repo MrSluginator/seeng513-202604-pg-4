@@ -4,6 +4,7 @@ import { EventDetailSchema, EventSchema } from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
 import { FilterProps } from '../../models/filters';
 import { z } from 'zod';
+import { environment } from '../../environments/environment';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
@@ -40,11 +41,12 @@ function filtersToParams(f: FilterProps): Record<string, Param> {
 @Service()
 export class EventService {
   private readonly http = inject(HttpClient);
+  private base = `${environment.apiBaseUrl}/events`;
 
   getEvent(id: () => string) {
     return httpResource(
       () => {
-        return isUUID(id()) ? `/api/events/${id()}` : undefined;
+        return isUUID(id()) ? `${this.base}/${id()}` : undefined;
       },
       { parse: EventSchema.parse }
     );
@@ -53,7 +55,7 @@ export class EventService {
   getEventDetails(id: () => string) {
     return httpResource(
       () => {
-        return isUUID(id()) ? `/api/events/${id()}` : undefined;
+        return isUUID(id()) ? `${this.base}/${id()}` : undefined;
       },
       { parse: EventDetailSchema.parse }
     );
@@ -62,7 +64,7 @@ export class EventService {
   getEventFeed(filters: () => FilterProps) {
     return httpResource(
       () => ({
-        url: '/api/events',
+        url: this.base,
         params: filtersToParams(filters()),
       }),
       {
@@ -73,7 +75,7 @@ export class EventService {
   }
 
   getFeatured() {
-    return httpResource(() => '/api/events/featured', {
+    return httpResource(() => `${this.base}/featured`, {
       parse: z.array(EventSchema).parse,
     });
   }

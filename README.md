@@ -27,13 +27,12 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 .
 ├── .gitlab-ci.yml        # GitLab CI/CD pipeline definition
 ├── docker-compose.yml    # Full-stack Docker orchestration
-├── frontend/             # React + Vite application
-│   ├── src/              # React source code (Leaflet, App components)
+├── frontend/             # Angular + Vite application
+│   ├── src/              # Angular source code (App components, environment variables)
 │   ├── package.json      # Frontend dependencies & npm scripts
 │   ├── eslint.config.js  # ESLint configuration
 │   ├── .prettierrc       # Prettier formatting config
-│   ├── Dockerfile        # Frontend container definition
-│   └── .env.example      # Example frontend environment variables
+│   └── Dockerfile        # Frontend container definition
 ├── backend/              # FastAPI application
 │   ├── main.py           # FastAPI entrypoint & routes
 │   ├── db/               # Database configuration, ORM models & SQL scripts
