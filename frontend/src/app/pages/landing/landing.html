@@ -27,7 +27,7 @@
           <small>Showing items with the following tags:</small>
           @for (tag of filterSvc.filters().tags; track tag.id) {
             <f-widget
-              [text]="tag.label"
+              [text]="tag.name"
               icon="times"
               (click)="filterSvc.removeTag(tag)"
             />

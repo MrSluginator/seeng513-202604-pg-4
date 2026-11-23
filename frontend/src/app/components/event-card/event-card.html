@@ -27,7 +27,7 @@
     <div class="image">
       @if (size() === 'xl') {
         <f-carousel
-          [items]="detail().photos.map((p) => p.url)"
+          [items]="detail().photos.map((photo) => photo.url)"
           [getKey]="getKey"
           itemLabel="photo"
         >
@@ -40,7 +40,7 @@
           </ng-template>
         </f-carousel>
       } @else {
-        <img [src]="event().photo!.url" alt="" />
+        <img [src]="event().photos.find((photo) => photo.is_cover)?.url" alt="" />
       }
     </div>
   }
@@ -74,9 +74,9 @@
       <div class="tags">
         @for (tag of detail().tags; track tag) {
           <f-widget
-            [text]="tag.label"
+            [text]="tag.name"
             [label]="'Search for events matching the tag: ' + tag"
-            (pressedChange)="searchTag(tag.label)"
+            (pressedChange)="searchTag(tag.name)"
           />
         }
       </div>
@@ -102,7 +102,7 @@
           <h3>About</h3>
           <ng-container [ngTemplateOutlet]="interactables" />
         </div>
-        <p>{{ event().description }}</p>
+        <p>{{ event().summary }}</p>
       </div>
     }
   </div>
