@@ -1,5 +1,13 @@
 import { Sort } from './../../../models/filters';
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { EventGrid } from '../../components/event-grid/event-grid';
 import { FilterService } from '../../services/filter-service';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
@@ -11,9 +19,17 @@ import {
   MenuOption,
 } from '../../molecules/menu-button/menu-button';
 import { SORT_OPTIONS } from '../../../models/filters';
-import { Button } from '../../atoms/button/button';
 import { NavbarService } from '../../services/navbar-service';
 import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
+import { Footer } from '../../components/footer/footer';
+import { AllCategories } from '../../molecules/category/all-categories';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  categoriesList,
+  CategoryForm,
+  CategoryName,
+} from '../../molecules/category/categories';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   imports: [
@@ -22,8 +38,9 @@ import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
     Widget,
     Divider,
     MenuButton,
-    Button,
     SearchBar,
+    Footer,
+    AllCategories,
   ],
   selector: 'f-landing',
   styleUrl: './landing.css',
@@ -36,6 +53,8 @@ export class Landing {
 
   protected readonly featured = this.eventApi.getFeatured();
   protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+  private readonly feedSection =
+    viewChild.required<ElementRef<HTMLElement>>('feedSection');
 
   protected readonly sortOptions: MenuOption[] = Object.entries(
     SORT_OPTIONS
@@ -43,10 +62,6 @@ export class Landing {
 
   protected onSortSelected(value: string): void {
     this.filterSvc.patch({ sort: value as Sort });
-  }
-
-  printFilters() {
-    console.log(this.filterSvc.filters());
   }
 
   protected searchEvents(query: string): SearchResult<Event>[] {
@@ -60,11 +75,43 @@ export class Landing {
   protected eventQuery = signal<string>('');
   protected eventResults = computed(() => this.searchEvents(this.eventQuery()));
 
+  protected readonly categoryForm: CategoryForm = (() => {
+    const selected = new Set(this.filterSvc.filters().categories);
+    const controls = {} as Record<CategoryName, FormControl<boolean>>;
+    for (const c of categoriesList) {
+      controls[c] = new FormControl(selected.has(c), { nonNullable: true });
+    }
+    return new FormGroup(controls);
+  })();
+
   constructor() {
+    // form -> filters
+    this.categoryForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      const raw = this.categoryForm.getRawValue();
+      const categories = categoriesList.filter((c) => raw[c]);
+      this.filterSvc.patch({ categories });
+      this.scrollToFeed();
+    });
+
+    // filters -> form (so the filter dialog or reset() updates the chips too)
+    effect(() => {
+      const selected = new Set(this.filterSvc.filters().categories);
+      const value = {} as Record<CategoryName, boolean>;
+      for (const c of categoriesList) value[c] = selected.has(c);
+      this.categoryForm.setValue(value, { emitEvent: false });
+    });
+
     this.navbarSvc.setSearch<Event>({
       placeholder: 'Search events...',
       results: (query) => this.searchEvents(query),
       onSelect: (event) => this.selectEvent(event),
+    });
+  }
+
+  private scrollToFeed(): void {
+    this.feedSection().nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
     });
   }
 }

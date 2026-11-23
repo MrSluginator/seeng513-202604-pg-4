@@ -17,7 +17,7 @@
   border-radius: 8px;
   border: 1px solid var(--_dark);
   background: color-mix(in srgb, var(--_light) 20%, transparent);
-  color: var(--n7);
+  color: inherit;
   transition:
     border-color 150ms ease,
     background-color 150ms ease,
@@ -28,7 +28,7 @@
   }
 
   &[aria-checked='true'] {
-    background-color: var(--_light);
+    background-color: color-mix(in srgb, var(--_light) 80%, transparent);
   }
 
   &:disabled {
