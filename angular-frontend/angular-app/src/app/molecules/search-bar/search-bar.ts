@@ -13,9 +13,9 @@ import { TextInput } from '../../atoms/text-input/text-input';
 import { Icon } from '../../atoms/icon/icon';
 import { FormsModule } from '@angular/forms';
 
-export interface SearchResult {
-  id: string;
+export interface SearchResult<T> {
   label: string;
+  value: T;
 }
 
 @Component({
@@ -29,14 +29,14 @@ export interface SearchResult {
     '(keydown.escape)': 'close()',
   },
 })
-export class SearchBar {
+export class SearchBar<T> {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   // API
   readonly placeholder = input('Search...');
-  readonly results = input<SearchResult[]>([]);
+  readonly results = input<SearchResult<T>[]>([]);
   readonly query = model('');
-  readonly resultSelected = output<SearchResult>();
+  readonly resultSelected = output<SearchResult<T>>();
 
   // Internal UI state
   protected readonly isOpen = signal(false);
@@ -81,7 +81,7 @@ export class SearchBar {
     }
   }
 
-  protected select(result: SearchResult): void {
+  protected select(result: SearchResult<T>): void {
     this.resultSelected.emit(result);
     this.query.set('');
     this.close();

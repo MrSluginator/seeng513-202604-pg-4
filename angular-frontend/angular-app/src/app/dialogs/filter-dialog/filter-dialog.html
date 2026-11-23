@@ -36,11 +36,11 @@
               <div class="tags">
                 @for (tag of draft().tags; track tag) {
                   <f-widget
-                    [text]="tag"
+                    [text]="tag.label"
                     icon="times"
                     [label]="'remove ' + tag + ' tag from filters'"
                     [ngModel]="true"
-                    (ngModelChange)="removeTag(tag)"
+                    (ngModelChange)="removeTag(tag.id)"
                   />
                 }
               </div>

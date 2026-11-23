@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type Size = 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 export type Color =
   | 'p1'
@@ -40,17 +42,10 @@ export type Color =
   | 'b2'
   | 'b3';
 export type ColorGroup = 'p' | 's' | 'n' | 't' | 'o' | 'y' | 'g' | 'b';
-export interface Location {
-  name: string;
-  latitude: number;
-  longitude: number;
-}
-export interface DateRange {
-  start: Date;
-  end: Date;
-}
-export interface PriceRange {
-  low: number;
-  high: number;
-}
+
 export type Range<T> = [T, T];
+
+export const IsoDate = z.iso.datetime().transform((s) => new Date(s));
+export const Decimal = z
+  .union([z.number(), z.string().regex(/^-?\d+(\.\d+)?$/)])
+  .transform(Number);

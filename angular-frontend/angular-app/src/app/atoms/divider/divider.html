@@ -1,0 +1,7 @@
+<span
+  [class]="`divider ${direction}`"
+  [class.horizontal]="direction() === 'horizontal'"
+  [class.verticle]="direction() === 'verticle'"
+  [style.border-color]="resolvedColor()"
+  [style.border-width]="resolvedSize()"
+></span>

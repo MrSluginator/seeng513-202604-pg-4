@@ -5,6 +5,7 @@ import {
   input,
 } from '@angular/core';
 import { Icon } from '../../atoms/icon/icon';
+import { Price as PriceType } from '../../../models/price.schema';
 
 export interface PriceRange {
   low: number;
@@ -19,16 +20,16 @@ export interface PriceRange {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Price {
-  readonly price = input<PriceRange>();
+  readonly price = input<PriceType | null>();
 
   protected readonly range = computed(() => {
     const p = this.price();
-    return p ? `(${p.low} - ${p.high})` : 'Free';
+    return p ? `(${p.price_min} - ${p.price_max})` : 'Free';
   });
 
   protected readonly tier = computed(() => {
     const p = this.price();
-    const avg = p ? (p.low + p.high) / 2 : 0;
+    const avg = p ? (p.price_min! + p.price_max!) / 2 : 0;
     if (avg < 30) return 1;
     if (avg < 60) return 2;
     if (avg < 100) return 3;

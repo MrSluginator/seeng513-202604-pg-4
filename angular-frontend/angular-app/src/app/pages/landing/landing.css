@@ -1,0 +1,59 @@
+.landing {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  height: 100%;
+  gap: 20px;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  @media (max-width: 768px) {
+    justify-content: stretch;
+  }
+}
+
+.feed,
+.featured {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.feed {
+  height: 100%;
+}
+
+.tags,
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.tags,
+.sort {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.search {
+  width: 100%;
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

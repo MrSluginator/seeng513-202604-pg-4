@@ -12,36 +12,57 @@ import {
   MenuOption,
 } from '../../molecules/menu-button/menu-button';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import { Event } from '../../../models/event';
+import { Event, EventDetail } from '../../../models/event.schema';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import {
   EventGrid,
   EventGridDisplay,
 } from '../../components/event-grid/event-grid';
 import { EventCard, EventSize } from '../../components/event-card/event-card';
+import { Divider } from '../../atoms/divider/divider';
 
 // Adjust the fields to match your real Event model
 const makeEvent = (
   id: number,
   overrides: Record<string, unknown> = {}
-): Event =>
-  ({
-    id,
-    title: `Test event ${id}`,
-    description: 'A sample event used for testing the card layout.',
-    imageUrls: [
-      `https://picsum.photos/seed/${id}a/600/400`,
-      `https://picsum.photos/seed/${id}b/600/400`,
-      `https://picsum.photos/seed/${id}c/600/400`,
-    ],
-    imageUrl: `https://picsum.photos/seed/${id}a/600/400`,
-    time: new Date(2026, 11, 5, 19, 30),
-    rating: 4.3,
-    reviews: 1234,
-    defaultSaved: false,
-    tags: ['music', 'outdoor', 'family'],
-    ...overrides,
-  }) as unknown as Event;
+): EventDetail => ({
+  id: '',
+  creator_id: '',
+  title: `Test event ${id}`,
+  summary: 'shit',
+  description: 'A sample event used for testing the card layout.',
+  time: {
+    start_time: new Date(2026, 11, 5, 19, 30),
+    end_time: new Date(2026, 11, 5, 19, 30),
+    recurrence_pattern: 'none',
+    recurrence_end_date: null,
+  },
+  price: null,
+  location: null,
+  crowd_by_hour: null,
+  visits_count: 1,
+  shares_count: 1,
+  review_count: 1,
+  rating: 4.3,
+  saved: false,
+  created_at: new Date(),
+  updated_at: new Date(),
+  photo: { id: '', url: `https://picsum.photos/seed/${id}a/600/400` },
+  creator: {},
+  photos: [
+    { id: '', url: `https://picsum.photos/seed/${id}a/600/400` },
+    { id: '', url: `https://picsum.photos/seed/${id}b/600/400` },
+    { id: '', url: `https://picsum.photos/seed/${id}c/600/400` },
+  ],
+  reviews: [],
+  tags: [
+    { id: '', label: 'music' },
+    { id: '', label: 'outdoor' },
+    { id: '', label: 'family' },
+  ],
+  scrapped_source: null,
+  ...overrides,
+});
 
 @Component({
   imports: [
@@ -53,6 +74,7 @@ const makeEvent = (
     FilterButton,
     EventGrid,
     EventCard,
+    Divider,
   ],
   selector: 'f-testing',
   styleUrl: './testing.css',
@@ -88,7 +110,7 @@ export class Testing {
   protected readonly allowClear = signal(true);
 
   // ---------- Events ----------
-  protected readonly events: Event[] = [
+  protected readonly events: EventDetail[] = [
     makeEvent(1),
     makeEvent(2, {
       title: 'Saved by default',

@@ -27,7 +27,7 @@
     <div class="image">
       @if (size() === 'xl') {
         <f-carousel
-          [items]="event().imageUrls"
+          [items]="detail().photos.map((p) => p.url)"
           [getKey]="getKey"
           itemLabel="photo"
         >
@@ -40,7 +40,7 @@
           </ng-template>
         </f-carousel>
       } @else {
-        <img [src]="event().imageUrl" alt="" />
+        <img [src]="event().photo!.url" alt="" />
       }
     </div>
   }
@@ -61,7 +61,7 @@
           <small>{{ reviews }}</small>
         }
         <f-icon-progress-bar
-          [value]="event().rating"
+          [value]="event().rating ?? 0"
           iconName="spark"
           backgroundColor="n5"
           fillColor="y1"
@@ -72,11 +72,11 @@
 
     @if (size() !== 'm') {
       <div class="tags">
-        @for (tag of event().tags; track tag) {
+        @for (tag of detail().tags; track tag) {
           <f-widget
-            [text]="tag"
+            [text]="tag.label"
             [label]="'Search for events matching the tag: ' + tag"
-            (pressedChange)="searchTag(tag)"
+            (pressedChange)="searchTag(tag.label)"
           />
         }
       </div>
