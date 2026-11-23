@@ -11,8 +11,16 @@ from db.models.event import Event
 from db.models.event_photo import EventPhoto
 from db.models.tag import Tag
 from db.models.user import User
-from schemas import EventDetail, EventList, EventSummary, TagSummary, EventCreate, EventUpdate
 from deps import require_roles
+from schemas import (
+    EventCreate,
+    EventDetail,
+    EventList,
+    EventSummary,
+    EventUpdate,
+    TagSummary,
+    _as_utc,
+)
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -107,12 +115,7 @@ def get_random_event(
 ) -> EventSummary:
     """Return one randomly selected event."""
 
-    stmt = (
-        select(Event)
-        .options(*_load_options())
-        .order_by(func.random())
-        .limit(1)
-    )
+    stmt = select(Event).options(*_load_options()).order_by(func.random()).limit(1)
 
     event = db.scalars(stmt).one_or_none()
 
@@ -149,6 +152,7 @@ def delete_event(
     db.delete(event)
     db.commit()
 
+
 @router.post("", response_model=EventDetail, status_code=201)
 def create_event(
     payload: EventCreate,
@@ -161,9 +165,7 @@ def create_event(
     tags = []
 
     if payload.tag_ids:
-        tags = db.scalars(
-            select(Tag).where(Tag.id.in_(payload.tag_ids))
-        ).all()
+        tags = db.scalars(select(Tag).where(Tag.id.in_(payload.tag_ids))).all()
 
         if len(tags) != len(payload.tag_ids):
             raise HTTPException(
@@ -185,11 +187,7 @@ def create_event(
     db.refresh(event)
 
     # Reload the event with its tags and photos.
-    stmt = (
-        select(Event)
-        .options(*_load_options())
-        .where(Event.id == event.id)
-    )
+    stmt = select(Event).options(*_load_options()).where(Event.id == event.id)
 
     event = db.scalars(stmt).one()
 
@@ -220,10 +218,7 @@ def update_event(
         raise HTTPException(status_code=404, detail="Event not found")
 
     # Organizers can only edit their own events. Admins can edit any event.
-    if (
-        current_user.account_type != "admin"
-        and event.creator_id != current_user.id
-    ):
+    if current_user.account_type != "admin" and event.creator_id != current_user.id:
         raise HTTPException(
             status_code=403,
             detail="You can only edit your own events",
@@ -239,28 +234,25 @@ def update_event(
     price_min = updates.get("price_min", event.price_min)
     price_max = updates.get("price_max", event.price_max)
 
-    recurrence_pattern = updates.get(
-        "recurrence_pattern", event.recurrence_pattern
-    )
-    recurrence_end_date = updates.get(
-        "recurrence_end_date", event.recurrence_end_date
-    )
+    recurrence_pattern = updates.get("recurrence_pattern", event.recurrence_pattern)
+    recurrence_end_date = updates.get("recurrence_end_date", event.recurrence_end_date)
 
-    if (
-        start_time is not None
-        and end_time is not None
-        and end_time < start_time
-    ):
+    # A stored time can come back without a timezone (e.g. in the SQLite tests).
+    start_time, end_time = _as_utc(start_time), _as_utc(end_time)
+
+    if start_time is not None and end_time is not None and end_time < start_time:
         raise HTTPException(
             status_code=422,
             detail="End time cannot be before start time",
         )
 
-    if (
-        price_min is not None
-        and price_max is not None
-        and price_max < price_min
-    ):
+    if price_max is not None and price_min is None:
+        raise HTTPException(
+            status_code=422,
+            detail="price_max needs a price_min",
+        )
+
+    if price_min is not None and price_max is not None and price_max < price_min:
         raise HTTPException(
             status_code=422,
             detail="Maximum price cannot be less than minimum price",
@@ -274,9 +266,9 @@ def update_event(
 
     # Replace the event's tags only if tag_ids was supplied.
     if tag_ids is not None:
-        tags = db.scalars(
-            select(Tag).where(Tag.id.in_(tag_ids))
-        ).all() if tag_ids else []
+        tags = (
+            db.scalars(select(Tag).where(Tag.id.in_(tag_ids))).all() if tag_ids else []
+        )
 
         if len(tags) != len(tag_ids):
             raise HTTPException(
@@ -294,11 +286,7 @@ def update_event(
     db.refresh(event)
 
     # Reload relationships for the response.
-    stmt = (
-        select(Event)
-        .options(*_load_options())
-        .where(Event.id == event.id)
-    )
+    stmt = select(Event).options(*_load_options()).where(Event.id == event.id)
 
     event = db.scalars(stmt).one()
 
@@ -315,4 +303,3 @@ def get_event(event_id: uuid.UUID, db: Session = Depends(get_db)) -> EventDetail
         raise HTTPException(status_code=404, detail="Event not found")
 
     return EventDetail.model_validate(event)
-

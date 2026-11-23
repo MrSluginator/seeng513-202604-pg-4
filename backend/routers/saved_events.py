@@ -1,4 +1,3 @@
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -41,11 +40,7 @@ def list_saved_events(
         SavedEvent.is_saved.is_(True),
     ]
 
-    total = db.scalar(
-        select(func.count())
-        .select_from(SavedEvent)
-        .where(*conditions)
-    )
+    total = db.scalar(select(func.count()).select_from(SavedEvent).where(*conditions))
 
     stmt = (
         select(SavedEvent)

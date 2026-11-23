@@ -1,20 +1,21 @@
+"""The logged-in user's own account."""
 
-"""The logged-in user's own account and preferences."""
-
-import uuid
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, func, or_
+from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from auth_schemas import UserMe, ProfileUpdate
+from auth_schemas import PreferredTagsUpdate, ProfileUpdate, UserMe
 from db.database import get_db
 from db.models.tag import Tag
 from db.models.user import User
 from db.models.user_preferred_tag import UserPreferredTag
 from deps import get_current_user
 from schemas import TagSummary
+
+logger = logging.getLogger("flare.users")
 
 router = APIRouter(tags=["users"])
 
@@ -27,123 +28,81 @@ def read_me(user: User = Depends(get_current_user)) -> UserMe:
 @router.patch("/me", response_model=UserMe)
 def update_me(
     payload: ProfileUpdate,
-    db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ) -> UserMe:
-    """Update the current user's profile."""
+    """Change your username or phone number. Send only what you want to change."""
+    changes = payload.model_dump(exclude_unset=True)
 
-    # Check whether the new username or email is already in use.
-    conditions = []
-
-    if "username" in payload.model_fields_set:
-        conditions.append(
-            func.lower(User.username) == payload.username.lower()
-        )
-
-    if "email" in payload.model_fields_set:
-        conditions.append(
-            func.lower(User.email) == str(payload.email).lower()
-        )
-
-    if conditions:
-        existing = db.scalar(
+    if "username" in changes:
+        if changes["username"] is None:
+            raise HTTPException(status_code=422, detail="username cannot be null")
+        taken = db.scalar(
             select(User.id).where(
+                func.lower(User.username) == changes["username"].lower(),
                 User.id != user.id,
-                or_(*conditions),
             )
         )
+        if taken is not None:
+            raise HTTPException(status_code=409, detail="Username already in use")
 
-        if existing is not None:
-            raise HTTPException(
-                status_code=409,
-                detail="Username or email already in use",
-            )
-
-    # Only update fields included in the request.
-    if "username" in payload.model_fields_set:
-        user.username = payload.username
-
-    if "email" in payload.model_fields_set:
-        user.email = str(payload.email).lower()
-
-    if "phone_number" in payload.model_fields_set:
-        user.phone_number = payload.phone_number
-
+    for name, value in changes.items():
+        setattr(user, name, value)
     try:
         db.commit()
     except IntegrityError:
         db.rollback()
-        raise HTTPException(
-            status_code=409,
-            detail="Username or email already in use",
-        )
-
+        raise HTTPException(status_code=409, detail="Username already in use")
     db.refresh(user)
-
+    logger.info("profile updated: user=%s fields=%s", user.id, ",".join(changes))
     return UserMe.model_validate(user)
 
 
-@router.get("/users/me/preferred-tags", response_model=list[TagSummary])
-def get_preferred_tags(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """Get the current user's preferred tags."""
-    stmt = (
+def _preferred_tags(db: Session, user: User) -> list[TagSummary]:
+    rows = db.scalars(
         select(Tag)
         .join(UserPreferredTag, UserPreferredTag.tag_id == Tag.id)
-        .where(UserPreferredTag.user_id == current_user.id)
-        .order_by(Tag.name)
+        .where(UserPreferredTag.user_id == user.id)
+        .order_by(Tag.name, Tag.id)
+    ).all()
+    return [TagSummary.model_validate(row) for row in rows]
+
+
+@router.get("/me/preferred-tags", response_model=list[TagSummary])
+def read_preferred_tags(
+    user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> list[TagSummary]:
+    return _preferred_tags(db, user)
+
+
+@router.put("/me/preferred-tags", response_model=list[TagSummary])
+def replace_preferred_tags(
+    payload: PreferredTagsUpdate,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[TagSummary]:
+    """Set the tags you like. The list you send replaces the old one."""
+    wanted = set(payload.tag_ids)
+    if wanted:
+        found = set(db.scalars(select(Tag.id).where(Tag.id.in_(wanted))))
+        if found != wanted:
+            raise HTTPException(
+                status_code=422, detail="One or more tag_ids do not exist"
+            )
+
+    current = set(
+        db.scalars(
+            select(UserPreferredTag.tag_id).where(UserPreferredTag.user_id == user.id)
+        )
     )
-
-    return db.scalars(stmt).all()
-
-
-@router.post(
-    "/users/me/preferred-tags/{tag_id}",
-    response_model=TagSummary,
-)
-def add_preferred_tag(
-    tag_id: uuid.UUID,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """Add a tag to the current user's preferences."""
-    tag = db.get(Tag, tag_id)
-
-    if tag is None:
-        raise HTTPException(status_code=404, detail="Tag not found")
-
-    existing = db.get(UserPreferredTag, (current_user.id, tag_id))
-
-    if existing is None:
-        preference = UserPreferredTag(
-            user_id=current_user.id,
-            tag_id=tag_id,
+    for tag_id in current - wanted:
+        db.execute(
+            delete(UserPreferredTag).where(
+                UserPreferredTag.user_id == user.id,
+                UserPreferredTag.tag_id == tag_id,
+            )
         )
-        db.add(preference)
-        db.commit()
-
-    return tag
-
-
-@router.delete(
-    "/users/me/preferred-tags/{tag_id}",
-    status_code=204,
-)
-def remove_preferred_tag(
-    tag_id: uuid.UUID,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """Remove a tag from the current user's preferences."""
-    preference = db.get(UserPreferredTag, (current_user.id, tag_id))
-
-    if preference is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Preferred tag not found",
-        )
-
-    db.delete(preference)
+    for tag_id in wanted - current:
+        db.add(UserPreferredTag(user_id=user.id, tag_id=tag_id))
     db.commit()
+    return _preferred_tags(db, user)

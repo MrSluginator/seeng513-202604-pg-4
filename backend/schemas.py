@@ -1,14 +1,14 @@
 import uuid
-from datetime import datetime
-from typing import Any, Literal
+from datetime import datetime, timezone
 from decimal import Decimal
-from enum import Enum
+from typing import Annotated, Any, Literal
 
 from pydantic import (
     AliasChoices,
     BaseModel,
     ConfigDict,
     Field,
+    StringConstraints,
     field_validator,
     model_validator,
 )
@@ -24,23 +24,38 @@ class TagSummary(BaseModel):
     slug: str
 
 
+Title = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+]
+
+Price = Annotated[Decimal, Field(ge=0, max_digits=10, decimal_places=2)]
+
+
+def _as_utc(value: datetime | None) -> datetime | None:
+    """A time sent without a timezone is taken to be UTC, so that comparing two
+    times can never fail with a naive-versus-aware error."""
+    if value is not None and value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value
+
+
 class EventCreate(BaseModel):
     """Fields an organizer can provide when creating an event."""
 
-    title: str = Field(min_length=1, max_length=255)
+    title: Title
     summary: str | None = Field(default=None, max_length=255)
     description: str | None = None
 
     start_time: datetime | None = None
     end_time: datetime | None = None
 
-    recurrence_pattern: Literal[
-        "none", "one-time", "daily", "weekly", "monthly"
-    ] = "none"
+    recurrence_pattern: Literal["none", "one-time", "daily", "weekly", "monthly"] = (
+        "none"
+    )
     recurrence_end_date: datetime | None = None
 
-    price_min: Decimal | None = Field(default=None, ge=0)
-    price_max: Decimal | None = Field(default=None, ge=0)
+    price_min: Price | None = None
+    price_max: Price | None = None
     currency: str = Field(default="USD", min_length=3, max_length=3)
 
     location_name: str | None = Field(default=None, max_length=255)
@@ -48,6 +63,11 @@ class EventCreate(BaseModel):
     longitude: Decimal | None = Field(default=None, ge=-180, le=180)
 
     tag_ids: list[uuid.UUID] = Field(default_factory=list)
+
+    @field_validator("start_time", "end_time", "recurrence_end_date")
+    @classmethod
+    def assume_utc(cls, value: datetime | None) -> datetime | None:
+        return _as_utc(value)
 
     @model_validator(mode="after")
     def validate_event(self):
@@ -58,6 +78,9 @@ class EventCreate(BaseModel):
         ):
             raise ValueError("End time cannot be before start time")
 
+        if self.price_max is not None and self.price_min is None:
+            raise ValueError("price_max needs a price_min")
+
         if (
             self.price_min is not None
             and self.price_max is not None
@@ -65,13 +88,8 @@ class EventCreate(BaseModel):
         ):
             raise ValueError("Maximum price cannot be less than minimum price")
 
-        if (
-            self.recurrence_pattern == "none"
-            and self.recurrence_end_date is not None
-        ):
-            raise ValueError(
-                "Recurrence end date requires a recurrence pattern"
-            )
+        if self.recurrence_pattern == "none" and self.recurrence_end_date is not None:
+            raise ValueError("Recurrence end date requires a recurrence pattern")
 
         if len(self.tag_ids) != len(set(self.tag_ids)):
             raise ValueError("Duplicate tag IDs are not allowed")
@@ -82,20 +100,20 @@ class EventCreate(BaseModel):
 class EventUpdate(BaseModel):
     """Fields an organizer can change on an existing event."""
 
-    title: str | None = Field(default=None, min_length=1, max_length=255)
+    title: Title | None = None
     summary: str | None = Field(default=None, max_length=255)
     description: str | None = None
 
     start_time: datetime | None = None
     end_time: datetime | None = None
 
-    recurrence_pattern: Literal[
-        "none", "one-time", "daily", "weekly", "monthly"
-    ] | None = None
+    recurrence_pattern: (
+        Literal["none", "one-time", "daily", "weekly", "monthly"] | None
+    ) = None
     recurrence_end_date: datetime | None = None
 
-    price_min: Decimal | None = Field(default=None, ge=0)
-    price_max: Decimal | None = Field(default=None, ge=0)
+    price_min: Price | None = None
+    price_max: Price | None = None
     currency: str | None = Field(default=None, min_length=3, max_length=3)
 
     location_name: str | None = Field(default=None, max_length=255)
@@ -103,6 +121,11 @@ class EventUpdate(BaseModel):
     longitude: Decimal | None = Field(default=None, ge=-180, le=180)
 
     tag_ids: list[uuid.UUID] | None = None
+
+    @field_validator("start_time", "end_time", "recurrence_end_date")
+    @classmethod
+    def assume_utc(cls, value: datetime | None) -> datetime | None:
+        return _as_utc(value)
 
     @model_validator(mode="after")
     def validate_update(self):
@@ -199,6 +222,7 @@ class EventList(BaseModel):
     total: int
     items: list[EventSummary]
 
+
 class SavedEventItem(BaseModel):
     """A saved event and the current user's visit information."""
 
@@ -207,9 +231,11 @@ class SavedEventItem(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
 class SavedEventList(BaseModel):
     total: int
     items: list[SavedEventItem]
+
 
 class SavedEventStatus(BaseModel):
     """Whether the current user has saved an event."""
@@ -218,6 +244,7 @@ class SavedEventStatus(BaseModel):
     is_saved: bool
     user_visits: int
 
+
 class EventVisitResponse(BaseModel):
     """Visit counts after recording a visit."""
 
@@ -225,17 +252,32 @@ class EventVisitResponse(BaseModel):
     user_visits: int
     visits_count: int
 
+
+ReviewText = Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)]
+
+
 class ReviewCreate(BaseModel):
     """Information required to create a review."""
 
     rating: int = Field(ge=1, le=5)
-    content: str | None = None
+    content: ReviewText | None = None
+
+    @field_validator("content")
+    @classmethod
+    def blank_is_none(cls, value: str | None) -> str | None:
+        return value or None
+
 
 class ReviewUpdate(BaseModel):
     """Fields that can be changed on an existing review."""
 
     rating: int | None = Field(default=None, ge=1, le=5)
-    content: str | None = None
+    content: ReviewText | None = None
+
+    @field_validator("content")
+    @classmethod
+    def blank_is_none(cls, value: str | None) -> str | None:
+        return value or None
 
     @model_validator(mode="after")
     def check_update_fields(self):
@@ -245,6 +287,7 @@ class ReviewUpdate(BaseModel):
             raise ValueError("Rating cannot be null")
         return self
 
+
 class ReviewSummary(BaseModel):
     """Information returned for an individual review."""
 
@@ -253,6 +296,7 @@ class ReviewSummary(BaseModel):
     id: uuid.UUID
     event_id: uuid.UUID
     user_id: uuid.UUID
+    username: str | None = None
     rating: int
     content: str | None
     created_at: datetime

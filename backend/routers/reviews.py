@@ -1,5 +1,5 @@
-
 import uuid
+from decimal import ROUND_HALF_UP, Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
@@ -10,7 +10,7 @@ from db.database import get_db
 from db.models.event import Event
 from db.models.review import Review
 from db.models.user import User
-from deps import get_current_user
+from deps import ADMIN, get_current_user
 from schemas import (
     ReviewCreate,
     ReviewList,
@@ -23,6 +23,9 @@ router = APIRouter(tags=["reviews"])
 
 def _update_event_rating(db: Session, event: Event) -> None:
     """Recalculate an event's average rating and review count."""
+    # The session has autoflush off, so send the pending add/change to the
+    # database first or the totals below would leave it out.
+    db.flush()
     result = db.execute(
         select(
             func.avg(Review.rating),
@@ -32,8 +35,18 @@ def _update_event_rating(db: Session, event: Event) -> None:
 
     average, count = result
 
-    event.rating = average
+    event.rating = (
+        None
+        if average is None
+        else Decimal(str(average)).quantize(Decimal("0.01"), ROUND_HALF_UP)
+    )
     event.review_count = count
+
+
+def _with_username(review: Review, username: str) -> ReviewSummary:
+    result = ReviewSummary.model_validate(review)
+    result.username = username
+    return result
 
 
 @router.get(
@@ -54,23 +67,22 @@ def list_reviews(
 
     conditions = [Review.event_id == event_id]
 
-    total = db.scalar(
-        select(func.count()).select_from(Review).where(*conditions)
-    )
+    total = db.scalar(select(func.count()).select_from(Review).where(*conditions))
 
     stmt = (
-        select(Review)
+        select(Review, User.username)
+        .join(User, User.id == Review.user_id)
         .where(*conditions)
-        .order_by(Review.created_at.desc())
+        .order_by(Review.created_at.desc(), Review.id)
         .limit(limit)
         .offset(offset)
     )
 
-    reviews = db.scalars(stmt).all()
+    rows = db.execute(stmt).all()
 
     return ReviewList(
         total=total or 0,
-        items=reviews,
+        items=[_with_username(review, name) for review, name in rows],
     )
 
 
@@ -90,6 +102,12 @@ def create_review(
 
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
+
+    if event.creator_id == current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can't review your own event",
+        )
 
     existing = db.scalar(
         select(Review).where(
@@ -124,7 +142,7 @@ def create_review(
         )
 
     db.refresh(review)
-    return review
+    return _with_username(review, current_user.username)
 
 
 @router.patch(
@@ -161,7 +179,7 @@ def update_review(
     db.commit()
     db.refresh(review)
 
-    return review
+    return _with_username(review, current_user.username)
 
 
 @router.delete(
@@ -179,7 +197,7 @@ def delete_review(
     if review is None:
         raise HTTPException(status_code=404, detail="Review not found")
 
-    if review.user_id != current_user.id:
+    if review.user_id != current_user.id and current_user.account_type != ADMIN:
         raise HTTPException(
             status_code=403,
             detail="You can only delete your own reviews",
