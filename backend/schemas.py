@@ -1,6 +1,8 @@
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
+from decimal import Decimal
+from enum import Enum
 
 from pydantic import (
     AliasChoices,
@@ -20,6 +22,101 @@ class TagSummary(BaseModel):
     id: uuid.UUID
     name: str
     slug: str
+
+
+class EventCreate(BaseModel):
+    """Fields an organizer can provide when creating an event."""
+
+    title: str = Field(min_length=1, max_length=255)
+    summary: str | None = Field(default=None, max_length=255)
+    description: str | None = None
+
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+
+    recurrence_pattern: Literal[
+        "none", "one-time", "daily", "weekly", "monthly"
+    ] = "none"
+    recurrence_end_date: datetime | None = None
+
+    price_min: Decimal | None = Field(default=None, ge=0)
+    price_max: Decimal | None = Field(default=None, ge=0)
+    currency: str = Field(default="USD", min_length=3, max_length=3)
+
+    location_name: str | None = Field(default=None, max_length=255)
+    latitude: Decimal | None = Field(default=None, ge=-90, le=90)
+    longitude: Decimal | None = Field(default=None, ge=-180, le=180)
+
+    tag_ids: list[uuid.UUID] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_event(self):
+        if (
+            self.start_time is not None
+            and self.end_time is not None
+            and self.end_time < self.start_time
+        ):
+            raise ValueError("End time cannot be before start time")
+
+        if (
+            self.price_min is not None
+            and self.price_max is not None
+            and self.price_max < self.price_min
+        ):
+            raise ValueError("Maximum price cannot be less than minimum price")
+
+        if (
+            self.recurrence_pattern == "none"
+            and self.recurrence_end_date is not None
+        ):
+            raise ValueError(
+                "Recurrence end date requires a recurrence pattern"
+            )
+
+        if len(self.tag_ids) != len(set(self.tag_ids)):
+            raise ValueError("Duplicate tag IDs are not allowed")
+
+        return self
+
+
+class EventUpdate(BaseModel):
+    """Fields an organizer can change on an existing event."""
+
+    title: str | None = Field(default=None, min_length=1, max_length=255)
+    summary: str | None = Field(default=None, max_length=255)
+    description: str | None = None
+
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+
+    recurrence_pattern: Literal[
+        "none", "one-time", "daily", "weekly", "monthly"
+    ] | None = None
+    recurrence_end_date: datetime | None = None
+
+    price_min: Decimal | None = Field(default=None, ge=0)
+    price_max: Decimal | None = Field(default=None, ge=0)
+    currency: str | None = Field(default=None, min_length=3, max_length=3)
+
+    location_name: str | None = Field(default=None, max_length=255)
+    latitude: Decimal | None = Field(default=None, ge=-90, le=90)
+    longitude: Decimal | None = Field(default=None, ge=-180, le=180)
+
+    tag_ids: list[uuid.UUID] | None = None
+
+    @model_validator(mode="after")
+    def validate_update(self):
+        if not self.model_fields_set:
+            raise ValueError("At least one field must be provided")
+
+        for field in ("title", "recurrence_pattern", "currency", "tag_ids"):
+            if field in self.model_fields_set and getattr(self, field) is None:
+                raise ValueError(f"{field} cannot be null")
+
+        if self.tag_ids is not None and len(self.tag_ids) != len(set(self.tag_ids)):
+            raise ValueError("Duplicate tag IDs are not allowed")
+
+        return self
 
 
 class PhotoSummary(BaseModel):
@@ -101,3 +198,69 @@ class EventDetail(EventSummary):
 class EventList(BaseModel):
     total: int
     items: list[EventSummary]
+
+class SavedEventItem(BaseModel):
+    """A saved event and the current user's visit information."""
+
+    event: EventSummary
+    user_visits: int
+    created_at: datetime
+    updated_at: datetime
+
+class SavedEventList(BaseModel):
+    total: int
+    items: list[SavedEventItem]
+
+class SavedEventStatus(BaseModel):
+    """Whether the current user has saved an event."""
+
+    event_id: uuid.UUID
+    is_saved: bool
+    user_visits: int
+
+class EventVisitResponse(BaseModel):
+    """Visit counts after recording a visit."""
+
+    event_id: uuid.UUID
+    user_visits: int
+    visits_count: int
+
+class ReviewCreate(BaseModel):
+    """Information required to create a review."""
+
+    rating: int = Field(ge=1, le=5)
+    content: str | None = None
+
+class ReviewUpdate(BaseModel):
+    """Fields that can be changed on an existing review."""
+
+    rating: int | None = Field(default=None, ge=1, le=5)
+    content: str | None = None
+
+    @model_validator(mode="after")
+    def check_update_fields(self):
+        if not self.model_fields_set:
+            raise ValueError("At least one field must be provided")
+        if "rating" in self.model_fields_set and self.rating is None:
+            raise ValueError("Rating cannot be null")
+        return self
+
+class ReviewSummary(BaseModel):
+    """Information returned for an individual review."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    event_id: uuid.UUID
+    user_id: uuid.UUID
+    rating: int
+    content: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class ReviewList(BaseModel):
+    """Paginated list of reviews."""
+
+    total: int
+    items: list[ReviewSummary]
