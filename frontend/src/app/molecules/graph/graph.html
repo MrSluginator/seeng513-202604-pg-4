@@ -1,1 +1,37 @@
-<p>graph works!</p>
+<div class="content">
+  <header class="header">Crowd Factor<span class="long-title"> Throughout the Day</span>:
+    <strong>{{ title() }}</strong>
+  </header>
+  <div class="chart">
+    <div class="y-axis">
+      @for (level of levels; track level) {
+        <div class="y-label full">
+          @for (p of [].constructor(level); track $index) {
+            <f-icon [name]="icon()"/>
+          }
+        </div>
+      }
+
+      @for (m of compactLevels; track m.count) {
+        <div class="y-label compact" [style.bottom.%]="m.position">
+          @for (p of [].constructor(m.count); track $index) {
+            <f-icon [name]="icon()"/>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="plot">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <polygon class="area" [attr.points]="area()" />
+        <polyline class="line" [attr.points]="line()" />
+      </svg>
+    </div>
+
+    <div class="x-axis">
+        @for (h of inputs; track h) {
+          <small [class.minor]="h % 6 !== 0">{{ h }}</small>
+        }
+      </div>
+  </div>
+</div>

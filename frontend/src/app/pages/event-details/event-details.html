@@ -4,7 +4,10 @@
       <f-event-card class="card" size="xl" [event]="event.value()!" />
       <div class="info">
         <f-heat-map />
-        <f-graph />
+        <f-graph
+          [title]="event.value().title"
+          [data]="graphData()"
+        />
         <div class="reviews">
           <h3 class="review-header">
             What others have to say about {{ event.value()!.title }}
