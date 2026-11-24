@@ -25,7 +25,7 @@
   display: flex;
   height: 196px;
   padding: 0px 60px;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   flex-shrink: 0;
   align-self: stretch;
@@ -80,6 +80,7 @@
 
 .feed {
   height: 100%;
+  gap: 10px;
 }
 
 .tags,

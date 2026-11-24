@@ -14,7 +14,6 @@ import { Range } from '../../../models/types';
 import { formatTime, number2Time } from '../../../utils/format';
 import { FilterService } from '../../services/filter-service';
 import { Button } from '../../atoms/button/button';
-import { TextInput } from '../../atoms/text-input/text-input';
 import { Widget } from '../../atoms/widget/widget';
 import {
   RangeFilter,

@@ -15,7 +15,7 @@
       <h1>Our Picks:</h1>
       <f-event-grid
         size="l"
-        [events]="featured.hasValue() ? featured.value() : []"
+        [events]="featured.hasValue() ? featured.value().items : []"
         [display]="{ type: 'carousel', controls: true }"
         /* [loading]="featured.isLoading()" */
       />
@@ -27,7 +27,7 @@
           <small>Showing items with the following tags:</small>
           @for (tag of filterSvc.filters().tags; track tag.id) {
             <f-widget
-              [text]="tag.label"
+              [text]="tag.name"
               icon="times"
               (click)="filterSvc.removeTag(tag)"
             />
@@ -44,8 +44,8 @@
           <f-search-bar
             class="search"
             placeholder="Search events..."
-            [(query)]="eventQuery"
-            [results]="eventResults()"
+            [(query)]="navbarSvc.query"
+            [results]="searchResults()"
             (resultSelected)="selectEvent($event)"
           />
           <f-filter-button />
@@ -53,7 +53,7 @@
       </div>
       <f-event-grid
         size="m"
-        [events]="feed.hasValue() ? feed.value() : []"
+        [events]="feed.hasValue() ? feed.value().items : []"
         [display]="{ type: 'grid', hidden: true }"
         /* [loading]="feed.isLoading()" */
       />

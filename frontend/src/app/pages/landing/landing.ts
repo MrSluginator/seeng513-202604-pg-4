@@ -5,9 +5,16 @@ import {
   effect,
   ElementRef,
   inject,
-  signal,
   viewChild,
 } from '@angular/core';
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { EventGrid } from '../../components/event-grid/event-grid';
 import { FilterService } from '../../services/filter-service';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
@@ -23,13 +30,12 @@ import { NavbarService } from '../../services/navbar-service';
 import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
 import { Footer } from '../../components/footer/footer';
 import { AllCategories } from '../../molecules/category/all-categories';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   categoriesList,
   CategoryForm,
   CategoryName,
 } from '../../molecules/category/categories';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Event } from '../../../models/event.schema';
 
 @Component({
   imports: [
@@ -50,6 +56,7 @@ export class Landing {
   private readonly filterSvc = inject(FilterService);
   private readonly eventApi = inject(EventService);
   private readonly navbarSvc = inject(NavbarService);
+  private readonly router = inject(Router);
 
   protected readonly featured = this.eventApi.getFeatured();
   protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
@@ -60,20 +67,25 @@ export class Landing {
     SORT_OPTIONS
   ).map(([value, label]) => ({ value, label }));
 
-  protected onSortSelected(value: string): void {
-    this.filterSvc.patch({ sort: value as Sort });
-  }
+  private readonly debouncedQuery = toSignal(
+    toObservable(this.navbarSvc.query).pipe(
+      debounceTime(250),
+      distinctUntilChanged()
+    ),
+    { initialValue: '' }
+  );
 
-  protected searchEvents(query: string): SearchResult<Event>[] {
-    return [];
-  }
+  private readonly searchRes = this.eventApi.searchResource(
+    () => this.debouncedQuery(),
+    () => this.filterSvc.filters()
+  );
 
-  protected selectEvent(event: SearchResult<Event>): void {
-    return;
-  }
-
-  protected eventQuery = signal<string>('');
-  protected eventResults = computed(() => this.searchEvents(this.eventQuery()));
+  protected readonly searchResults = computed<SearchResult<Event>[]>(() =>
+    this.searchRes.value().items.map((event) => ({
+      label: event.title,
+      value: event,
+    }))
+  );
 
   protected readonly categoryForm: CategoryForm = (() => {
     const selected = new Set(this.filterSvc.filters().categories);
@@ -103,9 +115,23 @@ export class Landing {
 
     this.navbarSvc.setSearch<Event>({
       placeholder: 'Search events...',
-      results: (query) => this.searchEvents(query),
+      results: () => this.searchResults(),
       onSelect: (event) => this.selectEvent(event),
     });
+
+    effect(() => {
+      console.log('feed status:', this.feed.status());
+      console.log('feed error:', this.feed.error());
+      console.log('feed value:', this.feed.value());
+    });
+  }
+
+  protected onSortSelected(value: string): void {
+    this.filterSvc.patch({ sort: value as Sort });
+  }
+
+  private selectEvent(result: SearchResult<Event>): void {
+    this.router.navigate(['/event', result.value.id]);
   }
 
   private scrollToFeed(): void {

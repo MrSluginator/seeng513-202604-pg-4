@@ -1,3 +1,4 @@
+import math
 import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -5,6 +6,7 @@ from decimal import Decimal
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
+from sqlalchemy import event as sa_event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -21,6 +23,40 @@ from main import app
 pytestmark = pytest.mark.filterwarnings("ignore:Dialect sqlite")
 
 
+def _null_safe(fn):
+    """Math functions return NULL when any argument is NULL, like Postgres."""
+
+    def wrapper(*args):
+        if any(a is None for a in args):
+            return None
+        return fn(*args)
+
+    return wrapper
+
+
+def _least(*args):
+    # Like Postgres, LEAST ignores NULL arguments.
+    values = [a for a in args if a is not None]
+    return min(values) if values else None
+
+
+def _greatest(*args):
+    # Like Postgres, GREATEST ignores NULL arguments.
+    values = [a for a in args if a is not None]
+    return max(values) if values else None
+
+
+def _register_sql_functions(dbapi_connection, _record):
+    """The distance query needs functions SQLite doesn't ship (least, greatest,
+    and, depending on the build, the trig functions), so provide them."""
+    dbapi_connection.create_function("radians", 1, _null_safe(math.radians))
+    dbapi_connection.create_function("cos", 1, _null_safe(math.cos))
+    dbapi_connection.create_function("sin", 1, _null_safe(math.sin))
+    dbapi_connection.create_function("acos", 1, _null_safe(math.acos))
+    dbapi_connection.create_function("least", -1, _least)
+    dbapi_connection.create_function("greatest", -1, _greatest)
+
+
 @pytest.fixture()
 def session():
     engine = create_engine(
@@ -28,6 +64,7 @@ def session():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
+    sa_event.listen(engine, "connect", _register_sql_functions)
     Base.metadata.create_all(
         engine,
         tables=[
@@ -62,6 +99,16 @@ def add_event(session, **fields):
     session.add(event)
     session.commit()
     return event
+
+
+def add_event_at(session, title, lat, lng=-114):
+    """Add an event at a coordinate. One degree of latitude is ~111.2 km."""
+    return add_event(
+        session,
+        title=title,
+        latitude=Decimal(str(lat)),
+        longitude=Decimal(str(lng)),
+    )
 
 
 def add_tag(session, name, slug):
@@ -109,19 +156,67 @@ def test_empty_database_returns_empty_list(client):
     assert body == {"total": 0, "items": []}
 
 
-def test_default_order_is_soonest_first_with_undated_last(client, session):
+def test_default_sort_is_rating_ascending_with_unrated_last(client, session):
+    add_event(session, title="Top", rating=Decimal("4.8"))
+    add_event(session, title="Unrated")
+    add_event(session, title="Mid", rating=Decimal("3.0"))
+    assert titles(client.get("/events")) == ["Mid", "Top", "Unrated"]
+
+
+def test_sort_by_start_time_is_soonest_first_with_undated_last(client, session):
     add_event(session, title="Later", start_time=dt(20))
     add_event(session, title="Undated")
     add_event(session, title="Sooner", start_time=dt(2))
-    assert titles(client.get("/events")) == ["Sooner", "Later", "Undated"]
+    response = client.get("/events", params={"sort": "start_time"})
+    assert titles(response) == ["Sooner", "Later", "Undated"]
 
 
 def test_undated_events_stay_last_when_descending(client, session):
     add_event(session, title="Later", start_time=dt(20))
     add_event(session, title="Undated")
     add_event(session, title="Sooner", start_time=dt(2))
-    response = client.get("/events", params={"order": "desc"})
+    response = client.get("/events", params={"sort": "start_time", "order": "desc"})
     assert titles(response) == ["Later", "Sooner", "Undated"]
+
+
+def test_sort_by_title_descending(client, session):
+    for name in ("Bravo", "Alpha", "Charlie"):
+        add_event(session, title=name)
+    response = client.get("/events", params={"sort": "title", "order": "desc"})
+    assert titles(response) == ["Charlie", "Bravo", "Alpha"]
+
+
+def test_sort_by_rating_descending_puts_unrated_last(client, session):
+    add_event(session, title="Mid", rating=Decimal("3.0"))
+    add_event(session, title="Unrated")
+    add_event(session, title="Top", rating=Decimal("4.8"))
+    response = client.get("/events", params={"sort": "rating", "order": "desc"})
+    assert titles(response) == ["Top", "Mid", "Unrated"]
+
+
+def test_sort_by_visits(client, session):
+    add_event(session, title="Quiet", visits_count=1)
+    add_event(session, title="Busy", visits_count=99)
+    response = client.get("/events", params={"sort": "visits_count", "order": "desc"})
+    assert titles(response) == ["Busy", "Quiet"]
+
+
+def test_sort_by_price_uses_lowest_price_with_unpriced_last(client, session):
+    add_event(session, title="Pricey", price_min=Decimal("50"))
+    add_event(session, title="Unpriced")
+    add_event(session, title="Cheap", price_min=Decimal("5"))
+    asc = client.get("/events", params={"sort": "price", "order": "asc"})
+    assert titles(asc) == ["Cheap", "Pricey", "Unpriced"]
+    desc = client.get("/events", params={"sort": "price", "order": "desc"})
+    assert titles(desc) == ["Pricey", "Cheap", "Unpriced"]
+
+
+def test_sort_by_date_uses_last_updated_time(client, session):
+    add_event(session, title="Old", updated_at=dt(1))
+    add_event(session, title="Fresh", updated_at=dt(25))
+    add_event(session, title="Middle", updated_at=dt(10))
+    response = client.get("/events", params={"sort": "date", "order": "desc"})
+    assert titles(response) == ["Fresh", "Middle", "Old"]
 
 
 def test_list_numbers_come_back_as_numbers(client, session):
@@ -166,6 +261,57 @@ def test_search_treats_percent_and_underscore_literally(client, session):
     assert titles(client.get("/events", params={"q": "a_b"})) == ["a_b"]
 
 
+# def test_filter_by_category_is_case_insensitive(client, session):
+#     add_event(session, title="Jazz Night", category="Music")
+#     add_event(session, title="Food Festival", category="Food")
+#     add_event(session, title="Uncategorised")
+
+#     response = client.get("/events", params={"category": "MUSIC"})
+
+#     assert response.json()["total"] == 1
+#     assert titles(response) == ["Jazz Night"]
+
+
+# def test_filter_by_several_categories_matches_any(client, session):
+#     add_event(session, title="Jazz Night", category="music")
+#     add_event(session, title="Food Festival", category="food")
+#     add_event(session, title="Gallery Walk", category="art")
+
+#     response = client.get(
+#         "/events", params={"category": ["music", "food"], "sort": "title"}
+#     )
+
+#     assert response.json()["total"] == 2
+#     assert titles(response) == ["Food Festival", "Jazz Night"]
+
+
+# def test_unknown_category_returns_empty_list(client, session):
+#     add_event(session, title="Jazz Night", category="music")
+
+#     body = client.get("/events", params={"category": "sports"}).json()
+
+#     assert body == {"total": 0, "items": []}
+
+
+# def test_blank_category_is_ignored(client, session):
+#     add_event(session, title="Jazz Night", category="music")
+#     add_event(session, title="Uncategorised")
+
+#     response = client.get("/events", params={"category": "  "})
+
+#     assert response.json()["total"] == 2
+
+
+# def test_category_can_be_combined_with_search(client, session):
+#     add_event(session, title="Jazz Night", category="music")
+#     add_event(session, title="Rock Concert", category="music")
+#     add_event(session, title="Jazz Brunch", category="food")
+
+#     response = client.get("/events", params={"category": "music", "q": "jazz"})
+
+#     assert titles(response) == ["Jazz Night"]
+
+
 def test_date_range_filters(client, session):
     add_event(session, title="Early", start_time=dt(1))
     add_event(session, title="Middle", start_time=dt(10))
@@ -189,6 +335,31 @@ def test_max_price_keeps_free_cheap_and_unpriced(client, session):
     assert titles(response) == ["Cheap", "Free", "Unpriced"]
 
 
+def test_price_min_keeps_events_with_a_ticket_at_or_above_it(client, session):
+    add_event(session, title="Budget", price_min=Decimal("5"), price_max=Decimal("10"))
+    add_event(session, title="Exact", price_min=Decimal("10"), price_max=Decimal("20"))
+    add_event(
+        session, title="Premium", price_min=Decimal("50"), price_max=Decimal("90")
+    )
+    add_event(session, title="Unpriced")
+    response = client.get("/events", params={"price_min": 20, "sort": "title"})
+    assert titles(response) == ["Exact", "Premium", "Unpriced"]
+
+
+def test_price_min_and_max_price_together_find_overlapping_ranges(client, session):
+    add_event(
+        session, title="Too cheap", price_min=Decimal("1"), price_max=Decimal("4")
+    )
+    add_event(
+        session, title="Overlaps", price_min=Decimal("8"), price_max=Decimal("30")
+    )
+    add_event(
+        session, title="Too dear", price_min=Decimal("60"), price_max=Decimal("90")
+    )
+    response = client.get("/events", params={"price_min": 5, "max_price": 40})
+    assert titles(response) == ["Overlaps"]
+
+
 def test_min_rating_filter_drops_unrated(client, session):
     add_event(session, title="Great", rating=Decimal("4.5"))
     add_event(session, title="Meh", rating=Decimal("3.0"))
@@ -196,32 +367,153 @@ def test_min_rating_filter_drops_unrated(client, session):
     assert titles(client.get("/events", params={"min_rating": 4})) == ["Great"]
 
 
-def test_sort_by_title_descending(client, session):
-    for name in ("Bravo", "Alpha", "Charlie"):
-        add_event(session, title=name)
-    response = client.get("/events", params={"sort": "title", "order": "desc"})
-    assert titles(response) == ["Charlie", "Bravo", "Alpha"]
+# ---------------------------------------------------------------- distance
+# All distance tests use points on the -114 meridian, where one degree of
+# latitude is about 111.2 km: lat 51 -> 0 km, 52 -> ~111 km, 53 -> ~222 km
+# away from the point "51,-114".
 
 
-def test_sort_by_rating_descending_puts_unrated_last(client, session):
-    add_event(session, title="Mid", rating=Decimal("3.0"))
-    add_event(session, title="Unrated")
-    add_event(session, title="Top", rating=Decimal("4.8"))
-    response = client.get("/events", params={"sort": "rating", "order": "desc"})
-    assert titles(response) == ["Top", "Mid", "Unrated"]
+def test_distance_max_keeps_only_events_within_range(client, session):
+    add_event_at(session, "Here", 51)
+    add_event_at(session, "Near", 52)
+    add_event_at(session, "Far", 53)
+
+    response = client.get(
+        "/events",
+        params={"location": "51,-114", "distance_max": 150, "sort": "title"},
+    )
+
+    assert response.json()["total"] == 2
+    assert titles(response) == ["Here", "Near"]
 
 
-def test_sort_by_visits(client, session):
-    add_event(session, title="Quiet", visits_count=1)
-    add_event(session, title="Busy", visits_count=99)
-    response = client.get("/events", params={"sort": "visits_count", "order": "desc"})
-    assert titles(response) == ["Busy", "Quiet"]
+def test_distance_min_keeps_only_events_beyond_range(client, session):
+    add_event_at(session, "Here", 51)
+    add_event_at(session, "Near", 52)
+    add_event_at(session, "Far", 53)
+
+    response = client.get(
+        "/events", params={"location": "51,-114", "distance_min": 150}
+    )
+
+    assert titles(response) == ["Far"]
+
+
+def test_distance_min_and_max_form_a_band(client, session):
+    add_event_at(session, "Here", 51)
+    add_event_at(session, "Near", 52)
+    add_event_at(session, "Far", 53)
+
+    response = client.get(
+        "/events",
+        params={"location": "51,-114", "distance_min": 50, "distance_max": 150},
+    )
+
+    assert titles(response) == ["Near"]
+
+
+def test_distance_filter_excludes_events_without_coordinates(client, session):
+    add_event_at(session, "Here", 51)
+    add_event(session, title="No coordinates")
+    add_event(session, title="Latitude only", latitude=Decimal("51.0"))
+
+    response = client.get(
+        "/events", params={"location": "51,-114", "distance_max": 1000}
+    )
+
+    assert response.json()["total"] == 1
+    assert titles(response) == ["Here"]
+
+
+def test_several_locations_match_events_near_any_of_them(client, session):
+    add_event_at(session, "Near first", 51)
+    add_event_at(session, "Middle", 52)
+    add_event_at(session, "Near second", 53)
+
+    response = client.get(
+        "/events",
+        params={
+            "location": ["51,-114", "53,-114"],
+            "distance_max": 10,
+            "sort": "title",
+        },
+    )
+
+    assert titles(response) == ["Near first", "Near second"]
+
+
+def test_location_alone_does_not_filter(client, session):
+    add_event_at(session, "Here", 51)
+    add_event(session, title="No coordinates")
+
+    response = client.get("/events", params={"location": "51,-114"})
+
+    assert response.json()["total"] == 2
+
+
+def test_sort_by_distance_nearest_first(client, session):
+    add_event_at(session, "Far", 53)
+    add_event_at(session, "Here", 51)
+    add_event_at(session, "Near", 52)
+
+    response = client.get("/events", params={"location": "51,-114", "sort": "distance"})
+
+    assert titles(response) == ["Here", "Near", "Far"]
+
+
+def test_sort_by_distance_descending_puts_farthest_first(client, session):
+    add_event_at(session, "Far", 53)
+    add_event_at(session, "Here", 51)
+    add_event_at(session, "Near", 52)
+
+    response = client.get(
+        "/events",
+        params={"location": "51,-114", "sort": "distance", "order": "desc"},
+    )
+
+    assert titles(response) == ["Far", "Near", "Here"]
+
+
+def test_sort_by_distance_with_several_points_uses_the_nearest_one(client, session):
+    # Distances to the nearest point: Here 0 km, Close to second ~56 km,
+    # Between ~111 km.
+    add_event_at(session, "Between", 52)
+    add_event_at(session, "Here", 51)
+    add_event_at(session, "Close to second", 53)
+
+    response = client.get(
+        "/events",
+        params={"location": ["51,-114", "53.5,-114"], "sort": "distance"},
+    )
+
+    assert titles(response) == ["Here", "Close to second", "Between"]
+
+
+def test_distance_filter_and_sort_work_with_paging(client, session):
+    for lat in (51, 51.2, 51.4, 51.6, 60):
+        add_event_at(session, f"Lat {lat}", lat)
+
+    body = client.get(
+        "/events",
+        params={
+            "location": "51,-114",
+            "distance_max": 100,
+            "sort": "distance",
+            "limit": 2,
+            "offset": 1,
+        },
+    ).json()
+
+    assert body["total"] == 4
+    assert [item["title"] for item in body["items"]] == ["Lat 51.2", "Lat 51.4"]
 
 
 def test_paging_keeps_total_and_slices_items(client, session):
     for i in range(5):
         add_event(session, title=f"Event {i}", start_time=dt(i + 1))
-    body = client.get("/events", params={"limit": 2, "offset": 2}).json()
+    body = client.get(
+        "/events", params={"sort": "start_time", "limit": 2, "offset": 2}
+    ).json()
     assert body["total"] == 5
     assert [item["title"] for item in body["items"]] == ["Event 2", "Event 3"]
 
@@ -238,15 +530,86 @@ def test_offset_past_the_end_returns_no_items_but_real_total(client, session):
         {"limit": 0},
         {"limit": 101},
         {"offset": -1},
-        {"sort": "price"},
+        {"sort": "popularity"},
         {"order": "up"},
         {"max_price": -1},
+        {"price_min": -1},
         {"min_rating": 6},
         {"starts_after": "not-a-date"},
+        {"location": "51,-114", "distance_min": -1},
+        {"location": "51,-114", "distance_max": -1},
+        {"location": "51,-114", "distance_min": "far"},
     ],
 )
 def test_invalid_query_parameters_are_rejected(client, params):
     assert client.get("/events", params=params).status_code == 422
+
+
+@pytest.mark.parametrize(
+    "location",
+    [
+        "calgary",
+        "51.04",
+        "51,-114,3",
+        "a,b",
+        "",
+        "91,0",
+        "-91,0",
+        "0,181",
+        "0,-181",
+        "nan,0",
+        "0,inf",
+    ],
+)
+def test_invalid_locations_are_rejected(client, location):
+    response = client.get("/events", params={"location": location})
+    assert response.status_code == 422
+
+
+def test_invalid_location_error_names_the_bad_value(client):
+    response = client.get("/events", params={"location": "calgary"})
+    assert "calgary" in response.json()["detail"]
+    assert "lat,lng" in response.json()["detail"]
+
+
+def test_one_bad_location_among_good_ones_is_rejected(client):
+    response = client.get("/events", params={"location": ["51,-114", "oops"]})
+    assert response.status_code == 422
+
+
+def test_boundary_locations_are_accepted(client):
+    for location in ("90,180", "-90,-180", "0,0"):
+        assert client.get("/events", params={"location": location}).status_code == 200
+
+
+@pytest.mark.parametrize("param", ["distance_min", "distance_max"])
+def test_distance_bounds_require_a_location(client, param):
+    response = client.get("/events", params={param: 10})
+    assert response.status_code == 422
+    assert "location" in response.json()["detail"]
+
+
+def test_sorting_by_distance_requires_a_location(client):
+    response = client.get("/events", params={"sort": "distance"})
+    assert response.status_code == 422
+    assert "location" in response.json()["detail"]
+
+
+def test_distance_min_cannot_exceed_distance_max(client):
+    response = client.get(
+        "/events",
+        params={"location": "51,-114", "distance_min": 20, "distance_max": 10},
+    )
+    assert response.status_code == 422
+    assert "distance_min" in response.json()["detail"]
+
+
+def test_equal_distance_bounds_are_allowed(client):
+    response = client.get(
+        "/events",
+        params={"location": "51,-114", "distance_min": 10, "distance_max": 10},
+    )
+    assert response.status_code == 200
 
 
 def test_get_one_event_includes_detail_fields(client, session):
@@ -348,6 +711,41 @@ def test_filter_events_by_tag_slug(client, session):
     assert titles(response) == ["Jazz Night"]
 
 
+def test_filter_by_several_tags_matches_any_of_them(client, session):
+    music_event = add_event(session, title="Jazz Night")
+    food_event = add_event(session, title="Food Festival")
+    art_event = add_event(session, title="Art Exhibition")
+    add_event_tag(session, music_event, add_tag(session, "Music", "music"))
+    add_event_tag(session, food_event, add_tag(session, "Food", "food"))
+    add_event_tag(session, art_event, add_tag(session, "Art", "art"))
+
+    response = client.get("/events", params={"tag": ["music", "food"], "sort": "title"})
+
+    assert response.json()["total"] == 2
+    assert titles(response) == ["Food Festival", "Jazz Night"]
+
+
+def test_event_matching_several_requested_tags_is_listed_once(client, session):
+    event = add_event(session, title="Food and Music Fair")
+    add_event_tag(session, event, add_tag(session, "Music", "music"))
+    add_event_tag(session, event, add_tag(session, "Food", "food"))
+
+    body = client.get("/events", params={"tag": ["music", "food"]}).json()
+
+    assert body["total"] == 1
+    assert len(body["items"]) == 1
+    assert len(body["items"][0]["tags"]) == 2
+
+
+def test_blank_tag_is_ignored(client, session):
+    add_event(session, title="Jazz Night")
+    add_event(session, title="Food Festival")
+
+    response = client.get("/events", params={"tag": " "})
+
+    assert response.json()["total"] == 2
+
+
 def test_filter_by_tag_slug_returns_empty_when_no_events_match(client, session):
     add_event(session, title="Jazz Night")
     add_tag(session, "Food", "food")
@@ -389,6 +787,24 @@ def test_tag_filter_can_be_combined_with_search(client, session):
     assert response.status_code == 200
     assert response.json()["total"] == 1
     assert titles(response) == ["Jazz Night"]
+
+
+def test_tag_filter_can_be_combined_with_distance(client, session):
+    near_music = add_event_at(session, "Near Music", 51)
+    far_music = add_event_at(session, "Far Music", 53)
+    near_food = add_event_at(session, "Near Food", 51.1)
+    music = add_tag(session, "Music", "music")
+    food = add_tag(session, "Food", "food")
+    add_event_tag(session, near_music, music)
+    add_event_tag(session, far_music, music)
+    add_event_tag(session, near_food, food)
+
+    response = client.get(
+        "/events",
+        params={"tag": "music", "location": "51,-114", "distance_max": 50},
+    )
+
+    assert titles(response) == ["Near Music"]
 
 
 def test_get_one_event_includes_tags(client, session):
@@ -473,7 +889,7 @@ def test_each_event_only_gets_its_own_photos(client, session):
     add_event_photo(session, jazz, add_photo(session, "https://img.example/j.jpg"))
     add_event_photo(session, market, add_photo(session, "https://img.example/m.jpg"))
 
-    items = client.get("/events").json()["items"]
+    items = client.get("/events", params={"sort": "start_time"}).json()["items"]
 
     assert [item["title"] for item in items] == ["Jazz Night", "Night Market"]
     assert [[p["url"] for p in item["photos"]] for item in items] == [
@@ -525,3 +941,20 @@ def test_tag_filter_still_returns_photos(client, session):
     assert [p["url"] for p in body["items"][0]["photos"]] == [
         "https://img.example/j.jpg"
     ]
+
+
+def test_distance_filter_still_returns_photos_and_tags(client, session):
+    event = add_event_at(session, "Jazz Night", 51)
+    add_event_tag(session, event, add_tag(session, "Music", "music"))
+    add_event_photo(session, event, add_photo(session, "https://img.example/j.jpg"))
+
+    body = client.get(
+        "/events",
+        params={"location": "51,-114", "distance_max": 5, "sort": "distance"},
+    ).json()
+
+    assert body["total"] == 1
+    assert [p["url"] for p in body["items"][0]["photos"]] == [
+        "https://img.example/j.jpg"
+    ]
+    assert [t["slug"] for t in body["items"][0]["tags"]] == ["music"]

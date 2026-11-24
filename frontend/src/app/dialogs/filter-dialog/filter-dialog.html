@@ -36,7 +36,7 @@
               <div class="tags">
                 @for (tag of draft().tags; track tag) {
                   <f-widget
-                    [text]="tag.label"
+                    [text]="tag.name"
                     icon="times"
                     [label]="'remove ' + tag + ' tag from filters'"
                     [ngModel]="true"
