@@ -24,6 +24,9 @@ export class Price {
 
   protected readonly range = computed(() => {
     const p = this.price();
+    if (!p) return 'Free';
+    if (!p.price_min && !p.price_max) return 'Free';
+    if (p.price_max === null) return p.price_min ? `${p.price_min}` : 'Free';
     return p ? `(${p.price_min} - ${p.price_max})` : 'Free';
   });
 

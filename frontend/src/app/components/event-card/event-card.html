@@ -78,8 +78,9 @@
         @for (tag of detail().tags; track tag) {
           <f-widget
             [text]="tag.name"
-            [label]="'Search for events matching the tag: ' + tag"
-            (pressedChange)="searchTag(tag.name)"
+            [label]="'Search for events matching the tag: ' + tag.name"
+            [pressed]="false";
+            (click)="searchTag(tag)"
           />
         }
       </div>
@@ -92,7 +93,7 @@
         </div>
         <div class="location">
           <f-icon name="pin" />
-          <small>{{ event().location }}</small>
+          <small>{{ locationLabel() }}</small>
         </div>
       </div>
     } @else {
