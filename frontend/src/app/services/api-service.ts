@@ -138,12 +138,15 @@ export class ReviewService {
 
   getEventReviews(eventId: () => string) {
     return httpResource(
-      () => (isUUID(eventId()) ? {
-        url: this.base,
-        params: {
-          event: eventId()
-        },
-      } : undefined),
+      () =>
+        isUUID(eventId())
+          ? {
+              url: this.base,
+              params: {
+                event: eventId(),
+              },
+            }
+          : undefined,
       {
         parse: ReviewListSchema.parse,
         defaultValue: { total: 0, items: [] },

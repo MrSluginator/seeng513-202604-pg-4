@@ -24,12 +24,16 @@ export class Graph {
   readonly min_x = input(0);
   readonly max_x = input(24 * 60);
 
-  protected readonly inputs = [0,3,6,9,12,15,18,21,24];
+  protected readonly inputs = [0, 3, 6, 9, 12, 15, 18, 21, 24];
 
   private readonly points = computed(() => {
     return this.data().map(([x, y]) => {
-      const x_out = (x - this.min_x()) * 100 / (this.max_x() - this.min_x());
-      const y_out = 100 - ((clamp(this.min_y(), this.max_y(), y) - this.min_y()) / (this.max_y() - this.min_y())) * 100;
+      const x_out = ((x - this.min_x()) * 100) / (this.max_x() - this.min_x());
+      const y_out =
+        100 -
+        ((clamp(this.min_y(), this.max_y(), y) - this.min_y()) /
+          (this.max_y() - this.min_y())) *
+          100;
       return `${x_out},${y_out}`;
     });
   });

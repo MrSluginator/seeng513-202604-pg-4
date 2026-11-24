@@ -14,7 +14,7 @@ export const ReviewSchema = z.object({
 export const ReviewListSchema = z.object({
   total: z.number().int().nonnegative(),
   items: z.array(ReviewSchema),
-})
+});
 
 export type Review = z.infer<typeof ReviewSchema>;
 export type ReviewList = z.infer<typeof ReviewListSchema>;

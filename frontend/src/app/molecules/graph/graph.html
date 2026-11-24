@@ -1,5 +1,6 @@
 <div class="content">
-  <header class="header">Crowd Factor<span class="long-title"> Throughout the Day</span>:
+  <header class="header">
+    Crowd Factor<span class="long-title"> Throughout the Day</span>:
     <strong>{{ title() }}</strong>
   </header>
   <div class="chart">
@@ -7,7 +8,7 @@
       @for (level of levels; track level) {
         <div class="y-label full">
           @for (p of [].constructor(level); track $index) {
-            <f-icon [name]="icon()"/>
+            <f-icon [name]="icon()" />
           }
         </div>
       }
@@ -15,7 +16,7 @@
       @for (m of compactLevels; track m.count) {
         <div class="y-label compact" [style.bottom.%]="m.position">
           @for (p of [].constructor(m.count); track $index) {
-            <f-icon [name]="icon()"/>
+            <f-icon [name]="icon()" />
           }
         </div>
       }
@@ -29,9 +30,9 @@
     </div>
 
     <div class="x-axis">
-        @for (h of inputs; track h) {
-          <small [class.minor]="h % 6 !== 0">{{ h }}</small>
-        }
-      </div>
+      @for (h of inputs; track h) {
+        <small [class.minor]="h % 6 !== 0">{{ h }}</small>
+      }
+    </div>
   </div>
 </div>
