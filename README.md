@@ -145,62 +145,6 @@ To populate (or reset and re-seed) the database with sample users, settings, fri
   docker compose exec -T db psql -U flare_user -d flare_db < backend/db/seed.sql
   ```
 
----
-
-## 🅰️ Angular CLI Reference
-
-Run these from the `frontend/` directory.
-
-### Development server
-
-```bash
-ng serve
-```
-
-Open `http://localhost:4200/`. The app reloads automatically when you change source files.
-
-### Code scaffolding
-
-Generate a new component:
-
-```bash
-ng generate component component-name
-```
-
-For a full list of schematics (components, directives, pipes, services, etc.):
-
-```bash
-ng generate --help
-```
-
-### Building
-
-```bash
-ng build
-```
-
-This compiles the project and stores the build artifacts in the `dist/` directory. By default, the production build is optimized for performance and speed.
-
-### Running unit tests
-
-Unit tests run with the [Vitest](https://vitest.dev/) test runner:
-
-```bash
-ng test
-```
-
-### Running end-to-end tests
-
-```bash
-ng e2e
-```
-
-Angular CLI does not ship with an end-to-end testing framework by default, so choose one that suits your needs.
-
-For more details, see the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).
-
----
-
 ## 🔍 Linting, Formatting & Testing
 
 ### Frontend
