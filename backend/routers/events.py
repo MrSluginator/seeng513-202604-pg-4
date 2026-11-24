@@ -76,10 +76,10 @@ def _distance_km(lat: float, lng: float):
         func.radians(Event.latitude)
     ) * func.cos(func.radians(Event.longitude) - math.radians(lng)) + math.sin(
         math.radians(lat)
-    ) * func.sin(func.radians(Event.latitude))
-    return EARTH_RADIUS_KM * func.acos(
-        func.least(1.0, func.greatest(-1.0, cos_angle))
+    ) * func.sin(
+        func.radians(Event.latitude)
     )
+    return EARTH_RADIUS_KM * func.acos(func.least(1.0, func.greatest(-1.0, cos_angle)))
 
 
 @router.get("", response_model=EventList)
