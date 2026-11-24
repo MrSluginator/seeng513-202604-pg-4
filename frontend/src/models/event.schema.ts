@@ -46,7 +46,7 @@ const processEvent = (raw: unknown) => {
 };
 
 const EventSchemaBase = z.object({
-  id: z.uuid(),
+  id: z.guid(),
 
   title: z.string().max(255),
   summary: z.string().max(255).nullable(),
@@ -62,11 +62,11 @@ const EventSchemaBase = z.object({
   photos: z.array(PhotoSchema),
   tags: z.array(TagSchema),
 
-  saved: z.boolean(),
+  saved: z.boolean().optional(),
 });
 
 const EventDetailSchemaBase = EventSchemaBase.extend({
-  creator_id: z.uuid(),
+  creator_id: z.guid(),
   description: z.string().nullable(),
   crowd_by_hour: z.record(z.string(), z.any()),
   shares_count: z.number().int().nonnegative(),

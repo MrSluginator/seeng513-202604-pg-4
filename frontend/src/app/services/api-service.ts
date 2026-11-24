@@ -1,9 +1,12 @@
-import { HttpClient, httpResource } from '@angular/common/http';
+import { HttpClient, HttpRequest, httpResource, HttpResourceRequest, HttpResponse } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { EventDetailSchema, EventSchema } from '../../models/event.schema';
+import {
+  EventDetailSchema,
+  EventListSchema,
+  EventSchema,
+} from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
 import { FilterProps } from '../../models/filters';
-import { z } from 'zod';
 import { environment } from '../../environments/environment';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
@@ -12,7 +15,11 @@ function filtersToParams(f: FilterProps): Record<string, Param> {
   const params: Record<string, Param> = {
     sort: f.sort,
     sort_direction: f.sortDirection,
+    limit: f.limit ?? 20,
+    offset: f.offset ?? 0,
   };
+
+  if (f.query?.trim()) params['q'] = f.query.trim();
 
   // Arrays: only send when non-empty. Angular repeats the key (?tag=a&tag=b)
   if (f.categories.length) params['category'] = f.categories;
@@ -45,18 +52,14 @@ export class EventService {
 
   getEvent(id: () => string) {
     return httpResource(
-      () => {
-        return isUUID(id()) ? `${this.base}/${id()}` : undefined;
-      },
+      () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
       { parse: EventSchema.parse }
     );
   }
 
   getEventDetails(id: () => string) {
     return httpResource(
-      () => {
-        return isUUID(id()) ? `${this.base}/${id()}` : undefined;
-      },
+      () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
       { parse: EventDetailSchema.parse }
     );
   }
@@ -68,15 +71,48 @@ export class EventService {
         params: filtersToParams(filters()),
       }),
       {
-        parse: z.array(EventSchema).parse,
-        defaultValue: [],
+        parse: EventListSchema.parse,
+        defaultValue: { total: 0, items: [] },
       }
     );
   }
 
-  getFeatured() {
-    return httpResource(() => `${this.base}/featured`, {
-      parse: z.array(EventSchema).parse,
-    });
+  getFeatured(limit = 10) {
+    return httpResource(
+      () => ({
+        url: this.base,
+        params: {
+          sort: 'visits_count',
+          order: 'desc',
+          limit,
+        },
+      }),
+      {
+        parse: EventListSchema.parse,
+        defaultValue: { total: 0, items: [] },
+      }
+    );
+  }
+
+  searchResource(query: () => string, filters: () => FilterProps, limit = 8) {
+    return httpResource(
+      () => {
+        const q = query().trim();
+        if (!q) return undefined;
+
+        return {
+          url: this.base,
+          params: {
+            ...filtersToParams({ ...filters(), query: q }),
+            limit,
+            offset: 0,
+          },
+        };
+      },
+      {
+        parse: EventListSchema.parse,
+        defaultValue: { total: 0, items: [] },
+      }
+    );
   }
 }
