@@ -4,7 +4,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import admin, auth, events, users
+from routers import admin, auth, events, reviews, saved_events, users
 
 # Our own "flare.*" loggers (sign-ins, denied requests, role changes) log at INFO;
 # everything else stays at WARNING so the output isn't noisy.
@@ -33,6 +33,8 @@ app.include_router(admin.router)
 app.include_router(auth.router)
 app.include_router(events.router)
 app.include_router(users.router)
+app.include_router(saved_events.router)
+app.include_router(reviews.router)
 
 
 @app.get("/")
