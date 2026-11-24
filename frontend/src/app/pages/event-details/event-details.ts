@@ -20,37 +20,40 @@ export class EventDetails {
 
   protected readonly event = this.eventApi.getEventDetails(this.id);
 
-  // protected readonly reviews = this.reviewApi.getEventReviews(this.id);
-  protected readonly reviews = computed(
-    () =>
-      ({
-        total: 1,
-        items: [
-          {
-            id: '00-00',
-            event_id: this.id(),
-            user_id: '00-00',
-            rating: 4.3,
-            content:
-              'this is a reaelly cool event, please go, I need you to go please!',
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-        ],
-      }) as ReviewList
-  );
+  protected readonly reviews = this.reviewApi.getReviews(this.id);
+  // protected readonly reviews = computed(
+  //   () =>
+  //     ({
+  //       total: 1,
+  //       items: [
+  //         {
+  //           id: '00-00',
+  //           event_id: this.id(),
+  //           user_id: '00-00',
+  //           username: 'Big John',
+  //           rating: 4.3,
+  //           content:
+  //             'this is a really cool event, please go, I need you to go please!',
+  //           created_at: new Date(),
+  //         },
+  //       ],
+  //     }) as ReviewList
+  // );
 
   protected readonly graphData = computed(() => {
     if (!this.event.hasValue()) return [];
     const raw = this.event.value().crowd_by_hour;
-    return Object.entries(raw)
+    console.log(raw);
+    const data = Object.entries(raw)
       .map(([hour, crowd]) => {
-        const time = new Date(Date.parse(hour));
         return [
-          time.getHours() * 60 + time.getMinutes(),
+          Number.parseInt(hour) * 60,
           Number.parseFloat(crowd),
         ] as [number, number];
       })
       .sort((a, b) => a[0] - b[0]);
+      data.push([24 * 60, data[0][1]]);
+      console.log(data);
+      return data;
   });
 }

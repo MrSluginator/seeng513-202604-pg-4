@@ -25,3 +25,9 @@
 .content {
   flex: 1 0 0;
 }
+
+.user {
+  display: flex;
+  flex-direction: column;
+  gap: 10px
+}

@@ -9,8 +9,8 @@
           <h3 class="review-header">
             What others have to say about {{ event.value()!.title }}
           </h3>
-          @if (reviews()) {
-            @for (review of reviews()!.items; track $index) {
+          @if (reviews.hasValue()) {
+            @for (review of reviews.value()!.items; track $index) {
               <f-comment [review]="review" />
             }
           }

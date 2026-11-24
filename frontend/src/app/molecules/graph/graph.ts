@@ -19,8 +19,8 @@ export class Graph {
   readonly title = input<string>();
   readonly icon = input<IconName>('profile');
   readonly data = input.required<[number, number][]>();
-  readonly min_y = input(1);
-  readonly max_y = input(5);
+  readonly min_y = input(0);
+  readonly max_y = input(100);
   readonly min_x = input(0);
   readonly max_x = input(24 * 60);
 
