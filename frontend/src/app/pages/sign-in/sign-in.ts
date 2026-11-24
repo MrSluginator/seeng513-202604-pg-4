@@ -3,16 +3,31 @@ import { TextInput } from '../../atoms/text-input/text-input';
 import { Button } from '../../atoms/button/button';
 import { TabGroup, TabOption } from '../../atoms/tab-group/tab-group';
 import { Router } from '@angular/router';
-import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
-import { LoginRequest, SignupRequest, Username } from '../../../models/user.schema';
+import {
+  LoginRequest,
+  SignupRequest,
+  Username,
+} from '../../../models/user.schema';
 import { getErrorMessage, zodValidator } from '../../../utils/validation';
 import { Logo } from '../../atoms/logo/logo';
 
 type AuthMode = 'login' | 'signup';
 
 @Component({
-  imports: [TextInput, Button, TabGroup, FormsModule, ReactiveFormsModule, Logo],
+  imports: [
+    TextInput,
+    Button,
+    TabGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Logo,
+  ],
   selector: 'f-sign-in',
   styleUrl: './sign-in.css',
   templateUrl: './sign-in.html',
@@ -25,25 +40,29 @@ export class SignIn {
   readonly mode = input<AuthMode>('login');
 
   readonly tabs: TabOption[] = [
-    {value: 'login', label: "Log In"},
-    {value: 'signup', label: "Sign Up"},
-  ]
+    { value: 'login', label: 'Log In' },
+    { value: 'signup', label: 'Sign Up' },
+  ];
 
   protected switchTo(mode: AuthMode): void {
     this.router.navigate(['/', mode], { queryParamsHandling: 'preserve' });
   }
 
-  protected readonly data = computed(() => this.mode() === 'login' ? {
-    header: 'Welcome Back!',
-    text: "Log in to see wwhat's happening around you.",
-    button: 'Log In',
-    password: 'Enter your password',
-  } : {
-    header: 'Create an account',
-    text: "Start discovering newe placees, events what's happening",
-    button: 'Create Account',
-    password: 'Create a password',
-  });
+  protected readonly data = computed(() =>
+    this.mode() === 'login'
+      ? {
+          header: 'Welcome Back!',
+          text: "Log in to see wwhat's happening around you.",
+          button: 'Log In',
+          password: 'Enter your password',
+        }
+      : {
+          header: 'Create an account',
+          text: "Start discovering newe placees, events what's happening",
+          button: 'Create Account',
+          password: 'Create a password',
+        }
+  );
 
   protected readonly passwordHidden = signal(true);
 
@@ -57,7 +76,7 @@ export class SignIn {
   protected readonly loginForm = this.fb.group({
     email: ['', zodValidator(LoginRequest.shape.email)],
     password: ['', zodValidator(LoginRequest.shape.password)],
-  })
+  });
 
   protected readonly signupForm = this.fb.group({
     username: ['', zodValidator(Username)],
@@ -65,11 +84,13 @@ export class SignIn {
     password: ['', zodValidator(SignupRequest.shape.password)],
   });
 
-  form = computed(() => this.mode() === 'login' ? this.loginForm : this.signupForm);
+  form = computed(() =>
+    this.mode() === 'login' ? this.loginForm : this.signupForm
+  );
 
   protected submit(): void {
     const form = this.mode() === 'login' ? this.loginForm : this.signupForm;
-    console.log(form.invalid, this.error())
+    console.log(form.invalid, this.error());
     if (form.invalid) {
       form.markAllAsTouched();
       return;
@@ -83,7 +104,6 @@ export class SignIn {
         ? this.authApi.login(this.loginForm.getRawValue())
         : this.authApi.signUp(this.signupForm.getRawValue());
 
-
     request$.subscribe({
       next: () => this.router.navigateByUrl('/'), // or the returnUrl logic from earlier
       error: (err) => {
@@ -93,9 +113,13 @@ export class SignIn {
     });
   }
 
-
-
-  toGoogle() { return; }
-  toApple() { return; }
-  toFacebook() { return; }
+  toGoogle() {
+    return;
+  }
+  toApple() {
+    return;
+  }
+  toFacebook() {
+    return;
+  }
 }

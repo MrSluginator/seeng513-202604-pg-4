@@ -5,7 +5,11 @@ import { z } from 'zod';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth-service';
 import { Tag } from '../../models/tag.schema';
-import { PreferredTagsUpdate, ProfileUpdate, UserMe } from '../../models/user.schema';
+import {
+  PreferredTagsUpdate,
+  ProfileUpdate,
+  UserMe,
+} from '../../models/user.schema';
 
 const TagList = z.array(Tag);
 
@@ -18,7 +22,7 @@ export class UserService {
   getMe(): Observable<UserMe> {
     return this.http.get<unknown>(this.base).pipe(
       map((res) => UserMe.parse(res)),
-      tap((u) => this.auth.setUser(u)),
+      tap((u) => this.auth.setUser(u))
     );
   }
 
@@ -28,7 +32,7 @@ export class UserService {
       return this.http.patch<unknown>(this.base, body);
     }).pipe(
       map((res) => UserMe.parse(res)),
-      tap((u) => this.auth.setUser(u)),
+      tap((u) => this.auth.setUser(u))
     );
   }
 

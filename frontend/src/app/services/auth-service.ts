@@ -33,7 +33,7 @@ export class AuthService {
       return this.http.post<unknown>(`${this.base}/signup`, body);
     }).pipe(
       map((res) => AuthResponse.parse(res)),
-      tap((res) => this.setSession(res)),
+      tap((res) => this.setSession(res))
     );
   }
 
@@ -43,7 +43,7 @@ export class AuthService {
       return this.http.post<unknown>(`${this.base}/login`, body);
     }).pipe(
       map((res) => AuthResponse.parse(res)),
-      tap((res) => this.setSession(res)),
+      tap((res) => this.setSession(res))
     );
   }
 

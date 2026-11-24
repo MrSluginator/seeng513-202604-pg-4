@@ -1,5 +1,5 @@
 :host {
-  display: block;   /* custom elements are inline by default */
+  display: block; /* custom elements are inline by default */
   width: 100%;
 }
 
