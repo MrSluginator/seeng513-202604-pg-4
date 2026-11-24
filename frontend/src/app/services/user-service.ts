@@ -1,20 +1,13 @@
 import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, defer, map, tap } from 'rxjs';
+import { z } from 'zod';
 import { environment } from '../../environments/environment';
-import { AuthService, UserMe } from './auth-service';
+import { AuthService } from './auth-service';
+import { Tag } from '../../models/tag.schema';
+import { PreferredTagsUpdate, ProfileUpdate, UserMe } from '../../models/user.schema';
 
-// Adjust to match ProfileUpdate in auth_schemas.py
-export interface ProfileUpdate {
-  username?: string;
-  phone_number?: string | null;
-}
-
-// Adjust to match TagSummary in schemas.py
-export interface TagSummary {
-  id: number;
-  name: string;
-}
+const TagList = z.array(Tag);
 
 @Service()
 export class UserService {
@@ -22,35 +15,34 @@ export class UserService {
   private readonly auth = inject(AuthService);
   private readonly base = `${environment.apiBaseUrl}/me`;
 
-  /** GET /me -> UserMe (401 if the token is missing or invalid) */
   getMe(): Observable<UserMe> {
-    return this.http.get<UserMe>(this.base).pipe(tap((u) => this.auth.setUser(u)));
+    return this.http.get<unknown>(this.base).pipe(
+      map((res) => UserMe.parse(res)),
+      tap((u) => this.auth.setUser(u)),
+    );
   }
 
-  /**
-   * PATCH /me -> UserMe
-   * Send only the fields you want to change.
-   * 409 if the username is taken, 422 if username is null.
-   */
-  updateMe(changes: ProfileUpdate): Observable<UserMe> {
+  updateMe(changes: z.input<typeof ProfileUpdate>): Observable<UserMe> {
+    return defer(() => {
+      const body = ProfileUpdate.parse(changes);
+      return this.http.patch<unknown>(this.base, body);
+    }).pipe(
+      map((res) => UserMe.parse(res)),
+      tap((u) => this.auth.setUser(u)),
+    );
+  }
+
+  /** GET /me/preferred-tags -> Tag[] */
+  getPreferredTags(): Observable<Tag[]> {
     return this.http
-      .patch<UserMe>(this.base, changes)
-      .pipe(tap((u) => this.auth.setUser(u)));
+      .get<unknown>(`${this.base}/preferred-tags`)
+      .pipe(map((res) => TagList.parse(res)));
   }
 
-  /** GET /me/preferred-tags -> TagSummary[] */
-  getPreferredTags(): Observable<TagSummary[]> {
-    return this.http.get<TagSummary[]>(`${this.base}/preferred-tags`);
-  }
-
-  /**
-   * PUT /me/preferred-tags -> TagSummary[]
-   * The list you send replaces the old one (send [] to clear).
-   * 422 if any tag id doesn't exist.
-   */
-  replacePreferredTags(tagIds: number[]): Observable<TagSummary[]> {
-    return this.http.put<TagSummary[]>(`${this.base}/preferred-tags`, {
-      tag_ids: tagIds,
-    });
+  replacePreferredTags(tagIds: string[]): Observable<Tag[]> {
+    return defer(() => {
+      const body = PreferredTagsUpdate.parse({ tag_ids: tagIds });
+      return this.http.put<unknown>(`${this.base}/preferred-tags`, body);
+    }).pipe(map((res) => TagList.parse(res)));
   }
 }
