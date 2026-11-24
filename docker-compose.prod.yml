@@ -33,7 +33,7 @@ services:
 
   frontend:
     build:
-      context: ./angular-frontend/angular-app
+      context: ./frontend
       dockerfile: Dockerfile.prod
       args:
         API_BASE_URL: ${API_BASE_URL:?Set API_BASE_URL in .env.prod}
