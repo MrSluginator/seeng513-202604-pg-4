@@ -14,6 +14,7 @@ import {
 import { isUUID } from '../../utils/validation';
 import { FilterProps } from '../../models/filters';
 import { environment } from '../../environments/environment';
+import { ReviewListSchema, ReviewSchema } from '../../models/review.schema';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
@@ -117,6 +118,34 @@ export class EventService {
       },
       {
         parse: EventListSchema.parse,
+        defaultValue: { total: 0, items: [] },
+      }
+    );
+  }
+}
+
+@Service()
+export class ReviewService {
+  private readonly http = inject(HttpClient);
+  private base = `${environment.apiBaseUrl}/reviews`;
+
+  getReview(id: () => string) {
+    return httpResource(
+      () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
+      { parse: ReviewSchema.parse }
+    );
+  }
+
+  getEventReviews(eventId: () => string) {
+    return httpResource(
+      () => (isUUID(eventId()) ? {
+        url: this.base,
+        params: {
+          event: eventId()
+        },
+      } : undefined),
+      {
+        parse: ReviewListSchema.parse,
         defaultValue: { total: 0, items: [] },
       }
     );

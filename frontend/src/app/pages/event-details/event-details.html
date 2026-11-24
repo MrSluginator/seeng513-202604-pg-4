@@ -1,1 +1,28 @@
-<p>event-details works!</p>
+<div class="column">
+  <div class="content">
+    @if (event.hasValue()) {
+      <f-event-card class="card" size="xl" [event]="event.value()!" />
+      <div class="info">
+        <f-heat-map />
+        <f-graph />
+        <div class="reviews">
+          <h3 class="review-header">
+            What others have to say about {{ event.value()!.title }}
+          </h3>
+          @if (reviews.hasValue()) {
+            @for (review of reviews.value()!.items; track $index) {
+              <f-comment [review]="review" />
+            }
+          }
+        </div>
+      </div>
+    } @else {
+      <div>
+        <h3>
+          Please return to the main page, no event found with id '{{ id() }}'
+        </h3>
+      </div>
+    }
+  </div>
+  <f-footer />
+</div>
