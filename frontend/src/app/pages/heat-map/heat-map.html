@@ -1,1 +1,32 @@
-<p>heat-map works!</p>
+<section class="heat-map-page" aria-label="Event heat map">
+  <div
+    #mapContainer
+    class="map-container"
+    role="region"
+    aria-label="Interactive event map"
+  ></div>
+
+  <div class="map-controls" role="toolbar" aria-label="Map controls">
+    <button
+      type="button"
+      class="control-btn"
+      [class.active]="showHeatmap()"
+      [attr.aria-pressed]="showHeatmap()"
+      (click)="toggleHeatmap()"
+    >
+      Heatmap
+    </button>
+    <button
+      type="button"
+      class="control-btn"
+      [class.active]="showPins()"
+      [attr.aria-pressed]="showPins()"
+      (click)="togglePins()"
+    >
+      Pins ({{ mappedEvents().length }})
+    </button>
+    <button type="button" class="control-btn" (click)="recenter()">
+      Recenter
+    </button>
+  </div>
+</section>
