@@ -1,14 +1,22 @@
+:host {
+  display: block;   /* custom elements are inline by default */
+  width: 100%;
+}
+
 .group {
+  display: flex;
   border: none;
   margin: 0;
   padding: 0;
   min-width: 0;
   font-family: inherit;
   color: var(--n7);
+  flex: 1;
 }
 
 .options {
   display: flex;
+  flex: 1;
   flex-direction: row;
   align-items: flex-end;
   gap: 0px;

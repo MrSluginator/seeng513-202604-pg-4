@@ -1,1 +1,71 @@
-<p>sign-in works!</p>
+<div class="info">
+  <f-logo size="xl" />
+  <div class="text">
+    <h1>SPARK NEW CONNECTIONS</h1>
+    <h3>
+      Create an account and end the tedious search, save placees, see what your
+      friends are up to and find what you want to do.
+    </h3>
+  </div>
+</div>
+<div class="form">
+  <f-tab-group
+    [options]="tabs"
+    [ngModel]="mode()"
+    (ngModelChange)="switchTo($event)"
+  />
+  <div class="content">
+    <div class="column">
+      <h3>{{ data().header }}</h3>
+      <p>{{ data().text }}</p>
+    </div>
+    <form class="inputs" [formGroup]="form()" (ngSubmit)="submit()" novalidate>
+      @if (mode() === 'signup') {
+        <f-text-input
+          formControlName="username"
+          label="Username"
+          placeholder="Enter your username (Jane_Doe)"
+        />
+      }
+      <f-text-input
+        formControlName="email"
+        label="Email"
+        placeholder="Enter your email (you@example.com)"
+        type="username"
+      />
+      <f-text-input
+        formControlName="password"
+        label="Password"
+        [placeholder]="data().password"
+        [type]="passwordHidden() ? 'password' : 'label'"
+        [autocomplete]="
+          mode() === 'login' ? 'current-password' : 'new-password'
+        "
+        [icon]="passwordHidden() ? 'eyeOpen' : 'eyeClosed'"
+        (clicked)="togglePassword()"
+      />
+      <f-button type="submit" [text]="data().button" />
+      @if (error(); as msg) {
+        <p class="error" role="alert">{{ msg }}</p>
+      }
+    </form>
+    <p>or continue with</p>
+    <div class="inputs">
+      <f-button
+        text="Continue with Google"
+        (clicked)="toGoogle()"
+        [disabled]="true"
+      />
+      <f-button
+        text="Continue with Apple"
+        (clicked)="toApple()"
+        [disabled]="true"
+      />
+      <f-button
+        text="Continue with Facebook"
+        (clicked)="toFacebook()"
+        [disabled]="true"
+      />
+    </div>
+  </div>
+</div>

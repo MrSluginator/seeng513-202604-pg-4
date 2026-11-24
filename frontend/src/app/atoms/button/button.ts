@@ -15,6 +15,7 @@ export class Button {
   disabled = input(false);
   pressed = input<boolean | undefined>(undefined);
   label = input<string>();
+  type = input<string>('button');
 
   clicked = output<MouseEvent>();
 

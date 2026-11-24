@@ -32,6 +32,8 @@ export class TextInput implements ControlValueAccessor {
   iconPosition = input<'left' | 'right'>('right');
   readonly = input(false);
   id = input<string>(`f-text-input-${nextId++}`);
+  type = input<string>('input');
+  autocomplete = input<string>();
 
   protected value = signal('');
   protected disabled = signal(false);

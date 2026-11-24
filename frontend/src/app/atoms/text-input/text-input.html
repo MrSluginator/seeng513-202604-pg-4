@@ -9,6 +9,7 @@
     }
     <input
       [id]="id()"
+      [type]="type()"
       class="input"
       [placeholder]="placeholder() ?? ''"
       [disabled]="disabled()"
@@ -16,6 +17,7 @@
       [value]="value()"
       (input)="handleInput($event)"
       (blur)="onTouched()"
+      [autocomplete]="autocomplete()"
     />
     @if (ic && iconPosition() === 'right') {
       <span class="icon" aria-hidden="true"><f-icon [name]="ic" /></span>

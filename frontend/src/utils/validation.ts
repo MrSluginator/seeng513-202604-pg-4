@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
+import { ValidatorFn } from "@angular/forms";
 import { z } from "zod";
 
 export const UUID_RE = /^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}/;
@@ -38,4 +39,11 @@ export function getErrorMessage(err: unknown, fallback = DEFAULT_MESSAGE): strin
   }
 
   return fallback;
+}
+
+export function zodValidator(schema: z.ZodType): ValidatorFn {
+  return (control) => {
+    const result = schema.safeParse(control.value);
+    return result.success ? null : { zod: result.error.issues[0].message};
+  };
 }
