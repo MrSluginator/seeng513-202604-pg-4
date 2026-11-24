@@ -7,7 +7,11 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -119,7 +123,7 @@ export class Landing {
       console.log('feed status:', this.feed.status());
       console.log('feed error:', this.feed.error());
       console.log('feed value:', this.feed.value());
-    })
+    });
   }
 
   protected onSortSelected(value: string): void {

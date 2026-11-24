@@ -1,4 +1,10 @@
-import { HttpClient, HttpRequest, httpResource, HttpResourceRequest, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  httpResource,
+  HttpResourceRequest,
+  HttpResponse,
+} from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import {
   EventDetailSchema,

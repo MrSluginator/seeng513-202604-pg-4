@@ -40,7 +40,10 @@
           </ng-template>
         </f-carousel>
       } @else {
-        <img [src]="event().photos.find((photo) => photo.is_cover)?.url" alt="" />
+        <img
+          [src]="event().photos.find((photo) => photo.is_cover)?.url"
+          alt=""
+        />
       }
     </div>
   }

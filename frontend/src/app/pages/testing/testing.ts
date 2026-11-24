@@ -48,9 +48,24 @@ const makeEvent = (
   created_at: new Date(),
   updated_at: new Date(),
   photos: [
-    { id: '', url: `https://picsum.photos/seed/${id}a/600/400`, is_cover: true, display_order: 0 },
-    { id: '', url: `https://picsum.photos/seed/${id}b/600/400`, is_cover: false, display_order: 2 },
-    { id: '', url: `https://picsum.photos/seed/${id}c/600/400`, is_cover: false, display_order: 1 },
+    {
+      id: '',
+      url: `https://picsum.photos/seed/${id}a/600/400`,
+      is_cover: true,
+      display_order: 0,
+    },
+    {
+      id: '',
+      url: `https://picsum.photos/seed/${id}b/600/400`,
+      is_cover: false,
+      display_order: 2,
+    },
+    {
+      id: '',
+      url: `https://picsum.photos/seed/${id}c/600/400`,
+      is_cover: false,
+      display_order: 1,
+    },
   ],
   tags: [
     { id: '', name: 'music', slug: '' },

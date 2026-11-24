@@ -75,11 +75,14 @@ const EventDetailSchemaBase = EventSchemaBase.extend({
 });
 
 export const EventSchema = z.preprocess(processEvent, EventSchemaBase);
-export const EventDetailSchema = z.preprocess(processEvent, EventDetailSchemaBase);
+export const EventDetailSchema = z.preprocess(
+  processEvent,
+  EventDetailSchemaBase
+);
 export const EventListSchema = z.object({
   total: z.number().int(),
   items: z.array(EventSchema),
-})
+});
 
 export type Event = z.infer<typeof EventSchema>;
 export type EventDetail = z.infer<typeof EventDetailSchema>;
