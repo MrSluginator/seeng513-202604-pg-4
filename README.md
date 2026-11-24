@@ -1,12 +1,12 @@
 # Flare
 
-Welcome to **Flare**! This repository is organized as a full-stack monorepo featuring a React frontend, a FastAPI backend, PostgreSQL database support, Docker orchestration, and GitLab CI/CD pipelines.
+Welcome to **Flare**! This repository is organized as a full-stack monorepo featuring an Angular frontend, a FastAPI backend, PostgreSQL database support, Docker orchestration, and GitLab CI/CD pipelines.
 
 ---
 
 ## 🛠 Tech Stack & Architecture
 
-- **Frontend**: React 19, Vite, HTML/CSS, Leaflet & `leaflet.heat` (Map & Heatmap visualization)
+- **Frontend**: Angular 22 (generated with [Angular CLI](https://github.com/angular/angular-cli) 22.2.7), TypeScript, HTML/CSS, Leaflet & `leaflet.heat` (Map & Heatmap visualization)
 - **Backend**: FastAPI, SQLAlchemy, asyncpg / psycopg2, BeautifulSoup4 (Scraping), Uvicorn
 - **Database**: PostgreSQL
 - **Integrations & External APIs**:
@@ -27,13 +27,14 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 .
 ├── .gitlab-ci.yml        # GitLab CI/CD pipeline definition
 ├── docker-compose.yml    # Full-stack Docker orchestration
-├── frontend/             # React + Vite application
-│   ├── src/              # React source code (Leaflet, App components)
+├── frontend/             # Angular application
+│   ├── src/              # Angular source code (components, services, Leaflet, environment variables)
+│   ├── angular.json      # Angular CLI workspace configuration
 │   ├── package.json      # Frontend dependencies & npm scripts
+│   ├── tsconfig.json     # TypeScript configuration
 │   ├── eslint.config.js  # ESLint configuration
 │   ├── .prettierrc       # Prettier formatting config
-│   ├── Dockerfile        # Frontend container definition
-│   └── .env.example      # Example frontend environment variables
+│   └── Dockerfile        # Frontend container definition
 ├── backend/              # FastAPI application
 │   ├── main.py           # FastAPI entrypoint & routes
 │   ├── db/               # Database configuration, ORM models & SQL scripts
@@ -57,7 +58,8 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18+ recommended) & `npm`
+- [Node.js](https://nodejs.org/) (use a version supported by Angular 22) & `pnpm`
+- [Angular CLI](https://angular.dev/tools/cli): `pnpm install -g @angular/cli`
 - [Python](https://www.python.org/) (v3.11+ recommended)
 - [Docker](https://www.docker.com/) & Docker Compose (optional for containerized run)
 - [PostgreSQL](https://www.postgresql.org/) (local installation or cloud-hosted instance)
@@ -80,11 +82,13 @@ Welcome to **Flare**! This repository is organized as a full-stack monorepo feat
    ```bash
    pnpm install
    ```
-4. Run the development server:
+4. Start the development server:
    ```bash
-   pnpm run dev
+   ng serve
    ```
-   The frontend will be available at `http://localhost:5173`.
+   The frontend will be available at `http://localhost:4200`. The app reloads automatically whenever you modify a source file.
+
+> **Note:** Make sure the backend's CORS settings allow `http://localhost:4200` (Angular's default port).
 
 #### Backend Setup
 
@@ -143,17 +147,72 @@ To populate (or reset and re-seed) the database with sample users, settings, fri
 
 ---
 
+## 🅰️ Angular CLI Reference
+
+Run these from the `frontend/` directory.
+
+### Development server
+
+```bash
+ng serve
+```
+
+Open `http://localhost:4200/`. The app reloads automatically when you change source files.
+
+### Code scaffolding
+
+Generate a new component:
+
+```bash
+ng generate component component-name
+```
+
+For a full list of schematics (components, directives, pipes, services, etc.):
+
+```bash
+ng generate --help
+```
+
+### Building
+
+```bash
+ng build
+```
+
+This compiles the project and stores the build artifacts in the `dist/` directory. By default, the production build is optimized for performance and speed.
+
+### Running unit tests
+
+Unit tests run with the [Vitest](https://vitest.dev/) test runner:
+
+```bash
+ng test
+```
+
+### Running end-to-end tests
+
+```bash
+ng e2e
+```
+
+Angular CLI does not ship with an end-to-end testing framework by default, so choose one that suits your needs.
+
+For more details, see the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).
+
+---
+
 ## 🔍 Linting, Formatting & Testing
 
 ### Frontend
 
-Run linting and formatting commands from the `frontend/` directory:
+Run these from the `frontend/` directory:
 
-- **Lint code**: `npm run lint`
-- **Auto-fix lint issues**: `npm run lint:fix`
-- **Format code with Prettier**: `npm run format`
-- **Check formatting**: `npm run format:check`
-- **Build production bundle**: `npm run build`
+- **Lint code**: `pnpm run lint`
+- **Auto-fix lint issues**: `pnpm run lint:fix`
+- **Format code with Prettier**: `pnpm run format`
+- **Check formatting**: `pnpm run format:check`
+- **Run unit tests (Vitest)**: `ng test`
+- **Build production bundle**: `ng build`
 
 ### Backend
 
@@ -172,5 +231,5 @@ Run code quality checks and tests from the `backend/` directory:
 The repository includes a comprehensive `.gitlab-ci.yml` workflow configured for GitLab Runners across three stages:
 
 1. **Lint**: Runs ESLint & Prettier check on the frontend; Flake8, Black check, and isort check on the backend.
-2. **Test**: Executes Pytest test suites on the backend.
-3. **Build**: Builds production artifacts for the frontend.
+2. **Test**: Executes Pytest test suites on the backend (and `ng test` on the frontend, if enabled).
+3. **Build**: Builds the production Angular app (`ng build`) into `frontend/dist/`.
