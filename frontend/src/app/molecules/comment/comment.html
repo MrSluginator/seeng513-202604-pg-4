@@ -1,1 +1,14 @@
-<p>review works!</p>
+<div class="comment">
+  <div class="header">
+    <div class="user">
+      <h3>{{ review()?.user_id }}</h3>
+    </div>
+    <f-button
+      icon="spark"
+      [pressed]="sparked()"
+      [label]="sparkLabel()"
+      (click)="onSpark()"
+    />
+  </div>
+  <p class="content">{{ review()?.content }}</p>
+</div>

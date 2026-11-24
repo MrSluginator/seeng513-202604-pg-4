@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  align-self: stretch;
+}
+
+.comment {
+  display: flex;
+  min-height: 100px;
+  padding: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 16px;
+  background: var(--N1, #f0ecec);
+}
+
+.header {
+  display: flex;
+  align-self: stretch;
+  justify-content: space-between;
+}
+
+.content {
+  flex: 1 0 0;
+}
