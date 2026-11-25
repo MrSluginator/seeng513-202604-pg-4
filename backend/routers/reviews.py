@@ -44,9 +44,10 @@ def _update_event_rating(db: Session, event: Event) -> None:
     event.review_count = count
 
 
-def _with_username(review: Review, username: str) -> ReviewSummary:
+def _with_username(review: Review, username: str, sparks: int) -> ReviewSummary:
     result = ReviewSummary.model_validate(review)
     result.username = username
+    result.author_sparks = sparks
     return result
 
 
@@ -71,7 +72,7 @@ def list_reviews(
     total = db.scalar(select(func.count()).select_from(Review).where(*conditions))
 
     stmt = (
-        select(Review, User.username)
+        select(Review, User.username, User.spark_rating)
         .join(User, User.id == Review.user_id)
         .where(*conditions)
         .order_by(Review.created_at.desc(), Review.id)
@@ -83,7 +84,7 @@ def list_reviews(
 
     return ReviewList(
         total=total or 0,
-        items=[_with_username(review, name) for review, name in rows],
+        items=[_with_username(review, name, sparks) for review, name, sparks in rows],
     )
 
 
@@ -143,7 +144,7 @@ def create_review(
         )
 
     db.refresh(review)
-    return _with_username(review, current_user.username)
+    return _with_username(review, current_user.username, current_user.spark_rating)
 
 
 @router.patch(
@@ -180,7 +181,7 @@ def update_review(
     db.commit()
     db.refresh(review)
 
-    return _with_username(review, current_user.username)
+    return _with_username(review, current_user.username, current_user.spark_rating)
 
 
 @router.delete(

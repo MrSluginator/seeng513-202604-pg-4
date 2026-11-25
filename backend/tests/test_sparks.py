@@ -450,3 +450,46 @@ def test_reading_sparks_needs_a_login_and_a_real_user(client, session):
         client.get(f"/users/{uuid.uuid4()}/sparks", headers=bearer(viewer)).status_code
         == 404
     )
+
+
+def test_reviews_show_their_authors_sparks(client, session):
+    author = make_user(session, "writer")
+    reader = make_user(session, "reader")
+    event = add_event(session)
+    review_id = review(client, author, event.id).json()["id"]
+    spark_review(client, reader, review_id)
+    spark_review(client, reader, review_id)
+
+    listed = client.get(f"/events/{event.id}/reviews").json()["items"][0]
+
+    assert listed["author_sparks"] == 2
+
+
+def test_a_new_review_shows_its_authors_current_sparks(client, session):
+    author = make_user(session, "writer")
+    author.spark_rating = 7
+    session.commit()
+
+    posted = review(client, author, add_event(session).id).json()
+
+    assert posted["author_sparks"] == 7
+
+
+def test_events_show_their_organizers_sparks(client, session):
+    organizer = make_user(session, "org", "organizer")
+    fan = make_user(session, "alice")
+    event = make_event(session, organizer)
+    spark_event(client, fan, event.id)
+    spark_event(client, fan, event.id)
+
+    detail = client.get(f"/events/{event.id}").json()
+    listed = client.get("/events").json()["items"][0]
+
+    assert detail["creator_sparks"] == 2
+    assert listed["creator_sparks"] == 2
+
+
+def test_an_event_without_an_organizer_has_no_spark_total(client, session):
+    event = add_event(session)
+
+    assert client.get(f"/events/{event.id}").json()["creator_sparks"] is None

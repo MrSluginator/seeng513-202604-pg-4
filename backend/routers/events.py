@@ -45,6 +45,7 @@ SortField = Literal[
 def _load_options():
     """Fetch tags and photos in bulk: a fixed number of queries per request."""
     return (
+        selectinload(Event.creator),
         selectinload(Event.tags),
         selectinload(Event.event_photo_links).selectinload(EventPhoto.photo),
     )
