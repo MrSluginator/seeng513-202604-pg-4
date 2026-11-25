@@ -1,32 +1,37 @@
 <section class="heat-map-page" aria-label="Event heat map">
-  <div
-    #mapContainer
-    class="map-container"
-    role="region"
-    aria-label="Interactive event map"
-  ></div>
+  <div class="map-pane">
+    <div #mapContainer class="map-container" role="region" aria-label="Interactive event map"></div>
 
-  <div class="map-controls" role="toolbar" aria-label="Map controls">
-    <button
-      type="button"
-      class="control-btn"
-      [class.active]="showHeatmap()"
-      [attr.aria-pressed]="showHeatmap()"
-      (click)="toggleHeatmap()"
-    >
-      Heatmap
-    </button>
-    <button
-      type="button"
-      class="control-btn"
-      [class.active]="showPins()"
-      [attr.aria-pressed]="showPins()"
-      (click)="togglePins()"
-    >
-      Pins ({{ mappedEvents().length }})
-    </button>
-    <button type="button" class="control-btn" (click)="recenter()">
-      Recenter
-    </button>
+    <div class="map-controls">
+      <div class="map-category-selectors" role="toolbar" aria-label="Category filters">
+        <f-all-categories [form]="categoryForm" />
+      </div>
+
+      <div class="map-filter-action">
+        <f-filter-button />
+      </div>
+
+    </div>
   </div>
+
+  <aside class="events-sidebar" aria-label="Events in current map view">
+    <header class="sidebar-header">
+      <h4 class="sidebar-title">Quick List</h4>
+    </header>
+
+    <div class="sidebar-list">
+      @for (item of visibleEvents(); track item.event.id) {
+      <div class="sidebar-card-item" [class.selected]="selectedEventId() === item.event.id" tabindex="0" role="button"
+        (click)="focusEvent(item)" (keydown.enter)="focusEvent(item)"
+        (keydown.space)="$event.preventDefault(); focusEvent(item)">
+        <f-event-card [event]="item.event" size="s" [link]="false" />
+      </div>
+      } @empty {
+      <div class="sidebar-empty">
+        <p>No events in this map area.</p>
+        <small>Pan, zoom out, or recenter the map to see events.</small>
+      </div>
+      }
+    </div>
+  </aside>
 </section>

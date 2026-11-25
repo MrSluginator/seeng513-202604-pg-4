@@ -1,0 +1,11 @@
+<strong class="event-popup-title">{{ event().title }}</strong>
+
+@if (event().location?.name; as locationName) {
+<div class="event-popup-location">{{ locationName }}</div>
+}
+
+<f-button
+  class="event-popup-link"
+  text="View event"
+  (clicked)="viewEvent()"
+/>

@@ -47,6 +47,7 @@ export class EventCard {
   readonly event = input.required<Event | EventDetail>();
   readonly detail = computed(() => this.event() as EventDetail);
   readonly size = input.required<EventSize>();
+  readonly link = input(true);
   protected readonly reviewOpen = signal(false);
 
   // Starts from event().defaultSaved and resets if a different event is passed in

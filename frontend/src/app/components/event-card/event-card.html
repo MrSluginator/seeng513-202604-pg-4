@@ -51,7 +51,7 @@
   <div class="info">
     <div class="title-bar">
       <h3>
-        @if (size() === 'xl') {
+        @if (size() === 'xl' || !link()) {
           {{ event().title }}
         } @else {
           <a class="link" [routerLink]="['/event', event().id]">{{

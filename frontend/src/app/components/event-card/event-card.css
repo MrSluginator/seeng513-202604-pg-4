@@ -48,7 +48,7 @@
 
   @media (hover: hover) {
     &:is(.s, .m):hover {
-      scale: 1.03;
+      scale: var(--card-hover-scale, 1.03);
     }
 
     &:is(.s, .m, .l):hover {

@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+  font-family: inherit;
+}
+
+.event-popup-title {
+  font-size: 0.95rem;
+  color: var(--n7);
+}
+
+.event-popup-location {
+  font-size: 0.8rem;
+  color: var(--n6);
+}
+
+.event-popup-link {
+  margin-top: 6px;
+  align-self: flex-start;
+}

@@ -1,23 +1,55 @@
 import {
   afterNextRender,
+  ApplicationRef,
   Component,
+  ComponentRef,
   computed,
+  createComponent,
   DestroyRef,
   effect,
   ElementRef,
+  EnvironmentInjector,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup } from '@angular/forms';
 import * as L from 'leaflet';
 import { HeatLayer, HeatLatLng } from 'leaflet.heat';
+import pinIcon from '../../../assets/icons/pin.svg';
 import type { Event } from '../../../models/event.schema';
+import { EventCard } from '../../components/event-card/event-card';
+import { EventPopup } from '../../components/event-popup/event-popup';
+import { AllCategories } from '../../molecules/category/all-categories';
+import { FilterButton } from '../../molecules/filter-button/filter-button';
+import {
+  categoriesList,
+  CategoryForm,
+  CategoryName,
+} from '../../molecules/category/categories';
 import { EventService } from '../../services/api-service';
 import { FilterService } from '../../services/filter-service';
 
 const DEFAULT_CENTER: L.LatLngTuple = [51.0447, -114.0719];
 const DEFAULT_ZOOM = 12;
+
+const PIN_ICON_SIZE: L.PointTuple = [28, 28];
+const SELECTED_PIN_ICON_SIZE: L.PointTuple = [36, 36];
+
+const createPinIcon = (selected: boolean): L.DivIcon => {
+  const [width, height] = selected ? SELECTED_PIN_ICON_SIZE : PIN_ICON_SIZE;
+  return L.divIcon({
+    className: selected ? 'event-pin-marker selected' : 'event-pin-marker',
+    html: pinIcon,
+    iconSize: [width, height],
+    iconAnchor: [width / 2, height],
+    popupAnchor: [0, -height],
+  });
+};
+
+const DEFAULT_MARKER_ICON = createPinIcon(false);
+const SELECTED_MARKER_ICON = createPinIcon(true);
 
 interface MappedEvent {
   event: Event;
@@ -26,16 +58,17 @@ interface MappedEvent {
 }
 
 @Component({
-  imports: [],
+  imports: [EventCard, AllCategories, FilterButton],
   selector: 'f-heat-map',
   styleUrl: './heat-map.css',
   templateUrl: './heat-map.html',
 })
 export class HeatMap {
+  private readonly appRef = inject(ApplicationRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly environmentInjector = inject(EnvironmentInjector);
   private readonly eventApi = inject(EventService);
   private readonly filterSvc = inject(FilterService);
-  private readonly router = inject(Router);
 
   private readonly mapContainer =
     viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
@@ -43,12 +76,23 @@ export class HeatMap {
   private map?: L.Map;
   private heatLayer?: HeatLayer & L.Layer;
   private markersLayer?: L.LayerGroup;
+  private readonly markersById = new Map<string, L.Marker>();
+  private readonly activePopups = new Set<ComponentRef<EventPopup>>();
 
   private readonly mapReady = signal(false);
-  protected readonly showHeatmap = signal(true);
-  protected readonly showPins = signal(true);
+  private readonly viewBounds = signal<L.LatLngBounds | null>(null);
+  protected readonly selectedEventId = signal<string | null>(null);
 
   protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+
+  protected readonly categoryForm: CategoryForm = (() => {
+    const selected = new Set(this.filterSvc.filters().categories);
+    const controls = {} as Record<CategoryName, FormControl<boolean>>;
+    for (const c of categoriesList) {
+      controls[c] = new FormControl(selected.has(c), { nonNullable: true });
+    }
+    return new FormGroup(controls);
+  })();
 
   protected readonly mappedEvents = computed<MappedEvent[]>(() =>
     this.feed.value().items.flatMap((event) => {
@@ -59,7 +103,27 @@ export class HeatMap {
     })
   );
 
+  protected readonly visibleEvents = computed<MappedEvent[]>(() => {
+    const bounds = this.viewBounds();
+    const events = this.mappedEvents();
+    if (!bounds) return events;
+    return events.filter(({ lat, lng }) => bounds.contains([lat, lng]));
+  });
+
   constructor() {
+    this.categoryForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      const raw = this.categoryForm.getRawValue();
+      const categories = categoriesList.filter((c) => raw[c]);
+      this.filterSvc.patch({ categories });
+    });
+
+    effect(() => {
+      const selected = new Set(this.filterSvc.filters().categories);
+      const value = {} as Record<CategoryName, boolean>;
+      for (const c of categoriesList) value[c] = selected.has(c);
+      this.categoryForm.setValue(value, { emitEvent: false });
+    });
+
     afterNextRender(() => {
       this.initMap();
     });
@@ -68,33 +132,25 @@ export class HeatMap {
       if (!this.mapReady() || !this.map) return;
 
       const events = this.mappedEvents();
-      const showHeat = this.showHeatmap();
-      const showPins = this.showPins();
+      this.syncHeatLayer(events);
+      this.syncMarkersLayer(events);
+      this.updateMarkerHighlight(this.selectedEventId());
+    });
 
-      this.syncHeatLayer(events, showHeat);
-      this.syncMarkersLayer(events, showPins);
+    effect(() => {
+      this.updateMarkerHighlight(this.selectedEventId());
     });
   }
 
-  protected toggleHeatmap(): void {
-    this.showHeatmap.update((v) => !v);
-  }
-
-  protected togglePins(): void {
-    this.showPins.update((v) => !v);
-  }
-
-  protected recenter(): void {
+  protected focusEvent(item: MappedEvent): void {
     if (!this.map) return;
 
-    const events = this.mappedEvents();
-    if (events.length > 0) {
-      const bounds = L.latLngBounds(
-        events.map(({ lat, lng }) => [lat, lng] as L.LatLngTuple)
-      );
-      this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14 });
-    } else {
-      this.map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+    this.selectedEventId.set(item.event.id);
+    this.map.panTo([item.lat, item.lng], { animate: true });
+
+    const marker = this.markersById.get(item.event.id);
+    if (marker) {
+      marker.openPopup();
     }
   }
 
@@ -124,21 +180,32 @@ export class HeatMap {
         1.0: '#a52114',
       },
     }) as unknown as HeatLayer & L.Layer;
+    this.heatLayer.addTo(map);
 
-    this.markersLayer = L.layerGroup();
+    this.markersLayer = L.layerGroup().addTo(map);
     this.map = map;
+
+    const updateBounds = () => {
+      this.viewBounds.set(map.getBounds());
+    };
+    map.on('moveend zoomend resize', updateBounds);
+    updateBounds();
+
     this.mapReady.set(true);
 
     this.destroyRef.onDestroy(() => {
+      this.destroyActivePopups();
+      map.off('moveend zoomend resize', updateBounds);
       map.remove();
       this.map = undefined;
       this.heatLayer = undefined;
       this.markersLayer = undefined;
+      this.markersById.clear();
     });
   }
 
-  private syncHeatLayer(events: MappedEvent[], visible: boolean): void {
-    if (!this.map || !this.heatLayer) return;
+  private syncHeatLayer(events: MappedEvent[]): void {
+    if (!this.heatLayer) return;
 
     const maxVisits = Math.max(
       1,
@@ -151,73 +218,66 @@ export class HeatMap {
     ]);
 
     this.heatLayer.setLatLngs(points);
-
-    const isAdded = this.map.hasLayer(this.heatLayer);
-    if (visible && !isAdded) {
-      this.heatLayer.addTo(this.map);
-    } else if (!visible && isAdded) {
-      this.map.removeLayer(this.heatLayer);
-    }
   }
 
-  private syncMarkersLayer(events: MappedEvent[], visible: boolean): void {
-    if (!this.map || !this.markersLayer) return;
+  private syncMarkersLayer(events: MappedEvent[]): void {
+    if (!this.markersLayer) return;
 
+    this.destroyActivePopups();
     this.markersLayer.clearLayers();
+    this.markersById.clear();
 
     for (const { event, lat, lng } of events) {
-      const marker = L.circleMarker([lat, lng], {
-        radius: 8,
-        color: '#faf8f8',
-        weight: 2,
-        fillColor: '#d1291a',
-        fillOpacity: 0.9,
+      const marker = L.marker([lat, lng], { icon: DEFAULT_MARKER_ICON });
+
+      marker.bindPopup(() => this.createPopupContent(event, marker));
+      marker.on('click', () => {
+        this.selectedEventId.set(event.id);
       });
-
-      marker.bindPopup(() => this.createPopupContent(event));
       marker.addTo(this.markersLayer);
-    }
-
-    const isAdded = this.map.hasLayer(this.markersLayer);
-    if (visible && !isAdded) {
-      this.markersLayer.addTo(this.map);
-    } else if (!visible && isAdded) {
-      this.map.removeLayer(this.markersLayer);
+      this.markersById.set(event.id, marker);
     }
   }
 
-  private createPopupContent(event: Event): HTMLElement {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'event-popup';
-
-    const title = document.createElement('strong');
-    title.className = 'event-popup-title';
-    title.textContent = event.title;
-    wrapper.appendChild(title);
-
-    if (event.location?.name) {
-      const loc = document.createElement('div');
-      loc.className = 'event-popup-location';
-      loc.textContent = event.location.name;
-      wrapper.appendChild(loc);
+  private updateMarkerHighlight(selectedId: string | null): void {
+    for (const [id, marker] of this.markersById) {
+      if (id === selectedId) {
+        marker.setIcon(SELECTED_MARKER_ICON);
+        marker.setZIndexOffset(1000);
+      } else {
+        marker.setIcon(DEFAULT_MARKER_ICON);
+        marker.setZIndexOffset(0);
+      }
     }
+  }
 
-    const meta = document.createElement('div');
-    meta.className = 'event-popup-meta';
-    const ratingText =
-      event.rating != null ? `★ ${event.rating.toFixed(1)} · ` : '';
-    meta.textContent = `${ratingText}${event.visits_count} visits`;
-    wrapper.appendChild(meta);
-
-    const link = document.createElement('button');
-    link.type = 'button';
-    link.className = 'event-popup-link';
-    link.textContent = 'View event';
-    link.addEventListener('click', () => {
-      void this.router.navigate(['/event', event.id]);
+  private createPopupContent(event: Event, marker: L.Marker): HTMLElement {
+    const componentRef = createComponent(EventPopup, {
+      environmentInjector: this.environmentInjector,
     });
-    wrapper.appendChild(link);
+    componentRef.setInput('event', event);
+    this.appRef.attachView(componentRef.hostView);
+    componentRef.changeDetectorRef.detectChanges();
+    this.activePopups.add(componentRef);
 
-    return wrapper;
+    const cleanup = () => {
+      marker.off('popupclose', cleanup);
+      marker.off('remove', cleanup);
+      if (!this.activePopups.delete(componentRef)) return;
+      this.appRef.detachView(componentRef.hostView);
+      componentRef.destroy();
+    };
+    marker.on('popupclose', cleanup);
+    marker.on('remove', cleanup);
+
+    return componentRef.location.nativeElement as HTMLElement;
+  }
+
+  private destroyActivePopups(): void {
+    for (const ref of this.activePopups) {
+      this.appRef.detachView(ref.hostView);
+      ref.destroy();
+    }
+    this.activePopups.clear();
   }
 }
