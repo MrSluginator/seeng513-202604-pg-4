@@ -1,0 +1,142 @@
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #dialog
+  aria-labelledby="filter-dialog-title"
+  (close)="onNativeClose()"
+  (click)="onBackdropClick($event)"
+>
+  @if (open()) {
+    <div class="panel">
+      <header class="header">
+        <h2 id="filter-dialog-title">Filters &amp; Sorting</h2>
+        <f-button icon="times" aria-label="Close filters" (click)="close()" />
+      </header>
+
+      <div class="body">
+        <div class="cats">
+          <div class="column" style="gap: 16px">
+            <h3>Categories</h3>
+            <div class="categories">
+              <f-all-categories [form]="categoryForm" />
+            </div>
+          </div>
+
+          <div class="column" style="flex: 1">
+            <div class="row between">
+              <h3>Tags</h3>
+              <f-search-bar
+                placeholder="Search tags..."
+                [(query)]="tagQuery"
+                [results]="tagResults()"
+                (resultSelected)="onTagSelected($event)"
+              />
+            </div>
+            <div class="column">
+              <p>Active Tags:</p>
+              <div class="tags">
+                @for (tag of draft().tags; track tag) {
+                  <f-widget
+                    [text]="tag.name"
+                    icon="times"
+                    [label]="'remove ' + tag + ' tag from filters'"
+                    [ngModel]="true"
+                    (ngModelChange)="removeTag(tag.id)"
+                  />
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="column" style="flex: 1">
+            <div class="row between">
+              <h3>Location</h3>
+              <f-search-bar
+                placeholder="Search locations..."
+                [(query)]="locationQuery"
+                [results]="locationResults()"
+                (resultSelected)="onLocationSelected($event)"
+              />
+            </div>
+            <small class="location-info">
+              If the Distance filter is active, the feed will show events within
+              the specified range from the following locations, otherwise we
+              simply prioritize events near these locations.
+            </small>
+            <div class="locations">
+              @for (loc of draft().locations; track loc.name; let i = $index) {
+                <div class="row">
+                  <f-pin [number]="i + 1" />
+                  {{ loc.name }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="sort column">
+          <h3>Sort order</h3>
+          <f-radio-group
+            [options]="sortOptions"
+            [ngModel]="draft().sort"
+            (ngModelChange)="setSort($event)"
+          />
+        </div>
+
+        <div class="ranges">
+          <div class="column">
+            <h3>Time</h3>
+            <f-range-filter
+              lowLabel="Start Time"
+              highLabel="End Time"
+              sliderLabel="Time range"
+              [format]="formatHour"
+              [min]="0"
+              [max]="24"
+              [step]="0.25"
+              [defaultValue]="timeDefault"
+              [ngModel]="timeValue()"
+              (ngModelChange)="setTimeRange($event)"
+            />
+          </div>
+
+          <div class="column">
+            <h3>Price</h3>
+            <f-range-filter
+              lowLabel="Lowest Price"
+              highLabel="Highest Price"
+              sliderLabel="Price range"
+              [format]="formatPrice"
+              [min]="0"
+              [max]="200"
+              [step]="5"
+              [defaultValue]="priceDefault"
+              [ngModel]="priceValue()"
+              (ngModelChange)="setPriceRange($event)"
+            />
+          </div>
+
+          <div class="column">
+            <h3>Distance</h3>
+            <f-range-filter
+              lowLabel="Shortest Distance"
+              highLabel="Furthest Distance"
+              sliderLabel="Distance range"
+              [format]="formatDistance"
+              [min]="0"
+              [max]="200"
+              [step]="5"
+              [defaultValue]="distanceDefault"
+              [ngModel]="distanceValue()"
+              (ngModelChange)="setDistanceRange($event)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <f-button text="reset" (click)="reset()" />
+        <f-button text="apply filters" (click)="apply()" />
+      </footer>
+    </div>
+  }
+</dialog>
