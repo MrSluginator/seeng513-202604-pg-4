@@ -17,6 +17,7 @@ from schemas import (
     ReviewSummary,
     ReviewUpdate,
 )
+from sparks import SparkGiven, SparkVote, give_spark
 
 router = APIRouter(tags=["reviews"])
 
@@ -211,3 +212,20 @@ def delete_review(
     _update_event_rating(db, event)
 
     db.commit()
+
+
+@router.post("/reviews/{review_id}/spark", response_model=SparkGiven)
+def spark_review(
+    review_id: uuid.UUID,
+    payload: SparkVote | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Give the review a spark (+1, the default) or send {"amount": -1} to take
+    one away. The reviewer's sparks change by that much."""
+    review = db.get(Review, review_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="Review not found")
+    if review.user_id == current_user.id:
+        raise HTTPException(status_code=403, detail="You can't spark your own review")
+    return give_spark(db, review.user_id, (payload or SparkVote()).amount)

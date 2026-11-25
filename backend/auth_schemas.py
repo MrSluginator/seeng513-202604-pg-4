@@ -25,6 +25,40 @@ class RoleUpdate(BaseModel):
     account_type: AccountType
 
 
+class SparkAdjustment(BaseModel):
+    """An admin adding or removing sparks. The reason goes in the server log."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    amount: int = Field(ge=-1000, le=1000)
+    reason: str = Field(min_length=3, max_length=200)
+
+    @field_validator("amount")
+    @classmethod
+    def not_zero(cls, value: int) -> int:
+        if value == 0:
+            raise ValueError("amount cannot be 0")
+        return value
+
+    @field_validator("reason")
+    @classmethod
+    def strip_reason(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) < 3:
+            raise ValueError("reason must be at least 3 characters")
+        return value
+
+
+class SparkSummary(BaseModel):
+    """A user's spark total, safe to show to other users."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    username: str
+    spark_rating: int
+
+
 class UserMe(BaseModel):
     """The logged-in user's own account. Never includes the password hash."""
 

@@ -12,7 +12,7 @@ from db.models.event import Event
 from db.models.event_photo import EventPhoto
 from db.models.tag import Tag
 from db.models.user import User
-from deps import require_roles
+from deps import get_current_user, require_roles
 from schemas import (
     EventCreate,
     EventDetail,
@@ -22,6 +22,7 @@ from schemas import (
     TagSummary,
     _as_utc,
 )
+from sparks import SparkGiven, SparkVote, give_spark
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -419,3 +420,20 @@ def get_event(event_id: uuid.UUID, db: Session = Depends(get_db)) -> EventDetail
         raise HTTPException(status_code=404, detail="Event not found")
 
     return EventDetail.model_validate(event)
+
+
+@router.post("/{event_id}/spark", response_model=SparkGiven)
+def spark_event(
+    event_id: uuid.UUID,
+    payload: SparkVote | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Give the event a spark (+1, the default) or send {"amount": -1} to take
+    one away. The organizer's sparks change by that much."""
+    event = db.get(Event, event_id)
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    if event.creator_id == current_user.id:
+        raise HTTPException(status_code=403, detail="You can't spark your own event")
+    return give_spark(db, event.creator_id, (payload or SparkVote()).amount)
