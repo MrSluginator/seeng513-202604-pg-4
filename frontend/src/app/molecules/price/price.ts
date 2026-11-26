@@ -27,7 +27,7 @@ export class Price {
     if (p) {
       if (p.price_min == p.price_max) {
         if (p.price_min != 0) {
-          return `${p.price_max}`
+          return `${p.price_max}`;
         }
       } else {
         if (p.price_min && p.price_max) {
