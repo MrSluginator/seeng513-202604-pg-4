@@ -1,1 +1,179 @@
-<p>post-event works!</p>
+<form class="page" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="main">
+    <!-- Row 1 -->
+    <div class="row">
+      <section class="field f-upload">
+        <h3>Upload Images</h3>
+        <label class="dropzone" [attr.data-invalid]="showError('images')">
+          <span class="plus">+</span>
+          <span>Drop images here or click to browse</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            hidden
+            (change)="onFiles($any($event.target).files)"
+          />
+        </label>
+        @if (showError('images')) {
+          <small class="error" role="alert">Add at least one image.</small>
+        }
+      </section>
+
+      <div class="title-desc">
+        <section class="field f-title">
+          <h3>Event Title</h3>
+          <f-text-input
+            formControlName="title"
+            placeholder="Name the event..."
+          />
+          @if (showError('title')) {
+            <small class="error" role="alert">Give your event a title.</small>
+          }
+        </section>
+        <section class="field f-desc">
+          <h3>Event Description</h3>
+          <textarea
+            formControlName="description"
+            placeholder="Describe your event here..."
+            rows="4"
+          ></textarea>
+          @if (showError('description')) {
+            <small class="error" role="alert">Add a description.</small>
+          }
+        </section>
+      </div>
+    </div>
+
+    <f-divider class="divider d1" />
+
+    <!-- Row 2 -->
+    <div class="row">
+      <section
+        class="field f-category"
+        [attr.data-invalid]="showError('category')"
+      >
+        <h3>Category</h3>
+        <f-all-categories [form]="categoryForm" />
+        @if (showError('category')) {
+          <small class="error" role="alert">Pick a category.</small>
+        }
+      </section>
+
+      <section class="field f-tags" [attr.data-invalid]="showError('tags')">
+        <div class="tags-head">
+          <h3>Tags</h3>
+          <f-search-bar />
+        </div>
+        <div class="tag-box">
+          @if (selectedTags().length || suggestedTags().length) {
+            @for (t of selectedTags(); track t.slug) {
+              <f-widget [text]="t.name" icon="times" (clicked)="removeTag(t)" />
+            }
+            @for (t of suggestedTags(); track t.slug) {
+              @if (!selectedTags().includes(t)) {
+                <f-widget
+                  class="suggested"
+                  [text]="t.name"
+                  icon="plus"
+                  (clicked)="toggleTag(t)"
+                />
+              }
+            }
+          } @else {
+            <p>
+              Select a category to see suggested tags or search for them
+              yourself.
+            </p>
+            <p>Please select a minimum of 3 tags.</p>
+          }
+        </div>
+        @if (showError('tags')) {
+          <small class="error" role="alert">Select at least 3 tags.</small>
+        }
+      </section>
+    </div>
+
+    <f-divider class="divider d2" />
+
+    <!-- Row 3 -->
+    <div class="row">
+      <div class="time-price-location">
+        <section class="field f-time">
+          <h3>Time</h3>
+          <f-range-filter
+            formControlName="time"
+            [min]="0"
+            [max]="24"
+            [step]="0.5"
+            lowLabel="Start Time"
+            highLabel="End Time"
+            [format]="(x) => `${x}`"
+          />
+        </section>
+        <section class="field f-price">
+          <h3>Price</h3>
+          <f-range-filter
+            formControlName="price"
+            [min]="0"
+            [max]="100"
+            [step]="1"
+            lowLabel="Lowest Price"
+            highLabel="Highest Price"
+            [format]="(x) => `${x}`"
+          />
+        </section>
+        <section class="field f-location">
+          <h3>Location</h3>
+          <f-text-input
+            formControlName="location"
+            placeholder="Event location"
+          />
+          @if (showError('location')) {
+            <small class="error" role="alert">Add a location.</small>
+          }
+        </section>
+      </div>
+
+      <section
+        class="field f-cover"
+        [attr.data-invalid]="showError('coverImageId')"
+      >
+        <h3>Cover Image</h3>
+        <small>Select which image appears on the default card</small>
+        <div class="photos">
+          @for (photo of images(); track photo.id) {
+            <button
+              type="button"
+              class="photo"
+              [class.selected]="photo.id === form.controls.coverImageId.value"
+              (click)="setCover(photo)"
+              [attr.aria-pressed]="
+                photo.id === form.controls.coverImageId.value
+              "
+            >
+              <img [src]="photo.url" alt="" />
+            </button>
+          } @empty {
+            <p>Your uploaded images will appear here</p>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <aside class="side">
+    <f-button class="post" text="Post event" type="submit" />
+    <f-button
+      class="preview-toggle"
+      text="Preview post"
+      type="button"
+      (clicked)="previewOpen.set(!previewOpen())"
+    />
+    <div class="preview" [class.open]="previewOpen()">
+      <h2>Preview</h2>
+      <f-event-card size="m" [event]="preview()" />
+      <f-event-card size="s" [event]="preview()" />
+    </div>
+  </aside>
+</form>
