@@ -44,8 +44,12 @@ export class Widget implements ControlValueAccessor {
   );
 
   // no-op defaults so the widget works without a form control
-  private onChange: (value: boolean) => void = () => { /* empty */ };
-  protected onTouched: () => void = () => { /* empty */ };
+  private onChange: (value: boolean) => void = () => {
+    /* empty */
+  };
+  protected onTouched: () => void = () => {
+    /* empty */
+  };
 
   protected toggle(): void {
     if (!this.toggleable()) return; // plain button: do nothing

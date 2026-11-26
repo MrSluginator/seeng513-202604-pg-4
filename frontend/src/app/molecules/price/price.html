@@ -1,5 +1,9 @@
 <div class="price">
-  <div class="icons" [class.free]="range() === 'Free'" [class.rich]="tier() === 4">
+  <div
+    class="icons"
+    [class.free]="range() === 'Free'"
+    [class.rich]="tier() === 4"
+  >
     @for (i of dollars(); track i) {
       <f-icon name="dollar" />
     }

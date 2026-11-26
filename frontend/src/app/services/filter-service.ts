@@ -48,7 +48,7 @@ export class FilterService {
   addTag(tag: Tag): void {
     if (this._filters().tags.find((t) => t.id === tag.id)) return;
     this._filters().tags.push(tag);
-    this.patch({ tags: this._filters().tags});
+    this.patch({ tags: this._filters().tags });
   }
 
   removeTag(tag: Tag): void {
