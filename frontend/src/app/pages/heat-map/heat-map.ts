@@ -83,7 +83,21 @@ export class HeatMap {
   private readonly viewBounds = signal<L.LatLngBounds | null>(null);
   protected readonly selectedEventId = signal<string | null>(null);
 
-  protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+  private readonly effectiveFilters = computed(() => {
+    const f = this.filterSvc.filters();
+    const needsLocation = Boolean(f.distanceRange) || f.sort === 'distance';
+    if (!needsLocation || f.locations.length > 0) return f;
+
+    const center = this.map?.getCenter();
+    const latitude = center?.lat ?? DEFAULT_CENTER[0];
+    const longitude = center?.lng ?? DEFAULT_CENTER[1];
+    return {
+      ...f,
+      locations: [{ name: 'Map center', latitude, longitude }],
+    };
+  });
+
+  protected readonly feed = this.eventApi.getEventFeed(this.effectiveFilters);
 
   protected readonly categoryForm: CategoryForm = (() => {
     const selected = new Set(this.filterSvc.filters().categories);
@@ -94,14 +108,15 @@ export class HeatMap {
     return new FormGroup(controls);
   })();
 
-  protected readonly mappedEvents = computed<MappedEvent[]>(() =>
-    this.feed.value().items.flatMap((event) => {
+  protected readonly mappedEvents = computed<MappedEvent[]>(() => {
+    const items = this.feed.hasValue() ? this.feed.value().items : [];
+    return items.flatMap((event) => {
       const lat = event.location?.latitude;
       const lng = event.location?.longitude;
       if (lat == null || lng == null) return [];
       return [{ event, lat, lng }];
-    })
-  );
+    });
+  });
 
   protected readonly visibleEvents = computed<MappedEvent[]>(() => {
     const bounds = this.viewBounds();

@@ -89,15 +89,19 @@ export class FilterDialog {
     this.filterService.queryTags(this.tagQuery())
   );
   protected locationResults = computed(() =>
-    this.filterService.queryLocations(this.tagQuery())
+    this.filterService.queryLocations(this.locationQuery())
   );
 
   protected onTagSelected(result: SearchResult<Tag>): void {
-    this.filterService.filters().tags.push(result.value);
+    const current = this.draft().tags;
+    if (current.some((t) => t.id === result.value.id)) return;
+    this.patch({ tags: [...current, result.value] });
   }
 
   protected onLocationSelected(result: SearchResult<Location>): void {
-    this.filterService.filters().locations.push(result.value);
+    const current = this.draft().locations;
+    if (current.some((l) => l.name === result.value.name)) return;
+    this.patch({ locations: [...current, result.value] });
   }
 
   protected readonly sortOptions = Object.entries(SORT_OPTIONS).map(
