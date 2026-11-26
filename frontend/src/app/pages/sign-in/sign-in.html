@@ -3,7 +3,7 @@
   <div class="text">
     <h1>SPARK NEW CONNECTIONS</h1>
     <h3>
-      Create an account and end the tedious search, save placees, see what your
+      Create an account and end the tedious search, save places, see what your
       friends are up to and find what you want to do.
     </h3>
   </div>
@@ -26,6 +26,7 @@
           formControlName="username"
           label="Username"
           placeholder="Enter your username (Jane_Doe)"
+          [showError]="true"
         />
       }
       <f-text-input
@@ -33,6 +34,7 @@
         label="Email"
         placeholder="Enter your email (you@example.com)"
         type="username"
+        [showError]="true"
       />
       <f-text-input
         formControlName="password"
@@ -42,8 +44,10 @@
         [autocomplete]="
           mode() === 'login' ? 'current-password' : 'new-password'
         "
+        [showError]="true"
         [icon]="passwordHidden() ? 'eyeOpen' : 'eyeClosed'"
-        (clicked)="togglePassword()"
+        [iconLabel]="passwordHidden() ? 'Show Password' : 'Hide Password'"
+        (iconClicked)="togglePassword()"
       />
       <f-button type="submit" [text]="data().button" />
       @if (error(); as msg) {

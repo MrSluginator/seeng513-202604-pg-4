@@ -52,13 +52,13 @@ export class SignIn {
     this.mode() === 'login'
       ? {
           header: 'Welcome Back!',
-          text: "Log in to see wwhat's happening around you.",
+          text: "Log in to see what's happening around you.",
           button: 'Log In',
           password: 'Enter your password',
         }
       : {
           header: 'Create an account',
-          text: "Start discovering newe placees, events what's happening",
+          text: "Start discovering new places, events what's happening",
           button: 'Create Account',
           password: 'Create a password',
         }

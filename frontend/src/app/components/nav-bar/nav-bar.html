@@ -48,8 +48,13 @@
         [results]="nav.results()"
         (resultSelected)="nav.select($event)"
       />
-      @if (nav.signedIn()) {
-        <div>Profile Button</div>
+      @if (auth.isLoggedIn()) {
+        <f-button
+          class="profile"
+          [text]="auth.user()?.username ?? 'Profile'"
+          icon="profile"
+          (clicked)="onSettingsClick()"
+        />
       } @else {
         <f-button text="Sign In" (click)="onSignInClick()" />
       }

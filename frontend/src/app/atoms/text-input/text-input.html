@@ -2,11 +2,12 @@
   @if (label()) {
     <label [for]="id()" class="label">{{ label() }}</label>
   }
-  <div class="field" [attr.data-disabled]="disabled() || null">
-    @let ic = icon();
-    @if (ic && iconPosition() === 'left') {
-      <span class="icon" aria-hidden="true"><f-icon [name]="ic" /></span>
-    }
+  <div
+    class="field"
+    [style.flex-direction]="iconPosition() === 'right' ? 'row' : 'row-reverse'"
+    [attr.data-disabled]="disabled() || null"
+    [attr.data-invalid]="displayError() ? '' : null"
+  >
     <input
       [id]="id()"
       [type]="type()"
@@ -18,9 +19,24 @@
       (input)="handleInput($event)"
       (blur)="onTouched()"
       [autocomplete]="autocomplete()"
+      [attr.aria-invalid]="displayError() ? true : null"
+      [attr.aria-describedby]="displayError() ? errorId() : null"
     />
-    @if (ic && iconPosition() === 'right') {
-      <span class="icon" aria-hidden="true"><f-icon [name]="ic" /></span>
+    @let ic = icon();
+    @if (ic) {
+      <button
+        class="icon"
+        type="button"
+        [attr.aria-label]="iconLabel() ?? null"
+        [disabled]="disabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="iconClicked.emit()"
+      >
+        <f-icon [name]="ic" />
+      </button>
     }
   </div>
+  @if (showError()) {
+    <small class=error [id]="errorId()" role="alert">{{ displayError() }}</small>
+  }
 </div>
