@@ -90,10 +90,12 @@
           <f-icon name="clock" />
           <small>{{ timeLabel() }}</small>
         </div>
-        <div class="location">
-          <f-icon name="pin" />
-          <small>{{ event().location }}</small>
-        </div>
+        @if (event().location?.name; as locationName) {
+          <div class="location">
+            <f-icon name="pin" />
+            <small>{{ locationName }}</small>
+          </div>
+        }
       </div>
     } @else {
       {{ event().summary }}
