@@ -9,8 +9,9 @@ Run it from the project folder, with the stack running:
     docker compose exec backend python refresh_crowd.py --limit 5
     docker compose exec backend python refresh_crowd.py --venue "Betty Lou's Library"
 
---export prints SQL that puts the saved forecasts into any other database (paste it at the end of seed.sql), 
-so the deployed site get the same heatmap without calling BestTime.
+    --export prints SQL that puts the saved forecasts into any other database
+    (paste it at the end of seed.sql),so the deployed site get the same heatmap
+    without calling BestTime.
 
     docker compose exec -T backend python refresh_crowd.py --export > forecasts.sql
 
