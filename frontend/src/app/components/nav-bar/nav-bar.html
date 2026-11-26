@@ -18,9 +18,9 @@
       <f-icon name="event" size="m" />
     </a>
     @if (auth.isLoggedIn()) {
-    <a class="link" routerLink="/settings" routerLinkActive="active">
-      <f-icon name="settings" size="m" />
-    </a>
+      <a class="link" routerLink="/settings" routerLinkActive="active">
+        <f-icon name="settings" size="m" />
+      </a>
     } @else {
       <a class="link" routerLink="/sign_in" routerLinkActive="active">
         <f-icon name="profile" size="m" />

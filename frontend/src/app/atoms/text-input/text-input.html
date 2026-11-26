@@ -37,6 +37,8 @@
     }
   </div>
   @if (showError()) {
-    <small class=error [id]="errorId()" role="alert">{{ displayError() }}</small>
+    <small class="error" [id]="errorId()" role="alert">{{
+      displayError()
+    }}</small>
   }
 </div>
