@@ -8,5 +8,5 @@ import { FilterService } from '../../services/filter-service';
   templateUrl: './filter-button.html',
 })
 export class FilterButton {
-  private readonly filterService = inject(FilterService);
+  protected readonly filterService = inject(FilterService);
 }

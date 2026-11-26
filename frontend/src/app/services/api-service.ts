@@ -18,9 +18,10 @@ import { environment } from '../../environments/environment';
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
 function filtersToParams(f: FilterProps): Record<string, Param> {
+  const hasLocations = f.locations.length > 0;
   const params: Record<string, Param> = {
-    sort: f.sort,
-    sort_direction: f.sortDirection,
+    sort: f.sort === 'distance' && !hasLocations ? 'start_time' : f.sort,
+    order: f.sortDirection,
     limit: f.limit ?? 20,
     offset: f.offset ?? 0,
   };
@@ -29,21 +30,21 @@ function filtersToParams(f: FilterProps): Record<string, Param> {
 
   // Arrays: only send when non-empty. Angular repeats the key (?tag=a&tag=b)
   if (f.categories.length) params['category'] = f.categories;
-  if (f.tags.length) params['tag'] = f.tags.map((t) => t.id);
-  if (f.locations.length) {
+  if (f.tags.length) params['tag'] = f.tags.map((t) => t.slug);
+  if (hasLocations) {
     params['location'] = f.locations.map((l) => `${l.latitude},${l.longitude}`);
   }
 
   // Ranges: flatten to individual keys, and only when present
   if (f.timeRange) {
-    params['start_after'] = f.timeRange.start.toISOString();
-    params['end_before'] = f.timeRange.end.toISOString();
+    params['starts_after'] = f.timeRange.start.toISOString();
+    params['starts_before'] = f.timeRange.end.toISOString();
   }
   if (f.priceRange) {
     params['price_min'] = f.priceRange.lowest;
-    params['price_max'] = f.priceRange.highest;
+    params['max_price'] = f.priceRange.highest;
   }
-  if (f.distanceRange) {
+  if (f.distanceRange && hasLocations) {
     params['distance_min'] = f.distanceRange.nearest;
     params['distance_max'] = f.distanceRange.furthest;
   }

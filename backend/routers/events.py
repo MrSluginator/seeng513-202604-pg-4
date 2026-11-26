@@ -37,6 +37,15 @@ SORT_COLUMNS = {
     "price": Event.price_min,
 }
 
+CATEGORY_TAG_SLUGS: dict[str, tuple[str, ...]] = {
+    "food": ("food-drink",),
+    "sights": ("arts-culture", "outdoors"),
+    "events": ("music", "markets", "tech-networking"),
+    "activities": ("sports-fitness", "outdoors"),
+    "nightlife": ("nightlife",),
+    "other": ("music", "arts-culture", "tech-networking", "markets"),
+}
+
 SortField = Literal[
     "start_time", "date", "title", "rating", "visits_count", "price", "distance"
 ]
@@ -146,9 +155,14 @@ def list_events(
             )
         )
     if category:
-        cats = [c.strip().lower() for c in category if c.strip()]
-        if cats:
-            conditions.append(func.lower(Event.category).in_(cats))
+        cat_slugs: set[str] = set()
+        for raw_cat in category:
+            cat = raw_cat.strip().lower()
+            if not cat:
+                continue
+            cat_slugs.update(CATEGORY_TAG_SLUGS.get(cat, (cat,)))
+        if cat_slugs:
+            conditions.append(Event.tags.any(Tag.slug.in_(cat_slugs)))
     if starts_after is not None:
         conditions.append(Event.start_time >= starts_after)
     if starts_before is not None:

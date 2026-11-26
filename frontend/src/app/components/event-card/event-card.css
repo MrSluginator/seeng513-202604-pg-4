@@ -15,7 +15,7 @@
     scale ease 150ms;
 
   &.s {
-    width: 330px;
+    width: var(--card-width, 330px);
     height: min-content;
     border-radius: 16px;
     gap: 10px;
@@ -48,7 +48,7 @@
 
   @media (hover: hover) {
     &:is(.s, .m):hover {
-      scale: 1.03;
+      scale: var(--card-hover-scale, 1.03);
     }
 
     &:is(.s, .m, .l):hover {
