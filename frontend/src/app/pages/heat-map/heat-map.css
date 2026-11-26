@@ -7,11 +7,16 @@
 }
 
 .heat-map-page {
+  position: relative;
   display: flex;
   flex: 1;
   width: 100%;
   min-height: 0;
   overflow: hidden;
+}
+
+.mobile-header {
+  display: none;
 }
 
 .map-pane {
@@ -25,6 +30,9 @@
   overflow: hidden;
   isolation: isolate;
   z-index: 0;
+  transition:
+    margin-left 200ms ease,
+    border-radius 200ms ease;
 }
 
 .map-container {
@@ -124,20 +132,126 @@
   gap: 6px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .heat-map-page {
     flex-direction: column;
   }
 
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--n0);
+    padding: 14px 16px 12px;
+    z-index: 5;
+  }
+
+  .mobile-title {
+    font-size: 1.625rem;
+    line-height: 1.2;
+    color: var(--n7);
+  }
+
   .map-pane {
-    flex: 1 1 55%;
+    margin-left: 0;
+    border-radius: 0;
+  }
+
+  .map-controls {
+    inset: 10px 10px auto;
+    flex-direction: row;
+    gap: 0;
+  }
+
+  .map-category-selectors {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 6px;
+
+    & ::ng-deep {
+      f-category {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+      }
+
+      f-widget {
+        width: 100%;
+        display: flex;
+      }
+
+      .widget {
+        width: 100%;
+        min-width: 0;
+        height: 30px;
+        min-height: 30px;
+        padding: 4px 6px;
+        border-radius: 10px;
+        flex-direction: row;
+        gap: 0;
+        background: color-mix(in srgb, var(--_light) 35%, var(--n0) 75%);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+        &[aria-checked='true'] {
+          background: color-mix(in srgb, var(--_light) 85%, var(--n0) 15%);
+        }
+      }
+
+      .widget-text {
+        display: none;
+      }
+    }
+  }
+
+  .map-filter-action,
+  .sidebar-header,
+  :host ::ng-deep .leaflet-control-zoom {
+    display: none;
   }
 
   .events-sidebar {
+    --card-w: min(340px, calc(100vw - 56px));
+    position: absolute;
+    inset: auto 0 88px;
     width: 100%;
-    flex: 1 1 45%;
-    border-left: none;
-    border-top: 1px solid var(--n2);
+    background: transparent;
+    z-index: 5;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .sidebar-list {
+    flex-direction: row;
+    overflow: auto hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    gap: 12px;
+    padding: 6px max(24px, calc((100vw - var(--card-w)) / 2)) 14px;
+    pointer-events: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .sidebar-card-item {
+    flex: 0 0 var(--card-w);
+    width: var(--card-w);
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
+  .sidebar-empty {
+    margin: 0 auto;
+    max-width: calc(100vw - 48px);
+    padding: 14px 20px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--n0) 92%, transparent);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
   }
 }
 

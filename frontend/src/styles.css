@@ -220,6 +220,24 @@ dialog,
   overflow: hidden;
 }
 
+@media (max-width: 767px) {
+  .App:has(f-heat-map) {
+    position: relative;
+  }
+
+  .App:has(f-heat-map) .box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  .App:has(f-heat-map) .box .mobile {
+    pointer-events: auto;
+  }
+}
+
 .box {
   position: sticky;
   bottom: 0;

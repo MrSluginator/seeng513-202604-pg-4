@@ -72,6 +72,8 @@ export class HeatMap {
 
   private readonly mapContainer =
     viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
+  private readonly sidebarList =
+    viewChild<ElementRef<HTMLDivElement>>('sidebarList');
 
   private map?: L.Map;
   private heatLayer?: HeatLayer & L.Layer;
@@ -153,7 +155,11 @@ export class HeatMap {
     });
 
     effect(() => {
-      this.updateMarkerHighlight(this.selectedEventId());
+      const selectedId = this.selectedEventId();
+      this.updateMarkerHighlight(selectedId);
+      if (selectedId) {
+        this.scrollSelectedCardIntoView(selectedId);
+      }
     });
   }
 
@@ -206,9 +212,15 @@ export class HeatMap {
     map.on('moveend zoomend resize', updateBounds);
     updateBounds();
 
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize({ pan: false });
+    });
+    resizeObserver.observe(container);
+
     this.mapReady.set(true);
 
     this.destroyRef.onDestroy(() => {
+      resizeObserver.disconnect();
       this.destroyActivePopups();
       map.off('moveend zoomend resize', updateBounds);
       map.remove();
@@ -286,6 +298,20 @@ export class HeatMap {
     marker.on('remove', cleanup);
 
     return componentRef.location.nativeElement as HTMLElement;
+  }
+
+  private scrollSelectedCardIntoView(eventId: string): void {
+    const listEl = this.sidebarList()?.nativeElement;
+    if (!listEl) return;
+
+    const card = listEl.querySelector<HTMLElement>(
+      `[data-event-id="${CSS.escape(eventId)}"]`
+    );
+    card?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    });
   }
 
   private destroyActivePopups(): void {
