@@ -21,6 +21,7 @@ import {
   ReviewDialog,
   ReviewResult,
 } from '../../dialogs/review-dialog/review-dialog';
+import { AuthService } from '../../services/auth-service';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -43,6 +44,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
 
   readonly event = input.required<Event | EventDetail>();
   readonly detail = computed(() => this.event() as EventDetail);
@@ -79,10 +81,12 @@ export class EventCard {
   }
 
   protected onSave(): void {
+    if (this.auth.requireRole(['standard'])) return;
     this.saved.update((prev) => !prev);
   }
 
   protected onReview(): void {
+    if (this.auth.requireRole(['standard'])) return;
     this.reviewOpen.set(true);
   }
 
