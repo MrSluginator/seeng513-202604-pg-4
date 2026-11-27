@@ -2,18 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
-  isDevMode,
   model,
-  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { formatTime, number2Time } from '../../../utils/format';
 import { Button } from '../../atoms/button/button';
 import { Slider, SliderValue } from '../../atoms/slider/slider';
-import { AuthService } from '../../services/auth-service';
 
 @Component({
   imports: [Button, FormsModule, RouterLink, Slider],
@@ -23,13 +19,8 @@ import { AuthService } from '../../services/auth-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeSlider {
-  private readonly auth = inject(AuthService);
-
   readonly hour = model.required<number>();
   readonly authRequired = input(false);
-
-  protected readonly isDev = isDevMode();
-  protected readonly signingIn = signal(false);
 
   private readonly currentHour = new Date().getHours();
 
@@ -55,15 +46,5 @@ export class TimeSlider {
 
   protected resetToNow(): void {
     this.hour.set(this.currentHour);
-  }
-
-  protected async devSignIn(): Promise<void> {
-    if (this.signingIn()) return;
-    this.signingIn.set(true);
-    try {
-      await this.auth.devSignIn();
-    } finally {
-      this.signingIn.set(false);
-    }
   }
 }

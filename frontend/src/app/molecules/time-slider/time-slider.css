@@ -87,26 +87,6 @@
   }
 }
 
-.time-slider-dev-signin {
-  border: 1px solid var(--n3);
-  background: var(--n1);
-  color: var(--n7);
-  font-size: 0.7rem;
-  font-weight: var(--weight-semibold);
-  padding: 2px 8px;
-  border-radius: 999px;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background: var(--n2);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: wait;
-  }
-}
-
 @media (min-width: 768px) {
   .time-slider-panel {
     width: 240px;

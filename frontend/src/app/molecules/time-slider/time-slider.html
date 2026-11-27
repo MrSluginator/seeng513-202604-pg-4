@@ -34,16 +34,6 @@
   @if (authRequired()) {
     <small class="time-slider-notice">
       <a routerLink="/sign-in">Sign in</a> to view live hourly busyness.
-      @if (isDev) {
-        <button
-          type="button"
-          class="time-slider-dev-signin"
-          [disabled]="signingIn()"
-          (click)="devSignIn()"
-        >
-          {{ signingIn() ? 'Signing in...' : 'Dev sign in' }}
-        </button>
-      }
     </small>
   }
 </div>
