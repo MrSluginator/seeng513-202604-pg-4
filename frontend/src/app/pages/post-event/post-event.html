@@ -1,12 +1,11 @@
 <form class="page" [formGroup]="form" (ngSubmit)="submit()" novalidate>
   <div class="main">
-    <!-- Row 1 -->
     <div class="row">
       <section class="field f-upload">
         <h3>Upload Images</h3>
         <label class="dropzone" [attr.data-invalid]="showError('images')">
-          <span class="plus">+</span>
-          <span>Drop images here or click to browse</span>
+          <f-icon name="plus" color="p2" size="xl" />
+          <small>Drop images here or click to browse</small>
           <input
             type="file"
             accept="image/*"
@@ -33,11 +32,11 @@
         </section>
         <section class="field f-desc">
           <h3>Event Description</h3>
-          <textarea
+          <f-text-field
             formControlName="description"
             placeholder="Describe your event here..."
             rows="4"
-          ></textarea>
+          />
           @if (showError('description')) {
             <small class="error" role="alert">Add a description.</small>
           }
@@ -54,7 +53,9 @@
         [attr.data-invalid]="showError('category')"
       >
         <h3>Category</h3>
-        <f-all-categories [form]="categoryForm" />
+        <div class="all-categories">
+          <f-all-categories [form]="categoryForm" />
+        </div>
         @if (showError('category')) {
           <small class="error" role="alert">Pick a category.</small>
         }
@@ -172,8 +173,8 @@
     />
     <div class="preview" [class.open]="previewOpen()">
       <h2>Preview</h2>
-      <f-event-card size="m" [event]="preview()" />
-      <f-event-card size="s" [event]="preview()" />
+      <f-event-card size="m" [event]="preview()" [link]="false" />
+      <f-event-card size="s" [event]="preview()" [link]="false" />
     </div>
   </aside>
 </form>

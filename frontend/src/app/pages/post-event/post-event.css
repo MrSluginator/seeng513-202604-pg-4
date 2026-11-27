@@ -17,7 +17,7 @@
   gap: 1.5rem;
   padding: 2rem;
   border-radius: 2rem;
-  background: var(--surface-muted, #f0ecea);
+  background: var(--n1);
 }
 
 .row {
@@ -38,10 +38,10 @@
   }
 }
 .error {
-  color: var(--danger, #b3261e);
+  color: var(--s5);
 }
 [data-invalid='true'] {
-  outline: 2px solid var(--danger, #b3261e);
+  outline: 2px solid var(--s5);
   outline-offset: 4px;
   border-radius: 1rem;
 }
@@ -60,7 +60,8 @@
   padding: 1rem;
   text-align: center;
   cursor: pointer;
-  border: 2px dashed var(--accent, #f4a29b);
+  border: 2px dashed var(--p2);
+  background-color: var(--n0);
   border-radius: 2rem;
 }
 .title-desc {
@@ -79,7 +80,12 @@ textarea {
 
 /* row 2 */
 .f-category {
-  flex: 0 0 auto;
+  flex: 0 0 260px;
+}
+.all-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .f-tags {
   flex: 1 1 320px;
@@ -98,7 +104,7 @@ textarea {
   min-height: 8rem;
   padding: 1rem;
   border-radius: 1.5rem;
-  background: var(--surface, #faf8f8);
+  background: var(--n0);
 }
 .suggested {
   opacity: 0.6;
@@ -121,7 +127,7 @@ textarea {
   min-height: 12rem;
   padding: 1rem;
   border-radius: 1.5rem;
-  background: var(--surface, #faf8f8);
+  background: var(--n0);
 }
 .photo {
   flex: 0 0 96px;
@@ -132,7 +138,7 @@ textarea {
   overflow: hidden;
   cursor: pointer;
   &.selected {
-    border-color: var(--accent-strong, #e24b3d);
+    border-color: var(--p5);
   }
   img {
     width: 100%;
@@ -143,11 +149,17 @@ textarea {
 }
 
 /* ---------- right panel ---------- */
+.post {
+  width: 100%;
+  height: 48px;
+}
 .side {
-  flex: 0 0 360px;
   display: flex;
+  padding: 20px;
   flex-direction: column;
-  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
 }
 .preview {
   display: flex;

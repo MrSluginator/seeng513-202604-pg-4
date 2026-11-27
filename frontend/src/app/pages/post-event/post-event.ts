@@ -25,6 +25,8 @@ import {
 } from '../../molecules/category/categories';
 import { range2Price, range2Time } from '../../../utils/format';
 import { Widget } from '../../atoms/widget/widget';
+import { Icon } from '../../atoms/icon/icon';
+import { TextField } from '../../atoms/text-field/text-field';
 
 export interface UploadedImage {
   id: string;
@@ -71,9 +73,11 @@ const SUGGESTED_TAGS: Record<CategoryName, Tag[]> = {
     RangeFilter,
     AllCategories,
     TextInput,
+    TextField,
     EventCard,
     Button,
     Widget,
+    Icon,
   ],
   selector: 'f-post-event',
   styleUrl: './post-event.css',
@@ -198,15 +202,6 @@ export class PostEvent {
   setCover(img: UploadedImage) {
     this.form.controls.coverImageId.setValue(img.id);
     this.form.controls.coverImageId.markAsDirty();
-  }
-
-  // ---- category / tags ----
-  selectCategory(cat: CategoryName) {
-    // toggle category and untoggle all others
-    for (const c in categoriesList) {
-      this.form.controls.categories.get(c)?.setValue(c === cat);
-    }
-    this.form.controls.categories.markAsDirty();
   }
 
   toggleTag(t: Tag) {
