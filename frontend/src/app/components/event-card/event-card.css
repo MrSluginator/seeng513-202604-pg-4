@@ -138,6 +138,8 @@
   justify-content: space-between;
   align-items: center;
   align-self: stretch;
+  container-type: inline-size;
+  container-name: title-bar;
 
   h3 {
     display: -webkit-box;
@@ -147,9 +149,15 @@
     overflow: hidden;
   }
 
-  :is(.l, .xl) & {
-    @media (max-width: 768px) {
+  @media (max-width: 768px) {
+    :is(.l, .xl) & {
       padding: 10px 20px;
+    }
+
+    .xl & {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
     }
   }
 }
@@ -160,6 +168,13 @@
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
   align-items: center;
+
+  @media (max-width: 768px) {
+    :is(.xl) & {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+    }
+  }
 }
 
 .link {
@@ -246,7 +261,7 @@
   flex-direction: row-reverse;
   flex-wrap: wrap;
   gap: 4px;
-  width: 100%;
+  align-self: stretch;
 
   :is(.l, .xl) & {
     --location-basis: auto;
