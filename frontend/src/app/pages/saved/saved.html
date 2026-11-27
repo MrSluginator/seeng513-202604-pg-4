@@ -1,4 +1,4 @@
-<div #feedSection class="feed">
+<div class="feed">
   <div class="feed-header">
     <div class="tags">
       <small>Showing items with the following tags:</small>
@@ -13,7 +13,7 @@
     <div class="filters">
       <f-menu-button
         class="sort"
-        [text]="`Sort: ${filterSvc.filters().sort}`"
+        [text]="`Sort: ${selectedSort()}`"
         label="Sort events"
         [options]="sortOptions"
         (selected)="onSortSelected($event)"
@@ -34,11 +34,13 @@
           {{ result.label }}
         </ng-template>
       </f-search-bar>
+      <f-filter-button />
     </div>
   </div>
   <f-event-grid
     size="m"
     [events]="saved()"
-    [display]="{ type: 'grid', hidden: true }"
+    [display]="{ type: 'grid', hidden: false }"
   />
 </div>
+<f-footer />

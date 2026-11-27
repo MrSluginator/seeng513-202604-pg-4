@@ -21,6 +21,7 @@ import { Widget } from '../../atoms/widget/widget';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import { EventGrid } from '../../components/event-grid/event-grid';
 import { SavedEventService } from '../../services/saved-event-service';
+import { Footer } from '../../components/footer/footer';
 
 @Component({
   imports: [
@@ -30,6 +31,7 @@ import { SavedEventService } from '../../services/saved-event-service';
     EventGrid,
     SearchBar,
     SearchResultTemplate,
+    Footer,
   ],
   selector: 'f-saved',
   styleUrl: './saved.css',
@@ -53,6 +55,9 @@ export class Saved {
   protected readonly sortOptions: MenuOption[] = Object.entries(
     SORT_OPTIONS
   ).map(([value, label]) => ({ value, label }));
+  protected readonly selectedSort = computed(
+    () => SORT_OPTIONS[this.filterSvc.filters().sort]
+  );
 
   private readonly debouncedQuery = toSignal(
     toObservable(this.navbarSvc.query).pipe(
