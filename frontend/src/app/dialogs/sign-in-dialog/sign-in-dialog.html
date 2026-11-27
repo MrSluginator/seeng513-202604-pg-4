@@ -1,0 +1,26 @@
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #dialog
+  aria-labelledby="review-title"
+  class="content"
+  (close)="onNativeClose()"
+  (click)="onBackdropClick($event)"
+>
+  <div class="login">
+    <h2>Log in to Flare</h2>
+    <p>
+      The requested action requires an
+      <strong>{{ requiredRole() }}</strong> account.
+    </p>
+    <f-button text="Log In" (clicked)="onLogIn()" />
+  </div>
+  <f-divider />
+  <div class="signup">
+    <small
+      >Please switch to account with the appropriate permissions or contact us
+      at <strong>flare@gmail.ca</strong></small
+    >
+    <small>Don't have an account?</small>
+    <f-button text="Sign Up" (clicked)="onSignUp()" />
+  </div>
+</dialog>

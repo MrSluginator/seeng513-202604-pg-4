@@ -17,9 +17,15 @@
     <a class="link" routerLink="/post" routerLinkActive="active">
       <f-icon name="event" size="m" />
     </a>
-    <a class="link" routerLink="/settings" routerLinkActive="active">
-      <f-icon name="settings" size="m" />
-    </a>
+    @if (auth.isLoggedIn()) {
+      <a class="link" routerLink="/settings" routerLinkActive="active">
+        <f-icon name="settings" size="m" />
+      </a>
+    } @else {
+      <a class="link" routerLink="/sign_in" routerLinkActive="active">
+        <f-icon name="profile" size="m" />
+      </a>
+    }
   </div>
 
   <div class="desktop">
@@ -48,8 +54,13 @@
         [results]="nav.results()"
         (resultSelected)="nav.select($event)"
       />
-      @if (nav.signedIn()) {
-        <div>Profile Button</div>
+      @if (auth.isLoggedIn()) {
+        <f-button
+          class="profile"
+          [text]="auth.user()?.username ?? 'Profile'"
+          icon="profile"
+          (clicked)="onSettingsClick()"
+        />
       } @else {
         <f-button text="Sign In" (click)="onSignInClick()" />
       }

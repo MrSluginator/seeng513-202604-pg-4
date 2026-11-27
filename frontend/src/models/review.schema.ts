@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const ReviewSchema = z.object({});
+export const Review = z.object({});
 
-export type Review = z.infer<typeof ReviewSchema>;
+export type Review = z.infer<typeof Review>;

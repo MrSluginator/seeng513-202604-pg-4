@@ -1,10 +1,4 @@
-import {
-  HttpClient,
-  HttpRequest,
-  httpResource,
-  HttpResourceRequest,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import {
   EventDetailSchema,
@@ -12,8 +6,8 @@ import {
   EventSchema,
 } from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
-import { FilterProps } from '../../models/filters';
 import { environment } from '../../environments/environment';
+import { FilterProps } from '../../models/filters';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 

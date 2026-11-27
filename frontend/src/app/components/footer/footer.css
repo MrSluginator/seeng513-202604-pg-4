@@ -2,6 +2,10 @@
   width: 100%;
   background-color: var(--p1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    margin-bottom: -90px;
+  }
 }
 
 .content {

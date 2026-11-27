@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 4px;
 
   .label {
     align-self: start;
@@ -36,6 +35,20 @@
   }
 }
 
+.field[data-invalid] {
+  border-color: var(--s3);
+}
+
+.field[data-invalid]:focus-within {
+  border-color: var(--s1);
+}
+
+.error {
+  min-height: 20px;
+  align-content: end;
+  color: var(--s5);
+}
+
 .input {
   flex: 1;
   min-width: 0; /* lets the input shrink instead of overflowing the box */
@@ -58,4 +71,14 @@
 .icon {
   display: inline-flex;
   flex-shrink: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  border-radius: 16px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
