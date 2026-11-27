@@ -1,12 +1,77 @@
 :host {
-  position: relative; /* anchors the menu */
   display: block;
+  position: relative;
 }
 
+:host([data-menu-align='start']) .menu {
+  inset-inline-start: 0;
+}
+
+:host([data-menu-align='end']) .menu {
+  inset-inline-end: 0;
+}
+
+/* Tweak these to match your theme */
 .menu {
   position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
+  top: calc(100% + 0.5rem);
+  /* left / right are set by the alignment rules below */
+  width: min(var(--menu-width, 100%), calc(100vw - 2rem));
   z-index: 10;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  background: var(--n0);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 0.06),
+    0 12px 28px rgb(0 0 0 / 0.16);
+  max-height: min(70vh, 32rem);
+  overflow-y: auto;
+}
+
+.group + .group {
+  margin-top: 1.25rem;
+}
+
+.results {
+  display: flex;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  flex-wrap: wrap;
+}
+
+.result {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.tag:hover {
+  background: var(--tag-bg-hover);
+}
+
+.tag.active,
+.tag:focus-visible {
+  outline: none;
+  background: var(--tag-bg-hover);
+  box-shadow: 0 0 0 2px var(--tag-focus);
+}
+
+/* Previous results stay visible, dimmed, while new ones load. */
+.menu[aria-busy='true'] .group {
+  opacity: 0.6;
+}
+
+.empty {
+  margin: 0;
+  color: var(--menu-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag {
+    transition: none;
+  }
 }

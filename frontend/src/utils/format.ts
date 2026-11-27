@@ -1,4 +1,6 @@
+import { Price } from '../models/price.schema';
 import { Time } from '../models/time.schema';
+import { Range } from '../models/types';
 
 const timeFormatter = new Intl.DateTimeFormat('en-US', {
   hour: 'numeric',
@@ -10,6 +12,21 @@ export function number2Time(time: number): Date {
   date.setHours(Math.floor(time));
   date.setMinutes((time - Math.floor(time)) * 60);
   return date;
+}
+
+export function range2Time(range: Range<number>): Time {
+  return {
+    start_time: number2Time(range[0]),
+    end_time: number2Time(range[1]),
+  };
+}
+
+export function range2Price(range: Range<number>): Price {
+  return {
+    price_min: range[0],
+    price_max: range[1],
+    currency: 'CAD',
+  };
 }
 
 export function formatTime(date: Date): string {

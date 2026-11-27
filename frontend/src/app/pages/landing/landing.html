@@ -44,10 +44,19 @@
           <f-search-bar
             class="search"
             placeholder="Search events..."
-            [(query)]="navbarSvc.query"
-            [results]="searchResults()"
+            [search]="search"
             (resultSelected)="selectEvent($event)"
-          />
+          >
+            <ng-template
+              fSearchResult
+              [fSearchResult]="search"
+              let-result
+              let-group="group"
+              let-active="active"
+            >
+              {{ result.label }}
+            </ng-template>
+          </f-search-bar>
           <f-filter-button />
         </div>
       </div>

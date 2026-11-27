@@ -46,14 +46,14 @@ export class EventDetails {
     console.log(raw);
     const data = Object.entries(raw)
       .map(([hour, crowd]) => {
-        return [
-          Number.parseInt(hour) * 60,
-          Number.parseFloat(crowd),
-        ] as [number, number];
+        return [Number.parseInt(hour) * 60, Number.parseFloat(crowd)] as [
+          number,
+          number,
+        ];
       })
       .sort((a, b) => a[0] - b[0]);
-      data.push([24 * 60, data[0][1]]);
-      console.log(data);
-      return data;
+    data.push([24 * 60, data[0][1]]);
+    console.log(data);
+    return data;
   });
 }

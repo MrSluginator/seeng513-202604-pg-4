@@ -93,7 +93,7 @@
   bottom: 0;
   background-color: color-mix(in srgb, var(--p1) 20%, transparent);
   backdrop-filter: blur(12px);
-  padding-block: 10px;   /* only the vertical part, so --controls-pad-x still applies */
+  padding-block: 10px; /* only the vertical part, so --controls-pad-x still applies */
 }
 
 .dots {

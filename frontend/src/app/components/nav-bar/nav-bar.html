@@ -48,22 +48,35 @@
     </div>
 
     <div class="holder">
-      <f-search-bar
-        [(query)]="query"
-        [placeholder]="nav.placeholder()"
-        [results]="nav.results()"
-        (resultSelected)="nav.select($event)"
-      />
-      @if (auth.isLoggedIn()) {
-        <f-button
-          class="profile"
-          [text]="auth.user()?.username ?? 'Profile'"
-          icon="profile"
-          (clicked)="onSettingsClick()"
-        />
+      @if (nav.active(); as search) {
+        <f-search-bar
+          [placeholder]="search.placeholder"
+          [search]="search.search"
+          [relatedSearch]="search.relatedSearch"
+          [(query)]="nav.query"
+          (resultSelected)="search.onSelect($event)"
+        >
+          <!-- Forwards the page's template (or the label) into the search bar -->
+          <ng-template
+            fSearchResult
+            let-result
+            let-group="group"
+            let-active="active"
+          >
+            <ng-container
+              [ngTemplateOutlet]="search.resultTemplate ?? labelOnly"
+              [ngTemplateOutletContext]="{ $implicit: result, group, active }"
+            />
+          </ng-template>
+        </f-search-bar>
+      }
+      @if (nav.signedIn()) {
+        <div>Profile Button</div>
       } @else {
         <f-button text="Sign In" (click)="onSignInClick()" />
       }
     </div>
   </div>
 </div>
+
+<ng-template #labelOnly let-result>{{ result.label }}</ng-template>
