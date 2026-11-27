@@ -16,7 +16,7 @@
   background: var(--p2);
   color: var(--n7);
   cursor: pointer;
-  flex: 1;
+  flex: 1 0 0;
 
   font-size: var(--body-size);
   font-weight: var(--body-weight);

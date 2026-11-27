@@ -1,4 +1,11 @@
-import { Routes } from '@angular/router';
+import { Routes, UrlMatcher } from '@angular/router';
+import { guestGuard } from './guards/auth-guard';
+
+export const authMatcher: UrlMatcher = (segments) =>
+  segments.length === 1 &&
+  (segments[0].path === 'login' || segments[0].path === 'signup')
+    ? { consumed: segments, posParams: { mode: segments[0] } }
+    : null;
 
 export const routes: Routes = [
   {
@@ -26,10 +33,12 @@ export const routes: Routes = [
       import('./pages/settings/settings').then((m) => m.Settings),
   },
   {
-    path: 'sign_in',
+    matcher: authMatcher,
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./pages/sign-in/sign-in').then((m) => m.SignIn),
   },
+  { path: 'sign_in', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'event/:id',
     loadComponent: () =>

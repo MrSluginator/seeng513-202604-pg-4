@@ -21,6 +21,7 @@ import {
   ReviewDialog,
   ReviewResult,
 } from '../../dialogs/review-dialog/review-dialog';
+import { AuthService } from '../../services/auth-service';
 import { Tag } from '../../../models/tag.schema';
 import { FilterService } from '../../services/filter-service';
 
@@ -45,6 +46,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
   private readonly filterSvc = inject(FilterService);
 
   readonly event = input.required<Event | EventDetail>();
@@ -95,10 +97,12 @@ export class EventCard {
   }
 
   protected onSave(): void {
+    if (this.auth.requireRole(['standard'])) return;
     this.saved.update((prev) => !prev);
   }
 
   protected onReview(): void {
+    if (this.auth.requireRole(['standard'])) return;
     this.reviewOpen.set(true);
   }
 

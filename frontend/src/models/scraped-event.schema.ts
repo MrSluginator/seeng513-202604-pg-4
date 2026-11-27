@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const ScrapedEventSchema = z.object({});
+export const ScrapedEvent = z.object({});
 
-export type ScrapedEvent = z.infer<typeof ScrapedEventSchema>;
+export type ScrapedEvent = z.infer<typeof ScrapedEvent>;
