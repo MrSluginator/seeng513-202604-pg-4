@@ -1,0 +1,49 @@
+<div
+  class="time-slider-panel"
+  role="region"
+  aria-label="Time of day busyness slider"
+>
+  <div class="time-slider-header">
+    <span class="time-slider-label">Display Time</span>
+    <div class="time-slider-value-group">
+      <span class="time-slider-value">Selected: {{ formattedHour() }}</span>
+      @if (!isCurrentHour()) {
+        <f-button
+          class="time-slider-now"
+          text="Now"
+          label="Reset to current time"
+          (clicked)="resetToNow()"
+        />
+      }
+    </div>
+  </div>
+
+  <f-slider
+    class="time-slider-control"
+    label="Time of day"
+    [min]="0"
+    [max]="23"
+    [step]="1"
+    [majorSteps]="5"
+    [minorSteps]="4"
+    [formatLabel]="formatHourTick"
+    [ngModel]="hour()"
+    (ngModelChange)="onHourChange($event)"
+  />
+
+  @if (authRequired()) {
+    <small class="time-slider-notice">
+      <a routerLink="/sign-in">Sign in</a> to view live hourly busyness.
+      @if (isDev) {
+        <button
+          type="button"
+          class="time-slider-dev-signin"
+          [disabled]="signingIn()"
+          (click)="devSignIn()"
+        >
+          {{ signingIn() ? 'Signing in...' : 'Dev sign in' }}
+        </button>
+      }
+    </small>
+  }
+</div>
