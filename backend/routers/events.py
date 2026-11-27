@@ -12,7 +12,7 @@ from db.models.event import Event
 from db.models.event_photo import EventPhoto
 from db.models.tag import Tag
 from db.models.user import User
-from deps import require_roles
+from deps import get_current_user, require_roles
 from schemas import (
     EventCreate,
     EventDetail,
@@ -22,6 +22,7 @@ from schemas import (
     TagSummary,
     _as_utc,
 )
+from sparks import SparkGiven, SparkVote, give_spark
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -36,6 +37,15 @@ SORT_COLUMNS = {
     "price": Event.price_min,
 }
 
+CATEGORY_TAG_SLUGS: dict[str, tuple[str, ...]] = {
+    "food": ("food-drink",),
+    "sights": ("arts-culture", "outdoors"),
+    "events": ("music", "markets", "tech-networking"),
+    "activities": ("sports-fitness", "outdoors"),
+    "nightlife": ("nightlife",),
+    "other": ("music", "arts-culture", "tech-networking", "markets"),
+}
+
 SortField = Literal[
     "start_time", "date", "title", "rating", "visits_count", "price", "distance"
 ]
@@ -44,6 +54,7 @@ SortField = Literal[
 def _load_options():
     """Fetch tags and photos in bulk: a fixed number of queries per request."""
     return (
+        selectinload(Event.creator),
         selectinload(Event.tags),
         selectinload(Event.event_photo_links).selectinload(EventPhoto.photo),
     )
@@ -144,9 +155,14 @@ def list_events(
             )
         )
     if category:
-        cats = [c.strip().lower() for c in category if c.strip()]
-        if cats:
-            conditions.append(func.lower(Event.category).in_(cats))
+        cat_slugs: set[str] = set()
+        for raw_cat in category:
+            cat = raw_cat.strip().lower()
+            if not cat:
+                continue
+            cat_slugs.update(CATEGORY_TAG_SLUGS.get(cat, (cat,)))
+        if cat_slugs:
+            conditions.append(Event.tags.any(Tag.slug.in_(cat_slugs)))
     if starts_after is not None:
         conditions.append(Event.start_time >= starts_after)
     if starts_before is not None:
@@ -419,3 +435,20 @@ def get_event(event_id: uuid.UUID, db: Session = Depends(get_db)) -> EventDetail
         raise HTTPException(status_code=404, detail="Event not found")
 
     return EventDetail.model_validate(event)
+
+
+@router.post("/{event_id}/spark", response_model=SparkGiven)
+def spark_event(
+    event_id: uuid.UUID,
+    payload: SparkVote | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Give the event a spark (+1, the default) or send {"amount": -1} to take
+    one away. The organizer's sparks change by that much."""
+    event = db.get(Event, event_id)
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    if event.creator_id == current_user.id:
+        raise HTTPException(status_code=403, detail="You can't spark your own event")
+    return give_spark(db, event.creator_id, (payload or SparkVote()).amount)

@@ -12,7 +12,9 @@
   @if (icon() && iconFirst()) {
     <f-icon [name]="icon()!" />
   }
-  {{ text() }}
+  @if (text()) {
+    <span class="widget-text">{{ text() }}</span>
+  }
   @if (icon() && !iconFirst()) {
     <f-icon [name]="icon()!" />
   }

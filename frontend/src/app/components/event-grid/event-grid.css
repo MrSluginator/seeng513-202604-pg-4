@@ -66,6 +66,7 @@
   }
 
   .l & {
+    --slide-max-w: 1200px;
     @media (max-width: 768px) {
       --slide-max-w: 480px;
     }

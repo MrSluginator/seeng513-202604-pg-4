@@ -5,6 +5,7 @@
   --device-cutoff: 768px;
   --desktop-min: var(--device-cutoff);
   --mobile-max: var(--device-cutoff);
+  --max-peripheral-width: 1200px;
   /* we may want to consider tablets, but that can wait */
 
   color-scheme: light; /* dark; */
@@ -205,9 +206,38 @@ dialog,
   overflow-y: auto;
 }
 
+.App:has(f-heat-map) {
+  overflow: hidden;
+}
+
 .page {
   flex: 1;
 } /* wrap your <Routes> in a div with this class */
+
+.page:has(f-heat-map) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .App:has(f-heat-map) {
+    position: relative;
+  }
+
+  .App:has(f-heat-map) .box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  .App:has(f-heat-map) .box .mobile {
+    pointer-events: auto;
+  }
+}
 
 .box {
   position: sticky;
