@@ -36,6 +36,11 @@ export const routes: Routes = [
       import('./pages/event-details/event-details').then((m) => m.EventDetails),
   },
   {
+    path: 'search',
+    loadComponent: () =>
+      import('./pages/search/search').then((m) => m.Search),
+  },
+  {
     path: 'testing',
     loadComponent: () =>
       import('./pages/testing/testing').then((m) => m.Testing),

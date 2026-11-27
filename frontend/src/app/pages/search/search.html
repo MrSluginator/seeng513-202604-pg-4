@@ -1,0 +1,90 @@
+<div class="search-page">
+  <div class="content">
+    <header class="search-header">
+      <div class="heading">
+        @if (trimmedQuery()) {
+          <h1>Search results for "{{ trimmedQuery() }}"</h1>
+        } @else if (trimmedTag()) {
+          <h1>Events tagged "{{ trimmedTag() }}"</h1>
+        } @else {
+          <h1>Search Events</h1>
+        }
+
+        @if (!searchResults.isLoading() && !searchResults.error()) {
+          <p class="count">
+            {{ totalCount() }}
+            {{ totalCount() === 1 ? 'event' : 'events' }} found
+          </p>
+        }
+      </div>
+
+      <div class="controls">
+        @if (filterSvc.filters().tags.length > 0) {
+          <div class="tags">
+            <small>Tags:</small>
+            @for (tag of filterSvc.filters().tags; track tag.id) {
+              <f-widget
+                [text]="tag.name"
+                icon="times"
+                (click)="filterSvc.removeTag(tag)"
+              />
+            }
+          </div>
+        }
+
+        <div class="filters">
+          <f-menu-button
+            class="sort"
+            [text]="`Sort: ${sortLabel()}`"
+            label="Sort search results"
+            [options]="sortOptions"
+            (selected)="onSortSelected($event)"
+          />
+          <f-filter-button />
+        </div>
+      </div>
+    </header>
+
+    <f-divider />
+
+    <section class="results">
+      @if (searchResults.isLoading()) {
+        <div class="state-message">
+          <p>Searching events...</p>
+        </div>
+      } @else if (searchResults.error()) {
+        <div class="state-message">
+          <h4>Could not load search results</h4>
+          <p>Something went wrong while fetching events. Please try again.</p>
+          <f-button text="Back to Home" (click)="browseAll()" />
+        </div>
+      } @else if (events().length === 0) {
+        <div class="state-message">
+          @if (trimmedQuery()) {
+            <h4>No events matched "{{ trimmedQuery() }}"</h4>
+            <p>
+              Try a different keyword or adjust your filters to see more events.
+            </p>
+          } @else {
+            <h4>No events found</h4>
+            <p>Try adjusting your filters or browse all upcoming events.</p>
+          }
+          <div class="state-actions">
+            @if (trimmedQuery() || filterSvc.activeCount() > 0) {
+              <f-button text="Clear Search & Filters" (click)="clearSearch()" />
+            }
+            <f-button text="Browse All Events" (click)="browseAll()" />
+          </div>
+        </div>
+      } @else {
+        <f-event-grid
+          size="m"
+          [events]="events()"
+          [display]="{ type: 'grid', hidden: false }"
+        />
+      }
+    </section>
+  </div>
+
+  <f-footer />
+</div>
