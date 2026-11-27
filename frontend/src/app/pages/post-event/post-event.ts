@@ -3,7 +3,6 @@ import { Divider } from '../../atoms/divider/divider';
 import {
   SearchBar,
   SearchFn,
-  SearchResult,
   SearchResultTemplate,
 } from '../../molecules/search-bar/search-bar';
 import { RangeFilter } from '../../molecules/range-filter/range-filter';
@@ -22,7 +21,7 @@ import {
 import { Tag } from '../../../models/tag.schema';
 import { Range } from '../../../models/types';
 import { Button } from '../../atoms/button/button';
-import { Event, EventDetail } from '../../../models/event.schema';
+import { EventDetail } from '../../../models/event.schema';
 import {
   categoriesList,
   CategoryForm,
@@ -32,12 +31,12 @@ import { range2Price, range2Time } from '../../../utils/format';
 import { Widget } from '../../atoms/widget/widget';
 import { Icon } from '../../atoms/icon/icon';
 import { TextField } from '../../atoms/text-field/text-field';
-import { Observable } from 'rxjs';
 
 export interface UploadedImage {
   id: string;
   file: File;
   url: string;
+  is_cover: boolean;
 }
 
 const minItems =
@@ -103,7 +102,6 @@ export class PostEvent {
 
   readonly form = this.fb.group({
     images: this.fb.nonNullable.control<UploadedImage[]>([], minItems(1)),
-    coverImageId: this.fb.control<string | null>(null, Validators.required),
     title: this.fb.nonNullable.control('', [
       Validators.required,
       Validators.maxLength(80),
@@ -157,7 +155,7 @@ export class PostEvent {
         v.images?.map((img, i) => ({
           id: img.id,
           url: img.url,
-          is_cover: false,
+          is_cover: img.is_cover,
           display_order: i,
         })) ?? [],
       tags: v.tags ?? [],
@@ -186,13 +184,14 @@ export class PostEvent {
         id: crypto.randomUUID(),
         file,
         url: URL.createObjectURL(file),
+        is_cover: false,
       }));
     const images = [...this.form.controls.images.value, ...added];
+    if (!images.find((img) => img.is_cover)) {
+      images[0].is_cover = true;
+    }
     this.form.controls.images.setValue(images);
     this.form.controls.images.markAsDirty();
-    if (!this.form.controls.coverImageId.value && images.length) {
-      this.form.controls.coverImageId.setValue(images[0].id);
-    }
   }
 
   removeImage(img: UploadedImage) {
@@ -200,15 +199,18 @@ export class PostEvent {
     const images = this.form.controls.images.value.filter(
       (i) => i.id !== img.id
     );
-    this.form.controls.images.setValue(images);
-    if (this.form.controls.coverImageId.value === img.id) {
-      this.form.controls.coverImageId.setValue(images[0]?.id ?? null);
+    if (img.is_cover) {
+      images[0].is_cover = true;
     }
+    this.form.controls.images.setValue(images);
   }
 
   setCover(img: UploadedImage) {
-    this.form.controls.coverImageId.setValue(img.id);
-    this.form.controls.coverImageId.markAsDirty();
+    const images = this.form.controls.images.value.map((i) => ({
+      ...i,
+      is_cover: i.id === img.id,
+    }))
+    this.form.controls.images.setValue(images);
   }
 
   toggleTag(t: Tag) {

@@ -162,10 +162,10 @@
             <button
               type="button"
               class="photo"
-              [class.selected]="photo.id === form.controls.coverImageId.value"
+              [class.selected]="photo.is_cover"
               (click)="setCover(photo)"
               [attr.aria-pressed]="
-                photo.id === form.controls.coverImageId.value
+                photo.is_cover
               "
             >
               <img [src]="photo.url" alt="" />
