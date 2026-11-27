@@ -16,6 +16,35 @@
   color: var(--n6);
 }
 
+.event-popup-busyness {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--n7);
+  margin-top: 2px;
+}
+
+.busyness-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--y1);
+
+  &[data-level='moderate'] {
+    background: var(--o1);
+  }
+
+  &[data-level='busy'] {
+    background: var(--p4);
+  }
+
+  &[data-level='very-busy'] {
+    background: var(--p6);
+  }
+}
+
 .event-popup-link {
   margin-top: 6px;
   align-self: flex-start;

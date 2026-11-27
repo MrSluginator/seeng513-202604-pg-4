@@ -4,4 +4,20 @@
   <div class="event-popup-location">{{ locationName }}</div>
 }
 
+@if (busynessPercent() !== null) {
+  <div class="event-popup-busyness">
+    <span
+      class="busyness-dot"
+      [attr.data-level]="busynessLevel()"
+      aria-hidden="true"
+    ></span>
+    <span>
+      {{ busynessLabel() }} ({{ busynessPercent() }}%)
+      @if (busynessTime(); as time) {
+        at {{ time }}
+      }
+    </span>
+  </div>
+}
+
 <f-button class="event-popup-link" text="View event" (clicked)="viewEvent()" />
