@@ -4,18 +4,16 @@ import {
   EventDetail,
   EventList,
   Event,
+  EventCreate,
+  EventUpdate,
 } from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
 import { environment } from '../../environments/environment';
-import {
-  Review,
-  ReviewListSchema,
-  ReviewRequest,
-  ReviewSchema,
-} from '../../models/review.schema';
 import { FilterProps } from '../../models/filters';
 import { firstValueFrom } from 'rxjs';
-import { EventDetails } from '../pages/event-details/event-details';
+import { z } from 'zod';
+import { Tag } from '../../models/tag.schema';
+import { SparkVote } from '../../models/sparks.schema';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
@@ -64,6 +62,20 @@ export class EventService {
       () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
       { parse: Event.parse }
     );
+  }
+
+  deleteEvent(eventId: string) {
+    return this.http.delete(`${this.base}/${eventId}`);
+  }
+
+  createEvent(event: EventCreate) {
+    return this.http.post(this.base, event);
+  }
+
+  updateEvent(eventId: string, event: EventUpdate) {
+    return isUUID(eventId)
+      ? this.http.patch(`${this.base}/eventId`, event)
+      : null;
   }
 
   getEventDetails(id: () => string) {
@@ -115,11 +127,19 @@ export class EventService {
     );
   }
 
-  deleteEvent(eventId: string) {
-    return this.http.delete(`${this.base}/${eventId}`);
+  listTags() {
+    return httpResource(() => `${this.base}/tags`, {
+      parse: z.array(Tag).parse,
+    });
   }
 
-  createEvent(event: EventDetails) {
-    return this.http.post(`${this.base}`, event)
+  fetchTags() {
+    return firstValueFrom(this.http.get(`${this.base}/tags`)).then((res) =>
+      z.array(Tag).parse(res)
+    );
+  }
+
+  sparkEvent(eventId: string, spark: SparkVote) {
+    return this.http.post(`${this.base}/${eventId}/spark`, spark);
   }
 }

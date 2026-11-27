@@ -61,26 +61,6 @@ export class Saved {
     () => SORT_OPTIONS[this.filterSvc.filters().sort]
   );
 
-  private readonly debouncedQuery = toSignal(
-    toObservable(this.navbarSvc.query).pipe(
-      debounceTime(250),
-      distinctUntilChanged()
-    ),
-    { initialValue: '' }
-  );
-
-  private readonly searchRes = this.eventApi.searchResource(
-    () => this.debouncedQuery(),
-    () => this.filterSvc.filters()
-  );
-
-  protected readonly searchResults = computed<SearchResult<Event>[]>(() =>
-    this.searchRes.value().items.map((event) => ({
-      label: event.title,
-      value: event,
-    }))
-  );
-
   protected readonly search: SearchFn<Event> = async (query) => {
     const res = await this.savedEventApi.fetchSavedEvents({
       ...this.filterSvc.filters(),

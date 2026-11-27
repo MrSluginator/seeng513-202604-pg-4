@@ -7,14 +7,9 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { EventGrid } from '../../components/event-grid/event-grid';
 import { FilterService } from '../../services/filter-service';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
@@ -90,19 +85,6 @@ export class Landing {
   protected readonly sortOptions: MenuOption[] = Object.entries(
     SORT_OPTIONS
   ).map(([value, label]) => ({ value, label }));
-
-  private readonly debouncedQuery = toSignal(
-    toObservable(this.navbarSvc.query).pipe(
-      debounceTime(250),
-      distinctUntilChanged()
-    ),
-    { initialValue: '' }
-  );
-
-  private readonly searchRes = this.eventApi.searchResource(
-    () => this.debouncedQuery(),
-    () => this.filterSvc.filters()
-  );
 
   protected readonly search: SearchFn<Event> = async (query) => {
     await new Promise((resolve) => setTimeout(resolve, 300));
