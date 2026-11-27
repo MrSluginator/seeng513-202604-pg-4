@@ -209,7 +209,7 @@ export class PostEvent {
     const images = this.form.controls.images.value.map((i) => ({
       ...i,
       is_cover: i.id === img.id,
-    }))
+    }));
     this.form.controls.images.setValue(images);
   }
 

@@ -164,9 +164,7 @@
               class="photo"
               [class.selected]="photo.is_cover"
               (click)="setCover(photo)"
-              [attr.aria-pressed]="
-                photo.is_cover
-              "
+              [attr.aria-pressed]="photo.is_cover"
             >
               <img [src]="photo.url" alt="" />
             </button>
@@ -190,10 +188,25 @@
       <h2>Preview</h2>
       <div class="cards">
         <div class="small-cards">
-          <f-event-card class="card-s" size="m" [event]="preview()" [link]="false" />
-          <f-event-card class="card-m" size="s" [event]="preview()" [link]="false" />
+          <f-event-card
+            class="card-s"
+            size="m"
+            [event]="preview()"
+            [link]="false"
+          />
+          <f-event-card
+            class="card-m"
+            size="s"
+            [event]="preview()"
+            [link]="false"
+          />
         </div>
-        <f-event-card class="big-cards" size="xl" [event]="preview()" [link]="false" />
+        <f-event-card
+          class="big-cards"
+          size="xl"
+          [event]="preview()"
+          [link]="false"
+        />
       </div>
     </div>
   </aside>

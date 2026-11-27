@@ -11,7 +11,7 @@ import { IconProgressBar } from '../icon-progress-bar/icon-progress-bar';
 })
 export class Comment {
   readonly review = input<Review>();
-  readonly ratingLabel = computed(() => `${this.review()?.rating ?? 0} / 5`)
+  readonly ratingLabel = computed(() => `${this.review()?.rating ?? 0} / 5`);
 
   sparked = signal(false);
   sparkLabel = computed(() => `Send a spark to ${this.review()?.user_id}`);
