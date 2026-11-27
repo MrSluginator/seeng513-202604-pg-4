@@ -13,22 +13,30 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import * as L from 'leaflet';
 import { HeatLayer, HeatLatLng } from 'leaflet.heat';
 import pinIcon from '../../../assets/icons/pin.svg';
 import type { Event } from '../../../models/event.schema';
+import type {
+  HeatPoint,
+  HeatmapResponse,
+} from '../../../models/heatmap.schema';
+import { formatTime, number2Time } from '../../../utils/format';
 import { EventCard } from '../../components/event-card/event-card';
 import { EventPopup } from '../../components/event-popup/event-popup';
 import { AllCategories } from '../../molecules/category/all-categories';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
+import { TimeSlider } from '../../molecules/time-slider/time-slider';
 import {
   categoriesList,
   CategoryForm,
   CategoryName,
 } from '../../molecules/category/categories';
 import { EventService } from '../../services/api-service';
+import { AuthService } from '../../services/auth-service';
 import { FilterService } from '../../services/filter-service';
 
 const DEFAULT_CENTER: L.LatLngTuple = [51.0447, -114.0719];
@@ -58,13 +66,14 @@ interface MappedEvent {
 }
 
 @Component({
-  imports: [EventCard, AllCategories, FilterButton],
+  imports: [EventCard, AllCategories, FilterButton, TimeSlider],
   selector: 'f-heat-map',
   styleUrl: './heat-map.css',
   templateUrl: './heat-map.html',
 })
 export class HeatMap {
   private readonly appRef = inject(ApplicationRef);
+  private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly environmentInjector = inject(EnvironmentInjector);
   private readonly eventApi = inject(EventService);
@@ -79,11 +88,16 @@ export class HeatMap {
   private heatLayer?: HeatLayer & L.Layer;
   private markersLayer?: L.LayerGroup;
   private readonly markersById = new Map<string, L.Marker>();
-  private readonly activePopups = new Set<ComponentRef<EventPopup>>();
+  private readonly activePopups = new Map<string, ComponentRef<EventPopup>>();
 
   private readonly mapReady = signal(false);
   private readonly viewBounds = signal<L.LatLngBounds | null>(null);
   protected readonly selectedEventId = signal<string | null>(null);
+
+  protected readonly selectedHour = signal<number>(new Date().getHours());
+  private readonly formattedSelectedHour = computed(() =>
+    formatTime(number2Time(this.selectedHour()))
+  );
 
   private readonly effectiveFilters = computed(() => {
     const f = this.filterSvc.filters();
@@ -99,7 +113,32 @@ export class HeatMap {
     };
   });
 
+  private readonly hasActiveFilters = computed(() => {
+    const f = this.filterSvc.filters();
+    return Boolean(this.filterSvc.activeCount() > 0 || f.query?.trim());
+  });
+
   protected readonly feed = this.eventApi.getEventFeed(this.effectiveFilters);
+  protected readonly heatmap = this.eventApi.getHeatmap(() => ({
+    hour: this.selectedHour(),
+    limit: 500,
+  }));
+  private readonly lastHeatmap = signal<HeatmapResponse | null>(null);
+
+  protected readonly heatmapAuthRequired = computed(() => {
+    const err = this.heatmap.error();
+    return err instanceof HttpErrorResponse && err.status === 401;
+  });
+
+  private readonly busynessByEventId = computed(() => {
+    const data = this.lastHeatmap();
+    const map = new Map<string, HeatPoint>();
+    if (!data) return map;
+    for (const point of data.points) {
+      map.set(point.event_id, point);
+    }
+    return map;
+  });
 
   protected readonly categoryForm: CategoryForm = (() => {
     const selected = new Set(this.filterSvc.filters().categories);
@@ -146,12 +185,32 @@ export class HeatMap {
     });
 
     effect(() => {
+      if (this.auth.token()) {
+        this.heatmap.reload();
+      }
+    });
+
+    effect(() => {
+      if (this.heatmap.hasValue()) {
+        this.lastHeatmap.set(this.heatmap.value());
+      }
+    });
+
+    effect(() => {
       if (!this.mapReady() || !this.map) return;
 
       const events = this.mappedEvents();
-      this.syncHeatLayer(events);
       this.syncMarkersLayer(events);
       this.updateMarkerHighlight(this.selectedEventId());
+    });
+
+    effect(() => {
+      if (!this.mapReady() || !this.map) return;
+
+      const events = this.mappedEvents();
+      const heatmapData = this.lastHeatmap();
+      this.syncHeatLayer(events, heatmapData);
+      this.syncActivePopupBusyness();
     });
 
     effect(() => {
@@ -191,13 +250,15 @@ export class HeatMap {
     }).addTo(map);
 
     this.heatLayer = new HeatLayer([], {
-      radius: 30,
-      blur: 20,
-      minOpacity: 0.35,
+      radius: 35,
+      blur: 22,
+      max: 1.0,
+      maxZoom: 1,
+      minOpacity: 0.05,
       gradient: {
         0.2: '#fded24',
         0.5: '#f8903b',
-        0.8: '#e7483a',
+        0.75: '#e7483a',
         1.0: '#a52114',
       },
     }) as unknown as HeatLayer & L.Layer;
@@ -231,8 +292,28 @@ export class HeatMap {
     });
   }
 
-  private syncHeatLayer(events: MappedEvent[]): void {
+  private syncHeatLayer(
+    events: MappedEvent[],
+    heatmapData: HeatmapResponse | null
+  ): void {
     if (!this.heatLayer) return;
+
+    if (heatmapData) {
+      let heatPoints = heatmapData.points;
+      if (this.hasActiveFilters()) {
+        const allowedIds = new Set(events.map(({ event }) => event.id));
+        heatPoints = heatPoints.filter((point) =>
+          allowedIds.has(point.event_id)
+        );
+      }
+      const points: HeatLatLng[] = heatPoints.map((point) => [
+        point.latitude,
+        point.longitude,
+        point.intensity,
+      ]);
+      this.heatLayer.setLatLngs(points);
+      return;
+    }
 
     const maxVisits = Math.max(
       1,
@@ -283,14 +364,16 @@ export class HeatMap {
       environmentInjector: this.environmentInjector,
     });
     componentRef.setInput('event', event);
+    this.applyPopupBusyness(event.id, componentRef);
     this.appRef.attachView(componentRef.hostView);
     componentRef.changeDetectorRef.detectChanges();
-    this.activePopups.add(componentRef);
+    this.activePopups.set(event.id, componentRef);
 
     const cleanup = () => {
       marker.off('popupclose', cleanup);
       marker.off('remove', cleanup);
-      if (!this.activePopups.delete(componentRef)) return;
+      if (this.activePopups.get(event.id) !== componentRef) return;
+      this.activePopups.delete(event.id);
       this.appRef.detachView(componentRef.hostView);
       componentRef.destroy();
     };
@@ -298,6 +381,28 @@ export class HeatMap {
     marker.on('remove', cleanup);
 
     return componentRef.location.nativeElement as HTMLElement;
+  }
+
+  private applyPopupBusyness(
+    eventId: string,
+    componentRef: ComponentRef<EventPopup>
+  ): void {
+    const heatmapData = this.lastHeatmap();
+    if (!heatmapData) {
+      componentRef.setInput('busyness', null);
+      componentRef.setInput('busynessTime', null);
+      return;
+    }
+    const point = this.busynessByEventId().get(eventId);
+    componentRef.setInput('busyness', point ? point.intensity : 0);
+    componentRef.setInput('busynessTime', this.formattedSelectedHour());
+  }
+
+  private syncActivePopupBusyness(): void {
+    for (const [eventId, ref] of this.activePopups) {
+      this.applyPopupBusyness(eventId, ref);
+      ref.changeDetectorRef.detectChanges();
+    }
   }
 
   private scrollSelectedCardIntoView(eventId: string): void {
@@ -315,7 +420,7 @@ export class HeatMap {
   }
 
   private destroyActivePopups(): void {
-    for (const ref of this.activePopups) {
+    for (const ref of this.activePopups.values()) {
       this.appRef.detachView(ref.hostView);
       ref.destroy();
     }
