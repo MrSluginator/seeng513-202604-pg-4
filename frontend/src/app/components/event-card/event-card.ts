@@ -59,7 +59,7 @@ export class EventCard {
   protected readonly reviewOpen = signal(false);
 
   // Starts from event().defaultSaved and resets if a different event is passed in
-  protected readonly saved = linkedSignal(() => this.event().saved);
+  protected readonly saved = linkedSignal(() => this.event().is_saved);
   protected readonly pending = signal(false);
 
   protected readonly saveLabel = computed(() =>
@@ -109,7 +109,7 @@ export class EventCard {
     const req$ = this.savedEventApi.toggleSave(this.event().id, !prev);
     req$.pipe(finalize(() => this.pending.set(false))).subscribe({
       error: () => this.saved.set(prev),
-    })
+    });
   }
 
   protected onReview(): void {

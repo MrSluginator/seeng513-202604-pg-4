@@ -3,11 +3,19 @@ import { FilterService } from '../../services/filter-service';
 import { EventService } from '../../services/api-service';
 import { NavbarService } from '../../services/navbar-service';
 import { Router } from '@angular/router';
-import { MenuOption, MenuButton } from '../../molecules/menu-button/menu-button';
+import {
+  MenuOption,
+  MenuButton,
+} from '../../molecules/menu-button/menu-button';
 import { Sort, SORT_OPTIONS } from '../../../models/filters';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
+import {
+  SearchResult,
+  SearchBar,
+  SearchFn,
+  SearchResultTemplate,
+} from '../../molecules/search-bar/search-bar';
 import { Event } from '../../../models/event.schema';
 import { Widget } from '../../atoms/widget/widget';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
@@ -15,7 +23,14 @@ import { EventGrid } from '../../components/event-grid/event-grid';
 import { SavedEventService } from '../../services/saved-event-service';
 
 @Component({
-  imports: [Widget, MenuButton, FilterButton, EventGrid, SearchBar],
+  imports: [
+    Widget,
+    MenuButton,
+    FilterButton,
+    EventGrid,
+    SearchBar,
+    SearchResultTemplate,
+  ],
   selector: 'f-saved',
   styleUrl: './saved.css',
   templateUrl: './saved.html',
@@ -27,7 +42,14 @@ export class Saved {
   private readonly navbarSvc = inject(NavbarService);
   private readonly router = inject(Router);
 
-  protected readonly saved = this.savedEventApi.listSavedEvents();
+  private readonly _saved = this.savedEventApi.listSavedEvents();
+  protected readonly saved = computed<Event[]>(
+    () =>
+      this._saved.value()?.items.map((info) => ({
+        ...info.event,
+        is_saved: this.savedEventApi.isSaved(info.event.id),
+      })) || []
+  );
   protected readonly sortOptions: MenuOption[] = Object.entries(
     SORT_OPTIONS
   ).map(([value, label]) => ({ value, label }));
@@ -52,10 +74,15 @@ export class Saved {
     }))
   );
 
+  protected readonly search: SearchFn<Event> = async (query) => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return [];
+  };
+
   constructor() {
     this.navbarSvc.setSearch<Event>({
       placeholder: 'Search events...',
-      results: () => this.searchResults(),
+      search: this.search,
       onSelect: (event) => this.selectEvent(event),
     });
   }

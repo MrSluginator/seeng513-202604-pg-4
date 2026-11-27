@@ -1,7 +1,17 @@
 <ng-template #interactables>
   <div class="interactables">
-    <f-button icon="spark" label="Rate event" (click)="onReview()" [disabled]="pending()" />
-    <f-button icon="share" label="Share event" (click)="onShare()" [disabled]="pending()" />
+    <f-button
+      icon="spark"
+      label="Rate event"
+      (click)="onReview()"
+      [disabled]="pending()"
+    />
+    <f-button
+      icon="share"
+      label="Share event"
+      (click)="onShare()"
+      [disabled]="pending()"
+    />
     <f-button
       icon="bookmark"
       [pressed]="saved()"

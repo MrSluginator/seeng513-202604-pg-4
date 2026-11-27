@@ -70,6 +70,25 @@ def list_saved_events(
     )
 
 
+@router.get("/users/me/saved-events/ids", response_model=list[uuid.UUID])
+def list_saved_event_ids(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Return just the IDs of the events the current user has saved."""
+
+    stmt = (
+        select(SavedEvent.event_id)
+        .where(
+            SavedEvent.user_id == current_user.id,
+            SavedEvent.is_saved.is_(True),
+        )
+        .order_by(SavedEvent.created_at.desc())
+    )
+
+    return db.scalars(stmt).all()
+
+
 @router.post(
     "/events/{event_id}/save",
     response_model=SavedEventStatus,

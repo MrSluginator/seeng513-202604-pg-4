@@ -219,6 +219,7 @@ def test_every_saved_route_requires_a_login(client, session):
     assert client.get(f"/events/{event.id}/save-status").status_code == 401
     assert client.post(f"/events/{event.id}/visit").status_code == 401
     assert client.get("/users/me/saved-events").status_code == 401
+    assert client.get("/users/me/saved-events/ids").status_code == 401
 
 
 def test_users_have_separate_saved_lists(client, session):
@@ -291,3 +292,33 @@ def test_visits_add_up_for_the_user_and_the_event(client, session):
 
     assert body["user_visits"] == 1
     assert body["visits_count"] == 3
+
+
+def saved_ids(client, user):
+    response = client.get("/users/me/saved-events/ids", headers=bearer(user))
+    assert response.status_code == 200
+    return set(response.json())
+
+
+def test_saved_ids_lists_only_the_events_the_user_saved(client, session):
+    user = make_user(session)
+    saved = add_event(session, title="Saved")
+    unsaved = add_event(session, title="Unsaved")
+    visited = add_event(session, title="Visited only")
+    add_event(session, title="Untouched")
+    save(client, user, saved.id)
+    save(client, user, unsaved.id)
+    unsave(client, user, unsaved.id)
+    visit(client, user, visited.id)
+
+    assert saved_ids(client, user) == {str(saved.id)}
+
+
+def test_saved_ids_are_separate_for_each_user(client, session):
+    alice = make_user(session, "alice")
+    bob = make_user(session, "bob")
+    event = add_event(session)
+    save(client, alice, event.id)
+
+    assert saved_ids(client, alice) == {str(event.id)}
+    assert saved_ids(client, bob) == set()

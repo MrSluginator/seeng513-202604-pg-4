@@ -59,7 +59,7 @@ const EventSchemaBase = z.object({
   photos: z.array(Photo),
   tags: z.array(Tag),
 
-  saved: z.boolean().optional(),
+  is_saved: z.boolean().optional(),
 });
 
 const EventDetailSchemaBase = EventSchemaBase.extend({

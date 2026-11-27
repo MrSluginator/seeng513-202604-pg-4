@@ -31,6 +31,7 @@ import {
   SearchResult,
   SearchBar,
   SearchFn,
+  SearchResultTemplate,
 } from '../../molecules/search-bar/search-bar';
 import { Footer } from '../../components/footer/footer';
 import { AllCategories } from '../../molecules/category/all-categories';
@@ -40,6 +41,7 @@ import {
   CategoryName,
 } from '../../molecules/category/categories';
 import { Event } from '../../../models/event.schema';
+import { SavedEventService } from '../../services/saved-event-service';
 
 @Component({
   imports: [
@@ -51,6 +53,7 @@ import { Event } from '../../../models/event.schema';
     SearchBar,
     Footer,
     AllCategories,
+    SearchResultTemplate,
   ],
   selector: 'f-landing',
   styleUrl: './landing.css',
@@ -59,11 +62,28 @@ import { Event } from '../../../models/event.schema';
 export class Landing {
   private readonly filterSvc = inject(FilterService);
   private readonly eventApi = inject(EventService);
+  private readonly savedEventApi = inject(SavedEventService);
   private readonly navbarSvc = inject(NavbarService);
   private readonly router = inject(Router);
 
-  protected readonly featured = this.eventApi.getFeatured();
-  protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+  private readonly _featured = this.eventApi.getFeatured();
+  private readonly _feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+
+  protected readonly featured = computed(
+    () =>
+      this._featured.value().items.map((event) => ({
+        ...event,
+        is_saved: this.savedEventApi.isSaved(event.id),
+      })) || []
+  );
+  protected readonly feed = computed(
+    () =>
+      this._feed.value().items.map((event) => ({
+        ...event,
+        is_saved: this.savedEventApi.isSaved(event.id),
+      })) || []
+  );
+
   private readonly feedSection =
     viewChild.required<ElementRef<HTMLElement>>('feedSection');
 
