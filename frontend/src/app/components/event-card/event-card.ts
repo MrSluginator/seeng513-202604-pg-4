@@ -26,6 +26,7 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth-service';
 import { Tag } from '../../../models/tag.schema';
 import { FilterService } from '../../services/filter-service';
+import { EventService } from '../../services/event-service';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -48,6 +49,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly eventApi = inject(EventService);
   private readonly savedEventApi = inject(SavedEventService);
   private readonly auth = inject(AuthService);
   private readonly filterSvc = inject(FilterService);
@@ -60,11 +62,8 @@ export class EventCard {
 
   // Starts from event().defaultSaved and resets if a different event is passed in
   protected readonly saved = linkedSignal(() => this.event().is_saved);
+  protected readonly sparked = signal(false);
   protected readonly pending = signal(false);
-
-  protected readonly saveLabel = computed(() =>
-    this.saved() ? 'Remove from saved' : 'Save event'
-  );
 
   protected readonly timeLabel = computed(() => {
     const time = this.event().time;
@@ -109,6 +108,18 @@ export class EventCard {
     const req$ = this.savedEventApi.toggleSave(this.event().id, !prev);
     req$.pipe(finalize(() => this.pending.set(false))).subscribe({
       error: () => this.saved.set(prev),
+    });
+  }
+
+  protected onSpark(): void {
+    if (this.auth.requireRole(['standard'])) return;
+    const prev = this.sparked();
+    this.sparked.set(!prev);
+    this.pending.set(true);
+
+    const req$ = this.eventApi.sparkEvent(this.event().id, {amount: prev ? -1 : 1});
+    req$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      error: () => this.sparked.set(prev),
     });
   }
 
