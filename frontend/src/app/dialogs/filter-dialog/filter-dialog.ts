@@ -34,7 +34,11 @@ import {
   CategoryName,
 } from '../../molecules/category/categories';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
+import {
+  SearchBar,
+  SearchFn,
+  SearchResult,
+} from '../../molecules/search-bar/search-bar';
 import { Tag } from '../../../models/tag.schema';
 import { Location } from '../../../models/location.schema';
 
@@ -82,15 +86,38 @@ export class FilterDialog {
     computation: ({ applied }) => applied,
   });
 
-  protected readonly tagQuery = signal('');
-  protected readonly locationQuery = signal('');
+  protected searchTags: SearchFn<Tag> = async (query) => {
+    await new Promise((resolve) => setTimeout(resolve, 300)); // fake latency
+    return [
+      {
+        label: `${query}`,
+        value: { id: '1', name: query, slug: query.toLocaleLowerCase() },
+      },
+      {
+        label: `${query} Colors`,
+        value: {
+          id: '2',
+          name: `${query} Colors`,
+          slug: `${query.toLocaleLowerCase()}_colors`,
+        },
+      },
+    ];
+  };
 
-  protected tagResults = computed(() =>
-    this.filterService.queryTags(this.tagQuery())
-  );
-  protected locationResults = computed(() =>
-    this.filterService.queryLocations(this.locationQuery())
-  );
+  protected searchRelatedTags: SearchFn<Tag> = async (query) => {
+    return [];
+  };
+
+  protected searchLocations: SearchFn<Location> = async (query) => {
+    await new Promise((resolve) => setTimeout(resolve, 300)); // fake latency
+    return [
+      { label: `${query}`, value: { name: query, longitude: 0, latitude: 0 } },
+      {
+        label: `${query} place`,
+        value: { name: `${query} place`, longitude: 0, latitude: 0 },
+      },
+    ];
+  };
 
   protected onTagSelected(result: SearchResult<Tag>): void {
     const current = this.draft().tags;

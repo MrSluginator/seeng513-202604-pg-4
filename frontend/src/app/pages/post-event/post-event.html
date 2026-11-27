@@ -64,7 +64,22 @@
       <section class="field f-tags" [attr.data-invalid]="showError('tags')">
         <div class="tags-head">
           <h3>Tags</h3>
-          <f-search-bar />
+          <f-search-bar
+            [search]="searchTags"
+            [relatedSearch]="searchRelatedTags"
+            (resultSelected)="toggleTag($event.value)"
+            style="--menu-width: 400px"
+          >
+            <ng-template
+              fSearchResult
+              [fSearchResult]="searchTags"
+              let-result
+              let-group="group"
+              let-active="active"
+            >
+              <f-widget [text]="result.value.name" />
+            </ng-template>
+          </f-search-bar>
         </div>
         <div class="tag-box">
           @if (selectedTags().length || suggestedTags().length) {

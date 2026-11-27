@@ -10,10 +10,19 @@ import { Icon } from '../../atoms/icon/icon';
 import { Logo } from '../../atoms/logo/logo';
 import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
 import { NavbarService } from '../../services/navbar-service';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'f-nav-bar',
-  imports: [RouterLink, RouterLinkActive, Button, Icon, Logo, SearchBar],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    Button,
+    Icon,
+    Logo,
+    SearchBar,
+    NgTemplateOutlet,
+  ],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

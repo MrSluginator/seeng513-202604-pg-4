@@ -26,10 +26,20 @@
               <h3>Tags</h3>
               <f-search-bar
                 placeholder="Search tags..."
-                [(query)]="tagQuery"
-                [results]="tagResults()"
+                [search]="searchTags"
+                [relatedSearch]="searchRelatedTags"
                 (resultSelected)="onTagSelected($event)"
-              />
+              >
+                <ng-template
+                  fSearchResult
+                  [fSearchResult]="searchTags"
+                  let-result
+                  let-group="group"
+                  let-active="active"
+                >
+                  <f-widget [text]="result.value.name" />
+                </ng-template>
+              </f-search-bar>
             </div>
             <div class="column">
               <p>Active Tags:</p>
@@ -52,10 +62,19 @@
               <h3>Location</h3>
               <f-search-bar
                 placeholder="Search locations..."
-                [(query)]="locationQuery"
-                [results]="locationResults()"
+                [search]="searchLocations"
                 (resultSelected)="onLocationSelected($event)"
-              />
+              >
+                <ng-template
+                  fSearchResult
+                  [fSearchResult]="searchLocations"
+                  let-result
+                  let-group="group"
+                  let-active="active"
+                >
+                  {{ result.label }}
+                </ng-template>
+              </f-search-bar>
             </div>
             <small class="location-info">
               If the Distance filter is active, the feed will show events within

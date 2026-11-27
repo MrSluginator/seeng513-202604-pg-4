@@ -1,6 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Divider } from '../../atoms/divider/divider';
-import { SearchBar } from '../../molecules/search-bar/search-bar';
+import {
+  SearchBar,
+  SearchFn,
+  SearchResult,
+  SearchResultTemplate,
+} from '../../molecules/search-bar/search-bar';
 import { RangeFilter } from '../../molecules/range-filter/range-filter';
 import { AllCategories } from '../../molecules/category/all-categories';
 import { TextInput } from '../../atoms/text-input/text-input';
@@ -27,6 +32,7 @@ import { range2Price, range2Time } from '../../../utils/format';
 import { Widget } from '../../atoms/widget/widget';
 import { Icon } from '../../atoms/icon/icon';
 import { TextField } from '../../atoms/text-field/text-field';
+import { Observable } from 'rxjs';
 
 export interface UploadedImage {
   id: string;
@@ -78,6 +84,7 @@ const SUGGESTED_TAGS: Record<CategoryName, Tag[]> = {
     Button,
     Widget,
     Icon,
+    SearchResultTemplate,
   ],
   selector: 'f-post-event',
   styleUrl: './post-event.css',
@@ -224,6 +231,28 @@ export class PostEvent {
     this.form.controls.tags.markAsDirty();
     this.form.controls.tags.markAsTouched();
   }
+
+  protected searchTags: SearchFn<Tag> = async (query) => {
+    await new Promise((resolve) => setTimeout(resolve, 300)); // fake latency
+    return [
+      {
+        label: `${query}`,
+        value: { id: '1', name: query, slug: query.toLocaleLowerCase() },
+      },
+      {
+        label: `${query} Colors`,
+        value: {
+          id: '2',
+          name: `${query} Colors`,
+          slug: `${query.toLocaleLowerCase()}_colors`,
+        },
+      },
+    ];
+  };
+
+  protected searchRelatedTags: SearchFn<Tag> = async (query) => {
+    return [];
+  };
 
   submit() {
     if (this.form.invalid) {
