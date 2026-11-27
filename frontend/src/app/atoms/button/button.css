@@ -33,8 +33,7 @@
   .text {
     display: flex;
     flex: 1 0 0;
-    justify-content: center;
-    text-align: center;
+    justify-content: var(--text-align, center);
   }
 
   &.iconOnly {

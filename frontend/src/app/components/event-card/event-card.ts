@@ -21,6 +21,8 @@ import {
   ReviewDialog,
   ReviewResult,
 } from '../../dialogs/review-dialog/review-dialog';
+import { SavedEventService } from '../../services/saved-event-service';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth-service';
 import { Tag } from '../../../models/tag.schema';
 import { FilterService } from '../../services/filter-service';
@@ -46,6 +48,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly savedEventApi = inject(SavedEventService);
   private readonly auth = inject(AuthService);
   private readonly filterSvc = inject(FilterService);
 
@@ -56,7 +59,8 @@ export class EventCard {
   protected readonly reviewOpen = signal(false);
 
   // Starts from event().defaultSaved and resets if a different event is passed in
-  protected readonly saved = linkedSignal(() => this.event().saved);
+  protected readonly saved = linkedSignal(() => this.event().is_saved);
+  protected readonly pending = signal(false);
 
   protected readonly saveLabel = computed(() =>
     this.saved() ? 'Remove from saved' : 'Save event'
@@ -98,7 +102,14 @@ export class EventCard {
 
   protected onSave(): void {
     if (this.auth.requireRole(['standard'])) return;
-    this.saved.update((prev) => !prev);
+    const prev = this.saved();
+    this.saved.set(!prev);
+    this.pending.set(true);
+
+    const req$ = this.savedEventApi.toggleSave(this.event().id, !prev);
+    req$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      error: () => this.saved.set(prev),
+    });
   }
 
   protected onReview(): void {

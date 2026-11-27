@@ -17,7 +17,7 @@ import { FilterProps } from '../../models/filters';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
-function filtersToParams(f: FilterProps): Record<string, Param> {
+export function filtersToParams(f: FilterProps): Record<string, Param> {
   const hasLocations = f.locations.length > 0;
   const params: Record<string, Param> = {
     sort: f.sort === 'distance' && !hasLocations ? 'start_time' : f.sort,

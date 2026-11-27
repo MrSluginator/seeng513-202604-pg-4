@@ -1,5 +1,5 @@
 import { Routes, UrlMatcher } from '@angular/router';
-import { guestGuard } from './guards/auth-guard';
+import { authGuard, roleGuard } from './guards/auth-guard';
 
 export const authMatcher: UrlMatcher = (segments) =>
   segments.length === 1 &&
@@ -15,26 +15,29 @@ export const routes: Routes = [
   },
   {
     path: 'map',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/heat-map/heat-map').then((m) => m.HeatMap),
   },
   {
     path: 'saved',
+    canActivate: [roleGuard('standard')],
     loadComponent: () => import('./pages/saved/saved').then((m) => m.Saved),
   },
   {
     path: 'post',
+    canActivate: [roleGuard('organizer', 'admin')],
     loadComponent: () =>
       import('./pages/post-event/post-event').then((m) => m.PostEvent),
   },
   {
     path: 'settings',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/settings/settings').then((m) => m.Settings),
   },
   {
     matcher: authMatcher,
-    canActivate: [guestGuard],
     loadComponent: () =>
       import('./pages/sign-in/sign-in').then((m) => m.SignIn),
   },
@@ -46,8 +49,14 @@ export const routes: Routes = [
   },
   {
     path: 'testing',
+    canActivate: [roleGuard('admin')],
     loadComponent: () =>
       import('./pages/testing/testing').then((m) => m.Testing),
+  },
+  {
+    path: 'forbidden',
+    loadComponent: () =>
+      import('./pages/forbidden/forbidden').then((m) => m.Forbidden),
   },
   {
     path: '**',
