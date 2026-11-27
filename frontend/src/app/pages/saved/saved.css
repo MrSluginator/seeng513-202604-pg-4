@@ -1,0 +1,45 @@
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  @media (max-width: 768px) {
+    justify-content: stretch;
+  }
+}
+
+.feed,
+.featured {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.feed {
+  height: 100%;
+  gap: 10px;
+}
+
+.tags,
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.tags,
+.sort {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.search {
+  width: 100%;
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

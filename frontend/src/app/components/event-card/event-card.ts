@@ -21,6 +21,9 @@ import {
   ReviewDialog,
   ReviewResult,
 } from '../../dialogs/review-dialog/review-dialog';
+import { SavedEventService } from '../../services/saved-event-service';
+import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
+import { finalize } from 'rxjs';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -43,6 +46,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly savedEventApi = inject(SavedEventService);
 
   readonly event = input.required<Event | EventDetail>();
   readonly detail = computed(() => this.event() as EventDetail);
@@ -52,6 +56,7 @@ export class EventCard {
 
   // Starts from event().defaultSaved and resets if a different event is passed in
   protected readonly saved = linkedSignal(() => this.event().saved);
+  protected readonly pending = signal(false);
 
   protected readonly saveLabel = computed(() =>
     this.saved() ? 'Remove from saved' : 'Save event'
@@ -80,7 +85,14 @@ export class EventCard {
   }
 
   protected onSave(): void {
-    this.saved.update((prev) => !prev);
+    const prev = this.saved();
+    this.saved.set(!prev);
+    this.pending.set(true);
+
+    const req$ = this.savedEventApi.toggleSave(this.event().id, !prev);
+    req$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      error: () => this.saved.set(prev),
+    })
   }
 
   protected onReview(): void {

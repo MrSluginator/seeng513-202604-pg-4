@@ -1,1 +1,36 @@
-<p>saved works!</p>
+<div #feedSection class="feed">
+  <div class="feed-header">
+    <div class="tags">
+      <small>Showing items with the following tags:</small>
+      @for (tag of filterSvc.filters().tags; track tag.id) {
+        <f-widget
+          [text]="tag.name"
+          icon="times"
+          (click)="filterSvc.removeTag(tag)"
+        />
+      }
+    </div>
+    <div class="filters">
+      <f-menu-button
+        class="sort"
+        [text]="`Sort: ${filterSvc.filters().sort}`"
+        label="Sort events"
+        [options]="sortOptions"
+        (selected)="onSortSelected($event)"
+      />
+      <f-search-bar
+        class="search"
+        placeholder="Search events..."
+        [(query)]="navbarSvc.query"
+        [results]="searchResults()"
+        (resultSelected)="selectEvent($event)"
+      />
+      <f-filter-button />
+    </div>
+  </div>
+  <f-event-grid
+    size="m"
+    [events]="saved.hasValue() ? saved.value().items.map(s => s.event) : []"
+    [display]="{ type: 'grid', hidden: true }"
+  />
+</div>
