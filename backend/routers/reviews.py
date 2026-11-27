@@ -17,6 +17,7 @@ from schemas import (
     ReviewSummary,
     ReviewUpdate,
 )
+from sparks import SparkGiven, SparkVote, give_spark
 
 router = APIRouter(tags=["reviews"])
 
@@ -43,9 +44,10 @@ def _update_event_rating(db: Session, event: Event) -> None:
     event.review_count = count
 
 
-def _with_username(review: Review, username: str) -> ReviewSummary:
+def _with_username(review: Review, username: str, sparks: int) -> ReviewSummary:
     result = ReviewSummary.model_validate(review)
     result.username = username
+    result.author_sparks = sparks
     return result
 
 
@@ -70,7 +72,7 @@ def list_reviews(
     total = db.scalar(select(func.count()).select_from(Review).where(*conditions))
 
     stmt = (
-        select(Review, User.username)
+        select(Review, User.username, User.spark_rating)
         .join(User, User.id == Review.user_id)
         .where(*conditions)
         .order_by(Review.created_at.desc(), Review.id)
@@ -82,7 +84,7 @@ def list_reviews(
 
     return ReviewList(
         total=total or 0,
-        items=[_with_username(review, name) for review, name in rows],
+        items=[_with_username(review, name, sparks) for review, name, sparks in rows],
     )
 
 
@@ -142,7 +144,7 @@ def create_review(
         )
 
     db.refresh(review)
-    return _with_username(review, current_user.username)
+    return _with_username(review, current_user.username, current_user.spark_rating)
 
 
 @router.patch(
@@ -179,7 +181,7 @@ def update_review(
     db.commit()
     db.refresh(review)
 
-    return _with_username(review, current_user.username)
+    return _with_username(review, current_user.username, current_user.spark_rating)
 
 
 @router.delete(
@@ -211,3 +213,20 @@ def delete_review(
     _update_event_rating(db, event)
 
     db.commit()
+
+
+@router.post("/reviews/{review_id}/spark", response_model=SparkGiven)
+def spark_review(
+    review_id: uuid.UUID,
+    payload: SparkVote | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Give the review a spark (+1, the default) or send {"amount": -1} to take
+    one away. The reviewer's sparks change by that much."""
+    review = db.get(Review, review_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="Review not found")
+    if review.user_id == current_user.id:
+        raise HTTPException(status_code=403, detail="You can't spark your own review")
+    return give_spark(db, review.user_id, (payload or SparkVote()).amount)

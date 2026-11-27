@@ -5,6 +5,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import (
     AliasChoices,
+    AliasPath,
     BaseModel,
     ConfigDict,
     Field,
@@ -193,6 +194,9 @@ class EventSummary(BaseModel):
     rating: float | None = None
     review_count: int
     visits_count: int
+    creator_sparks: int | None = Field(
+        None, validation_alias=AliasPath("creator", "spark_rating")
+    )
     tags: list[TagSummary] = Field(default_factory=list)
     photos: list[PhotoSummary] = Field(
         default_factory=list,
@@ -299,6 +303,7 @@ class ReviewSummary(BaseModel):
     username: str | None = None
     rating: int
     content: str | None
+    author_sparks: int | None = None
     created_at: datetime
     updated_at: datetime
 

@@ -1,13 +1,14 @@
 """The logged-in user's own account."""
 
 import logging
+import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from auth_schemas import PreferredTagsUpdate, ProfileUpdate, UserMe
+from auth_schemas import PreferredTagsUpdate, ProfileUpdate, SparkSummary, UserMe
 from db.database import get_db
 from db.models.tag import Tag
 from db.models.user import User
@@ -23,6 +24,19 @@ router = APIRouter(tags=["users"])
 @router.get("/me", response_model=UserMe)
 def read_me(user: User = Depends(get_current_user)) -> UserMe:
     return UserMe.model_validate(user)
+
+
+@router.get("/users/{user_id}/sparks", response_model=SparkSummary)
+def read_user_sparks(
+    user_id: uuid.UUID,
+    _: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> SparkSummary:
+    """Another user's spark total (for showing next to an organizer or reviewer)."""
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return SparkSummary.model_validate(user)
 
 
 @router.patch("/me", response_model=UserMe)

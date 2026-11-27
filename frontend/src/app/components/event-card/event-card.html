@@ -51,7 +51,7 @@
   <div class="info">
     <div class="title-bar">
       <h3>
-        @if (size() === 'xl') {
+        @if (size() === 'xl' || !link()) {
           {{ event().title }}
         } @else {
           <a class="link" [routerLink]="['/event', event().id]">{{
@@ -91,10 +91,12 @@
           <f-icon name="clock" />
           <small>{{ timeLabel() }}</small>
         </div>
-        <div class="location">
-          <f-icon name="pin" />
-          <small>{{ locationLabel() }}</small>
-        </div>
+        @if (event().location?.name; as locationName) {
+          <div class="location">
+            <f-icon name="pin" />
+            <small>{{ locationName }}</small>
+          </div>
+        }
       </div>
     } @else {
       {{ event().summary }}

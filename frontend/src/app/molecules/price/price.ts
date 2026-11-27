@@ -24,10 +24,18 @@ export class Price {
 
   protected readonly range = computed(() => {
     const p = this.price();
-    if (!p) return 'Free';
-    if (!p.price_min && !p.price_max) return 'Free';
-    if (p.price_max === null) return p.price_min ? `${p.price_min}` : 'Free';
-    return p ? `(${p.price_min} - ${p.price_max})` : 'Free';
+    if (p) {
+      if (p.price_min == p.price_max) {
+        if (p.price_min != 0) {
+          return `${p.price_max}`;
+        }
+      } else {
+        if (p.price_min && p.price_max) {
+          return `(${p.price_min} - ${p.price_max})`;
+        }
+      }
+    }
+    return 'Free';
   });
 
   protected readonly tier = computed(() => {
