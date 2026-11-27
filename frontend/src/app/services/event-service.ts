@@ -14,6 +14,8 @@ import {
   ReviewSchema,
 } from '../../models/review.schema';
 import { FilterProps } from '../../models/filters';
+import { firstValueFrom } from 'rxjs';
+import { EventDetails } from '../pages/event-details/event-details';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
@@ -71,7 +73,7 @@ export class EventService {
     );
   }
 
-  getEventFeed(filters: () => FilterProps) {
+  listEvents(filters: () => FilterProps) {
     return httpResource(
       () => ({
         url: this.base,
@@ -82,6 +84,18 @@ export class EventService {
         defaultValue: { total: 0, items: [] },
       }
     );
+  }
+
+  fetchEvents(filters: FilterProps, limit = 20, offset = 0) {
+    return firstValueFrom(
+      this.http.get(this.base, {
+        params: {
+          ...filtersToParams(filters),
+          limit,
+          offset,
+        },
+      })
+    ).then((res) => EventListSchema.parse(res));
   }
 
   getFeatured(limit = 10) {
@@ -101,69 +115,11 @@ export class EventService {
     );
   }
 
-  searchResource(query: () => string, filters: () => FilterProps, limit = 8) {
-    return httpResource(
-      () => {
-        const q = query().trim();
-        if (!q) return undefined;
-
-        return {
-          url: this.base,
-          params: {
-            ...filtersToParams({ ...filters(), query: q }),
-            limit,
-            offset: 0,
-          },
-        };
-      },
-      {
-        parse: EventListSchema.parse,
-        defaultValue: { total: 0, items: [] },
-      }
-    );
-  }
-}
-
-@Service()
-export class ReviewService {
-  private readonly http = inject(HttpClient);
-  private base = `${environment.apiBaseUrl}`;
-
-  getReview(id: () => string) {
-    return httpResource(
-      () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
-      { parse: ReviewSchema.parse }
-    );
+  deleteEvent(eventId: string) {
+    return this.http.delete(`${this.base}/${eventId}`);
   }
 
-  getReviews(eventId: () => string, limit = 20, offset = 0) {
-    return httpResource(
-      () =>
-        isUUID(eventId())
-          ? {
-              url: `${this.base}/events/${eventId()}/reviews`,
-              params: { limit, offset },
-            }
-          : undefined,
-      {
-        parse: ReviewListSchema.parse,
-        defaultValue: { total: 0, items: [] },
-      }
-    );
-  }
-
-  postReview(eventId: string, body: ReviewRequest) {
-    return this.http.post<Review>(
-      `${this.base}/events/${eventId}/reviews`,
-      body
-    );
-  }
-
-  updateReview(reviewId: string, body: ReviewRequest) {
-    return this.http.post<Review>(`${this.base}/reviews/${reviewId}`, body);
-  }
-
-  deleteReview(reviewId: string) {
-    return this.http.delete(`${this.base}/reviews/${reviewId}`);
+  createEvent(event: EventDetails) {
+    return this.http.post(`${this.base}`, event)
   }
 }

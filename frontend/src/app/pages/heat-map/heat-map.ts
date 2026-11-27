@@ -28,7 +28,7 @@ import {
   CategoryForm,
   CategoryName,
 } from '../../molecules/category/categories';
-import { EventService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { FilterService } from '../../services/filter-service';
 
 const DEFAULT_CENTER: L.LatLngTuple = [51.0447, -114.0719];
@@ -99,7 +99,7 @@ export class HeatMap {
     };
   });
 
-  protected readonly feed = this.eventApi.getEventFeed(this.effectiveFilters);
+  protected readonly feed = this.eventApi.listEvents(this.effectiveFilters);
 
   protected readonly categoryForm: CategoryForm = (() => {
     const selected = new Set(this.filterSvc.filters().categories);

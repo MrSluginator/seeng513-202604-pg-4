@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { FilterService } from '../../services/filter-service';
-import { EventService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { NavbarService } from '../../services/navbar-service';
 import { Router } from '@angular/router';
 import {

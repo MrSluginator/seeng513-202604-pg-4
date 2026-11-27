@@ -19,7 +19,7 @@ import { EventGrid } from '../../components/event-grid/event-grid';
 import { FilterService } from '../../services/filter-service';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import { Widget } from '../../atoms/widget/widget';
-import { EventService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { Divider } from '../../atoms/divider/divider';
 import {
   MenuButton,
@@ -67,7 +67,7 @@ export class Landing {
   private readonly router = inject(Router);
 
   private readonly _featured = this.eventApi.getFeatured();
-  private readonly _feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+  private readonly _feed = this.eventApi.listEvents(this.filterSvc.filters);
 
   protected readonly featured = computed(
     () =>
