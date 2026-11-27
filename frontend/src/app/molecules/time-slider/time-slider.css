@@ -3,24 +3,26 @@
 }
 
 .time-slider-panel {
-  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 14px 4px;
   border-radius: 16px;
   background: color-mix(in srgb, var(--n0) 92%, transparent);
+  border: 1px solid var(--P2, #F7A8A0);
   backdrop-filter: blur(8px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 240px;
+  flex-direction: row-reverse;
+  gap: 8px;
 }
 
 .time-slider-header {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-content: center;
 }
 
 .time-slider-label {
+  display: none;
   color: var(--N7, #383232);
 
   /* H3 */
@@ -40,6 +42,7 @@
 
 .time-slider-value {
   color: var(--N7, #383232);
+  text-align: right;
 
   /* Subtext */
   font-family: Nokora;
@@ -48,6 +51,10 @@
   font-weight: 400;
   line-height: 16px;
   /* 114.286% */
+}
+
+.time-slider-now {
+  display: none;
 }
 
 .time-slider-now ::ng-deep .button {
@@ -64,10 +71,10 @@
 }
 
 .time-slider-notice {
+  display: none;
   color: var(--n6);
   text-align: center;
   font-size: 0.75rem;
-  display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
@@ -100,9 +107,28 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .time-slider-panel {
-    padding: 8px 14px 4px;
-    gap: 2px;
+    width: 240px;
+    padding: 16px;
+    gap: 6px;
+    flex-direction: column;
+  }
+
+  .time-slider-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .time-slider-label {
+    display: inline;
+  }
+
+  .time-slider-now {
+    display: inline-block;
+  }
+
+  .time-slider-notice {
+    display: flex;
   }
 }
