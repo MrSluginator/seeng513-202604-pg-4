@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { EventSchema } from './event.schema';
+import { Event } from './event.schema';
 import { IsoDate } from './types';
 
 export const SavedEvent = z.object({
-  event: EventSchema,
+  event: Event,
   user_visits: z.int(),
   created_at: IsoDate,
   updated_at: IsoDate,

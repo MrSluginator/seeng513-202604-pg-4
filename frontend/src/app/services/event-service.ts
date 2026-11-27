@@ -1,9 +1,9 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import {
-  EventDetailSchema,
-  EventListSchema,
-  EventSchema,
+  EventDetail,
+  EventList,
+  Event,
 } from '../../models/event.schema';
 import { isUUID } from '../../utils/validation';
 import { environment } from '../../environments/environment';
@@ -62,14 +62,14 @@ export class EventService {
   getEvent(id: () => string) {
     return httpResource(
       () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
-      { parse: EventSchema.parse }
+      { parse: Event.parse }
     );
   }
 
   getEventDetails(id: () => string) {
     return httpResource(
       () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
-      { parse: EventDetailSchema.parse }
+      { parse: EventDetail.parse }
     );
   }
 
@@ -80,7 +80,7 @@ export class EventService {
         params: filtersToParams(filters()),
       }),
       {
-        parse: EventListSchema.parse,
+        parse: EventList.parse,
         defaultValue: { total: 0, items: [] },
       }
     );
@@ -95,7 +95,7 @@ export class EventService {
           offset,
         },
       })
-    ).then((res) => EventListSchema.parse(res));
+    ).then((res) => EventList.parse(res));
   }
 
   getFeatured(limit = 10) {
@@ -109,7 +109,7 @@ export class EventService {
         },
       }),
       {
-        parse: EventListSchema.parse,
+        parse: EventList.parse,
         defaultValue: { total: 0, items: [] },
       }
     );

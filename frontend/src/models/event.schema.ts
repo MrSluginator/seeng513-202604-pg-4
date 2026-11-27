@@ -6,7 +6,7 @@ import { Tag } from './tag.schema';
 import { Decimal, IsoDate } from './types';
 import { Price } from './price.schema';
 
-const processEvent = (raw: unknown) => {
+const processEvent = (raw: Record<string, unknown>) => {
   if (typeof raw !== 'object' || raw === null) return raw;
   const {
     location_name,
@@ -20,7 +20,7 @@ const processEvent = (raw: unknown) => {
     price_max,
     currency,
     ...rest
-  } = raw as Record<string, unknown>;
+  } = raw;
   return {
     ...rest,
     location: {
@@ -42,7 +42,28 @@ const processEvent = (raw: unknown) => {
   };
 };
 
-const EventSchemaBase = z.object({
+const flattenEvent = (data: z.infer<typeof EventCreateBase | typeof EventUpdateBase>) => {
+  const { time, price, location, tags, ...rest} = data;
+  return {
+    ...rest,
+    start_time: time?.start_time ?? null,
+    end_time: time?.end_time ?? null,
+    recurrence_pattern: time?.recurrence_pattern ?? 'none',
+    recurrence_end_date: time?.recurrence_end_date ?? null,
+
+    price_min: price?.price_min ?? null,
+    price_max: price?.price_max ?? null,
+    currency: price?.currency ?? 'CAD',
+
+    location_name: location?.name ?? null,
+    latitude: location?.latitude ?? null,
+    longitude: location?.longitude ?? null,
+
+    tag_ids: tags.map((t) => t.id),
+  }
+}
+
+const EventBase = z.object({
   id: z.guid(),
 
   title: z.string().max(255),
@@ -62,7 +83,7 @@ const EventSchemaBase = z.object({
   is_saved: z.boolean().optional(),
 });
 
-const EventDetailSchemaBase = EventSchemaBase.extend({
+const EventDetailBase = EventBase.extend({
   creator_id: z.guid(),
   description: z.string().nullable(),
   crowd_by_hour: z.record(z.string(), z.any()),
@@ -71,16 +92,44 @@ const EventDetailSchemaBase = EventSchemaBase.extend({
   updated_at: IsoDate,
 });
 
-export const EventSchema = z.preprocess(processEvent, EventSchemaBase);
-export const EventDetailSchema = z.preprocess(
+export const Event = z.preprocess(processEvent, EventBase);
+export const EventDetail = z.preprocess(
   processEvent,
-  EventDetailSchemaBase
+  EventDetailBase
 );
-export const EventListSchema = z.object({
+export const EventList = z.object({
   total: z.number().int(),
-  items: z.array(EventSchema),
+  items: z.array(Event),
 });
 
-export type Event = z.infer<typeof EventSchema>;
-export type EventDetail = z.infer<typeof EventDetailSchema>;
-export type EventList = z.infer<typeof EventListSchema>;
+const EventCreateBase = z.object({
+  title: z.string().min(1).max(255),
+  summary: z.string().max(255).nullable().optional(),
+  description: z.string().nullable().optional(),
+
+  time: Time.nullable().optional(),
+  price: Price.nullable().optional(),
+  location: Location.nullable().optional(),
+
+  tags: z.array(Tag).default([]),
+});
+
+const EventUpdateBase = z.object({
+  title: z.string().min(1).max(255).optional(),
+  summary: z.string().max(255).nullable().optional(),
+  description: z.string().nullable().optional(),
+
+  time: Time.nullable().optional(),
+  price: Price.nullable().optional(),
+  location: Location.nullable().optional(),
+
+  tags: z.array(Tag).default([]),
+});
+export const EventCreate = EventCreateBase.transform(flattenEvent);
+export const EventUpdate = EventUpdateBase.transform(flattenEvent);
+
+export type Event = z.infer<typeof Event>;
+export type EventDetail = z.infer<typeof EventDetail>;
+export type EventList = z.infer<typeof EventList>;
+export type EventCreate = z.infer<typeof EventCreate>;
+export type EventUpdate = z.infer<typeof EventUpdate>;
