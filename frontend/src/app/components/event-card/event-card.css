@@ -156,14 +156,10 @@
 
 .rating {
   display: flex;
-  gap: 10px;
+  gap: 4px;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
   align-items: center;
-  justify-content: center;
-
-  :is(.m) & {
-    flex-direction: column-reverse;
-    gap: 4px;
-  }
 }
 
 .link {
