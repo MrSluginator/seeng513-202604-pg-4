@@ -11,6 +11,7 @@ import { Logo } from '../../atoms/logo/logo';
 import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
 import { NavbarService } from '../../services/navbar-service';
 import { NgTemplateOutlet } from '@angular/common';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'f-nav-bar',
@@ -30,6 +31,7 @@ import { NgTemplateOutlet } from '@angular/common';
 export class NavBar<T> {
   private readonly router = inject(Router);
   protected readonly nav = inject(NavbarService);
+  protected readonly auth = inject(AuthService);
 
   // Bound to the search bar with [(query)]
   protected readonly query = signal('');

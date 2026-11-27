@@ -1,13 +1,10 @@
 import { z } from 'zod';
-import { LocationSchema } from './location.schema';
-import { TimeSchema } from './time.schema';
-import { UserSchema } from './user.schema';
-import { PhotoSchema } from './photo.schema';
-import { ReviewSchema } from './review.schema';
-import { TagSchema } from './tag.schema';
-import { ScrapedEventSchema } from './scraped-event.schema';
+import { Location } from './location.schema';
+import { Time } from './time.schema';
+import { Photo } from './photo.schema';
+import { Tag } from './tag.schema';
 import { Decimal, IsoDate } from './types';
-import { PriceSchema } from './price.schema';
+import { Price } from './price.schema';
 
 const processEvent = (raw: unknown) => {
   if (typeof raw !== 'object' || raw === null) return raw;
@@ -51,16 +48,16 @@ const EventSchemaBase = z.object({
   title: z.string().max(255),
   summary: z.string().max(255).nullable(),
 
-  time: TimeSchema.nullable(),
-  price: PriceSchema.nullable(),
-  location: LocationSchema.nullable(),
+  time: Time.nullable(),
+  price: Price.nullable(),
+  location: Location.nullable(),
 
   visits_count: z.number().int().nonnegative(),
   review_count: z.number().int().nonnegative(),
   rating: Decimal.pipe(z.number().min(0).max(5)).nullable(),
 
-  photos: z.array(PhotoSchema),
-  tags: z.array(TagSchema),
+  photos: z.array(Photo),
+  tags: z.array(Tag),
 
   saved: z.boolean().optional(),
 });

@@ -120,12 +120,6 @@ export class Landing {
       search: this.search,
       onSelect: (event) => this.selectEvent(event),
     });
-
-    effect(() => {
-      console.log('feed status:', this.feed.status());
-      console.log('feed error:', this.feed.error());
-      console.log('feed value:', this.feed.value());
-    });
   }
 
   protected onSortSelected(value: string): void {

@@ -5,6 +5,7 @@
   --device-cutoff: 768px;
   --desktop-min: var(--device-cutoff);
   --mobile-max: var(--device-cutoff);
+  --max-peripheral-width: 1200px;
   /* we may want to consider tablets, but that can wait */
 
   color-scheme: light; /* dark; */

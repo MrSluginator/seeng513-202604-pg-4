@@ -45,7 +45,12 @@ export class FilterService {
     this._filters.update((prev) => ({ ...prev, ...changes }));
   }
 
-  /** For removable tag chips outside the dialog. */
+  addTag(tag: Tag): void {
+    if (this._filters().tags.find((t) => t.id === tag.id)) return;
+    this._filters().tags.push(tag);
+    this.patch({ tags: this._filters().tags });
+  }
+
   removeTag(tag: Tag): void {
     this.patch({ tags: this._filters().tags.filter((t) => t.id !== tag.id) });
   }

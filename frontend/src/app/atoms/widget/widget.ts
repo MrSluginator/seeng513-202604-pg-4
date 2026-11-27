@@ -31,6 +31,7 @@ export class Widget implements ControlValueAccessor {
   icon = input<IconName>();
   iconPosition = input<IconPosition>('right');
   label = input<string>();
+  toggleable = input(true); // new
 
   pressed = model(false);
   disabled = model(false);
@@ -42,16 +43,23 @@ export class Widget implements ControlValueAccessor {
     () => this.iconPosition() === 'top' || this.iconPosition() === 'left'
   );
 
-  private onChange!: (value: boolean) => void;
-  protected onTouched!: () => void;
+  // no-op defaults so the widget works without a form control
+  private onChange: (value: boolean) => void = () => {
+    /* empty */
+  };
+  protected onTouched: () => void = () => {
+    /* empty */
+  };
 
   protected toggle(): void {
+    if (!this.toggleable()) return; // plain button: do nothing
+
     const next = !this.pressed();
     this.pressed.set(next);
     this.onChange(next);
   }
 
-  // ControlValueAccessor
+  // ControlValueAccessor (unchanged)
   writeValue(value: boolean | null): void {
     this.pressed.set(!!value);
   }

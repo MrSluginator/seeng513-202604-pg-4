@@ -73,14 +73,27 @@
   display: none;
 }
 
-/* frosted bar along the bottom */
 .controls {
+  --controls-pad-x: max(
+    32px,
+    calc((100% - var(--max-peripheral-width, 100%)) / 2)
+  );
   display: flex;
   box-sizing: border-box;
-  inset: auto 0 0 0;
-  padding: 0px 32px 10px;
+  width: 100%;
+  padding: 0 var(--controls-pad-x) 10px;
   justify-content: space-between;
   align-items: center;
+}
+
+.carousel.overlay .controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: color-mix(in srgb, var(--p1) 20%, transparent);
+  backdrop-filter: blur(12px);
+  padding-block: 10px;   /* only the vertical part, so --controls-pad-x still applies */
 }
 
 .dots {
@@ -98,6 +111,11 @@
   transition:
     width 150ms ease,
     background-color 150ms ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
 
 .dot.active {
