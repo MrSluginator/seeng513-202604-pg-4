@@ -1,6 +1,7 @@
+from typing import Literal
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
@@ -10,6 +11,13 @@ from db.models.event_photo import EventPhoto
 from db.models.saved_event import SavedEvent
 from db.models.user import User
 from deps import get_current_user
+from event_filters import (
+    EventFilters,
+    SortField,
+    build_event_conditions,
+    event_filters,
+    event_sort_expr,
+)
 from schemas import (
     EventVisitResponse,
     SavedEventItem,
@@ -18,6 +26,8 @@ from schemas import (
 )
 
 router = APIRouter(tags=["saved events"])
+
+SavedSortField = SortField | Literal["saved_at"]
 
 
 def _saved_event_status(row: SavedEvent, event_id: uuid.UUID):
@@ -30,20 +40,38 @@ def _saved_event_status(row: SavedEvent, event_id: uuid.UUID):
 
 @router.get("/users/me/saved-events", response_model=SavedEventList)
 def list_saved_events(
+    filters: EventFilters = Depends(event_filters),
+    sort: SavedSortField = "saved_at",
+    order: Literal["asc", "desc"] = "desc",
+    limit: int | None = Query(None, ge=1, le=100),
+    offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Return all events saved by the current user."""
+    """Return all events saved by the current user, with the same filters as /events."""
 
+    event_conditions, dists = build_event_conditions(filters)
     conditions = [
         SavedEvent.user_id == current_user.id,
         SavedEvent.is_saved.is_(True),
+        *event_conditions,
     ]
 
-    total = db.scalar(select(func.count()).select_from(SavedEvent).where(*conditions))
+    total = db.scalar(
+        select(func.count())
+        .select_from(SavedEvent)
+        .join(SavedEvent.event)
+        .where(*conditions)
+    )
+
+    sort_expr = (
+        SavedEvent.created_at if sort == "saved_at" else event_sort_expr(sort, dists)
+    )
+    direction = sort_expr.desc() if order == "desc" else sort_expr.asc()
 
     stmt = (
         select(SavedEvent)
+        .join(SavedEvent.event)
         .options(
             selectinload(SavedEvent.event).selectinload(Event.tags),
             selectinload(SavedEvent.event)
@@ -51,8 +79,11 @@ def list_saved_events(
             .selectinload(EventPhoto.photo),
         )
         .where(*conditions)
-        .order_by(SavedEvent.created_at.desc())
+        .order_by(direction.nulls_last(), SavedEvent.event_id)
+        .offset(offset)
     )
+    if limit is not None:
+        stmt = stmt.limit(limit)
 
     rows = db.scalars(stmt).all()
 

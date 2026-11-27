@@ -44,7 +44,9 @@ export class Saved {
   private readonly navbarSvc = inject(NavbarService);
   private readonly router = inject(Router);
 
-  private readonly _saved = this.savedEventApi.listSavedEvents();
+  private readonly _saved = this.savedEventApi.listSavedEvents(
+    this.filterSvc.filters
+  );
   protected readonly saved = computed<Event[]>(
     () =>
       this._saved.value()?.items.map((info) => ({
@@ -80,8 +82,14 @@ export class Saved {
   );
 
   protected readonly search: SearchFn<Event> = async (query) => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return [];
+    const res = await this.savedEventApi.fetchSavedEvents({
+      ...this.filterSvc.filters(),
+      query: query,
+    });
+    return res.items.map((info) => ({
+      label: info.event.title,
+      value: info.event,
+    }));
   };
 
   constructor() {

@@ -6,7 +6,9 @@ import {
   SavedEventStatus,
 } from '../../models/saved-event.schema';
 import { AuthService } from './auth-service';
-import { tap } from 'rxjs';
+import { firstValueFrom, tap } from 'rxjs';
+import { FilterProps } from '../../models/filters';
+import { filtersToParams } from './api-service';
 
 @Service()
 export class SavedEventService {
@@ -38,10 +40,23 @@ export class SavedEventService {
     return this.savedIds().has(eventId);
   }
 
-  listSavedEvents() {
-    return httpResource(() => this.savedBase, {
-      parse: SavedEventList.parse,
-    });
+  listSavedEvents(filters: () => FilterProps) {
+    return httpResource(
+      () => ({
+        url: this.savedBase,
+        params: filtersToParams(filters()),
+      }),
+      {
+        parse: SavedEventList.parse,
+        defaultValue: { total: 0, items: [] },
+      }
+    );
+  }
+
+  fetchSavedEvents(filters: FilterProps) {
+    return firstValueFrom(
+      this.http.get(this.savedBase, { params: filtersToParams(filters) })
+    ).then((res) => SavedEventList.parse(res));
   }
 
   saveEvent(eventId: string) {
