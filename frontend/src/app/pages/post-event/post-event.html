@@ -188,8 +188,13 @@
     />
     <div class="preview" [class.open]="previewOpen()">
       <h2>Preview</h2>
-      <f-event-card size="m" [event]="preview()" [link]="false" />
-      <f-event-card size="s" [event]="preview()" [link]="false" />
+      <div class="cards">
+        <div class="small-cards">
+          <f-event-card class="card-s" size="m" [event]="preview()" [link]="false" />
+          <f-event-card class="card-m" size="s" [event]="preview()" [link]="false" />
+        </div>
+        <f-event-card class="big-cards" size="xl" [event]="preview()" [link]="false" />
+      </div>
     </div>
   </aside>
 </form>
