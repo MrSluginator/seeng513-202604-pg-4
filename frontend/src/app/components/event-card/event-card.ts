@@ -22,6 +22,8 @@ import {
   ReviewResult,
 } from '../../dialogs/review-dialog/review-dialog';
 import { AuthService } from '../../services/auth-service';
+import { Tag } from '../../../models/tag.schema';
+import { FilterService } from '../../services/filter-service';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -45,6 +47,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 export class EventCard {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly filterSvc = inject(FilterService);
 
   readonly event = input.required<Event | EventDetail>();
   readonly detail = computed(() => this.event() as EventDetail);
@@ -64,6 +67,12 @@ export class EventCard {
     if (time === null) return '';
     return formatTimeRange(time);
   });
+  protected readonly locationLabel = computed(() => {
+    const location = this.event().location;
+    if (!location) return 'Location Unknown';
+    if (location.name) return location.name;
+    return `${location.longitude}, ${location.latitude}`;
+  });
 
   protected readonly ratingLabel = computed(() => `${this.event().rating}/5.0`);
   protected readonly reviewsLabel = computed(() => {
@@ -77,8 +86,14 @@ export class EventCard {
     return `${title} photo ${index + 1} of ${photos.length}`;
   }
 
-  protected searchTag(tag: string): void {
-    this.router.navigate(['/search'], { queryParams: { tag } });
+  protected searchTag(tag: Tag): void {
+    this.filterSvc.addTag(tag);
+    this.router.navigate(['/'], { fragment: 'feed' }).then(() => {
+      document
+        .getElementById('feed')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    // this.router.navigate(['/search'], { queryParams: { tag } });
   }
 
   protected onSave(): void {

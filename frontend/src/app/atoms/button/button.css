@@ -1,7 +1,11 @@
+:host {
+  display: flex;
+}
+
 .button {
   display: flex;
   flex-direction: row;
-  height: 32px;
+  min-height: 32px;
   min-width: 120px;
   padding: 8px;
   gap: 8px;

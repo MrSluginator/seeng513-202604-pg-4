@@ -23,6 +23,7 @@
 }
 
 .option {
+  position: relative;
   display: inline-flex;
   align-items: end;
   flex: 1;
@@ -57,17 +58,13 @@
 
 .label {
   padding: 10px;
+  position: relative;
   text-align: center;
   flex: 1;
   background-color: var(--p1);
   border-bottom: 2px solid var(--p2);
   border-radius: 16px 16px 0 0;
   transition: border-width 150ms ease;
-
-  &:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
-  }
 }
 
 .input:checked + .label {
@@ -86,4 +83,15 @@
   border-color: var(--n4);
   background-color: var(--n3);
   border-width: 2px;
+  cursor: not-allowed;
+}
+
+.input:focus-visible + .label::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 4px;
+  background: var(--focus);
 }

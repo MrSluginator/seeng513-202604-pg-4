@@ -78,8 +78,9 @@
         @for (tag of detail().tags; track tag) {
           <f-widget
             [text]="tag.name"
-            [label]="'Search for events matching the tag: ' + tag"
-            (pressedChange)="searchTag(tag.name)"
+            [label]="'Search for events matching the tag: ' + tag.name"
+            [toggleable]="false"
+            (click)="searchTag(tag)"
           />
         }
       </div>
