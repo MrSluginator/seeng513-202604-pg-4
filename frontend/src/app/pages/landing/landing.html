@@ -21,7 +21,7 @@
       />
     </div>
     <f-divider />
-    <div #feedSection class="feed">
+    <div #feedSection id="feed" class="feed">
       <div class="feed-header">
         <div class="tags">
           <small>Showing items with the following tags:</small>
@@ -44,10 +44,19 @@
           <f-search-bar
             class="search"
             placeholder="Search events..."
-            [(query)]="navbarSvc.query"
-            [results]="searchResults()"
+            [search]="search"
             (resultSelected)="selectEvent($event)"
-          />
+          >
+            <ng-template
+              fSearchResult
+              [fSearchResult]="search"
+              let-result
+              let-group="group"
+              let-active="active"
+            >
+              {{ result.label }}
+            </ng-template>
+          </f-search-bar>
           <f-filter-button />
         </div>
       </div>

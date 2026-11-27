@@ -81,6 +81,10 @@
 .feed {
   height: 100%;
   gap: 10px;
+
+  @media (min-width: 768px) {
+    scroll-margin-top: 80px;
+  }
 }
 
 .tags,

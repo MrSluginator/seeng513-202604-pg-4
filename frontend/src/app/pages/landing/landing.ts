@@ -27,7 +27,11 @@ import {
 } from '../../molecules/menu-button/menu-button';
 import { SORT_OPTIONS } from '../../../models/filters';
 import { NavbarService } from '../../services/navbar-service';
-import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
+import {
+  SearchResult,
+  SearchBar,
+  SearchFn,
+} from '../../molecules/search-bar/search-bar';
 import { Footer } from '../../components/footer/footer';
 import { AllCategories } from '../../molecules/category/all-categories';
 import {
@@ -80,12 +84,10 @@ export class Landing {
     () => this.filterSvc.filters()
   );
 
-  protected readonly searchResults = computed<SearchResult<Event>[]>(() =>
-    this.searchRes.value().items.map((event) => ({
-      label: event.title,
-      value: event,
-    }))
-  );
+  protected readonly search: SearchFn<Event> = async (query) => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return [];
+  };
 
   protected readonly categoryForm: CategoryForm = (() => {
     const selected = new Set(this.filterSvc.filters().categories);
@@ -115,14 +117,8 @@ export class Landing {
 
     this.navbarSvc.setSearch<Event>({
       placeholder: 'Search events...',
-      results: () => this.searchResults(),
+      search: this.search,
       onSelect: (event) => this.selectEvent(event),
-    });
-
-    effect(() => {
-      console.log('feed status:', this.feed.status());
-      console.log('feed error:', this.feed.error());
-      console.log('feed value:', this.feed.value());
     });
   }
 
