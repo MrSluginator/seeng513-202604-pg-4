@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, defer, map, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
+  AccountType,
   AuthResponse,
   LoginRequest,
+  RoleUpdate,
   SignupRequest,
   UserMe,
 } from '../../models/user.schema';
@@ -18,9 +20,12 @@ export class AuthService {
 
   private readonly _token = signal<string | null>(this.readToken());
   private readonly _user = signal<UserMe | null>(null);
+  private readonly _showDialog = signal(false);
+  readonly requiredRole = signal<AccountType | undefined>(undefined);
 
   readonly token = this._token.asReadonly();
   readonly user = this._user.asReadonly();
+  readonly showDialog = this._showDialog.asReadonly();
   readonly isLoggedIn = computed(() => !!this._token());
 
   setUser(user: UserMe): void {
@@ -73,5 +78,16 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  requireRole(roles: AccountType[]) {
+    if (roles.find((role) => role === this.user()?.account_type)) return;
+    this.requiredRole.set(roles[0]);
+    this._showDialog.set(true);
+    return true;
+  }
+
+  closeDialog() {
+    this._showDialog.set(false);
   }
 }
