@@ -44,9 +44,11 @@
     <div class="holder">
       <f-search-bar
         [(query)]="query"
-        [placeholder]="nav.placeholder()"
-        [results]="nav.results()"
-        (resultSelected)="nav.select($event)"
+        placeholder="Search events..."
+        [results]="suggestions()"
+        [loading]="isSearching()"
+        (resultSelected)="onResultSelected($event)"
+        (submitted)="onSearchSubmitted($event)"
       />
       @if (nav.signedIn()) {
         <div>Profile Button</div>
