@@ -5,15 +5,39 @@ import { SettingsShell } from './settings-shell/settings-shell';
 export const routes: Routes = [
   {
     path: '',
-    component: SettingsShell, // fine here, it's already inside a lazy chunk
+    component: SettingsShell,
     children: [
       { path: '', pathMatch: 'full', children: [] },
-      // {
-        // path: 'account',
-        // title: 'Account',
-        // loadComponent: () => import('./account/account').then(m => m.Account),
-      // },
-      // ...
+      {
+        path: 'account',
+        title: 'Account',
+        loadComponent: () => import('./account/account').then((m) => m.Account),
+      },
+      {
+        path: 'connect-socials',
+        title: 'Connect Socials',
+        loadComponent: () =>
+          import('./connect-socials/connect-socials').then(
+            (m) => m.ConnectSocials
+          ),
+      },
+      {
+        path: 'privacy',
+        title: 'Privacy',
+        loadComponent: () => import('./privacy/privacy').then((m) => m.Privacy),
+      },
+      {
+        path: 'preferences',
+        title: 'Preferences',
+        loadComponent: () =>
+          import('./preferences/preferences').then((m) => m.Preferences),
+      },
+      {
+        path: 'notifications',
+        title: 'Notifications',
+        loadComponent: () =>
+          import('./notifications/notifications').then((m) => m.Notifications),
+      },
     ],
   },
 ];

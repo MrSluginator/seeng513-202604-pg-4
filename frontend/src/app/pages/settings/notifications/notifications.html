@@ -1,1 +1,48 @@
-<p>notifications works!</p>
+<h1 class="heading">
+  <a class="mobile-back" routerLink="/settings" aria-label="Back">‹</a>
+  Notifications
+</h1>
+
+<section class="settings-section">
+  <h2 class="section-title">Email Notifications</h2>
+
+  <div class="option-row">
+    <p class="small-text">
+      Allow Flare to send you emails according to your preferences
+    </p>
+
+    <button
+      type="button"
+      role="switch"
+      aria-label="Email notifications"
+      [attr.aria-checked]="emailNotifications()"
+      class="toggle"
+      [class.toggle-active]="emailNotifications()"
+      (click)="toggleEmail()"
+    >
+      <span class="toggle-thumb"></span>
+    </button>
+  </div>
+</section>
+
+<section class="settings-section">
+  <h2 class="section-title">Notify Me When...</h2>
+
+  @for (option of notificationOptions(); track option.label; let i = $index) {
+    <div class="notification-row">
+      <p class="small-text">{{ option.label }}</p>
+
+      <button
+        type="button"
+        role="switch"
+        [attr.aria-label]="option.label"
+        [attr.aria-checked]="option.enabled"
+        class="toggle"
+        [class.toggle-active]="option.enabled"
+        (click)="toggleNotification(i)"
+      >
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+  }
+</section>

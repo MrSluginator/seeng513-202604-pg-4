@@ -1,1 +1,50 @@
-<p>connect-socials works!</p>
+<h1 class="heading">
+  <a class="mobile-back" routerLink="/settings" aria-label="Back">‹</a>
+  Connect Socials
+</h1>
+
+<p class="description">
+  Connecting your social media accounts will allow you to seamlessly share
+  events with friends. You will also be able to easily repost your reviews that
+  you were already making.
+</p>
+
+@for (social of socials(); track social.name) {
+  <div class="setting-row">
+    <h2 class="section-title">{{ social.name }}</h2>
+
+    @switch (social.status) {
+      @case ('disconnected') {
+        <button
+          type="button"
+          class="action-button"
+          (click)="connect(social.name)"
+        >
+          Connect
+        </button>
+      }
+      @case ('verified') {
+        <div class="verified-status">
+          <span class="status-text">Verified</span>
+          <span aria-hidden="true">✓</span>
+          <button
+            type="button"
+            class="action-button"
+            (click)="disconnect(social.name)"
+          >
+            Disconnect
+          </button>
+        </div>
+      }
+      @case ('pending') {
+        <div class="pending-status">
+          <span class="status-text">Pending</span>
+          <span aria-hidden="true">◌</span>
+          <button type="button" class="action-button" disabled>
+            Disconnect
+          </button>
+        </div>
+      }
+    }
+  </div>
+}

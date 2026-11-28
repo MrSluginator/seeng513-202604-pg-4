@@ -75,8 +75,7 @@
   min-height: 64px;
   padding: 12px 32px;
   box-sizing: border-box;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--n7) 20%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--n7) 20%, transparent);
 }
 
 .settingRow:last-child {
@@ -128,8 +127,7 @@
   max-width: 100%;
   padding: 8px 12px;
   box-sizing: border-box;
-  border: 1px solid
-    color-mix(in srgb, var(--p6) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p6) 30%, transparent);
   border-radius: 50px;
   background-color: transparent;
   color: var(--n7);
@@ -157,8 +155,7 @@
 }
 
 .passwordInput {
-  background-color:
-    color-mix(in srgb, var(--n7) 12%, transparent);
+  background-color: color-mix(in srgb, var(--n7) 12%, transparent);
   cursor: not-allowed;
 }
 
@@ -166,8 +163,7 @@
   padding: 5px 10px;
   border: 1px solid var(--p6);
   border-radius: 50px;
-  background-color:
-    color-mix(in srgb, var(--p6) 30%, var(--p1));
+  background-color: color-mix(in srgb, var(--p6) 30%, var(--p1));
   color: var(--n7);
   font-family: inherit;
   font-size: 12px;
@@ -176,8 +172,7 @@
 }
 
 .resetButton:hover {
-  background-color:
-    color-mix(in srgb, var(--p6) 45%, var(--p1));
+  background-color: color-mix(in srgb, var(--p6) 45%, var(--p1));
 }
 
 .sidebarItem:focus-visible,

@@ -1,6 +1,12 @@
 import { Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { Icon } from '../../../atoms/icon/icon';
 import { Divider } from '../../../atoms/divider/divider';
@@ -26,18 +32,20 @@ export class SettingsShell {
     { path: 'connect-socials', label: 'Connect Socials' },
     { path: 'privacy', label: 'Privacy' },
     { path: 'preferences', label: 'Preferences' },
-    { path: 'notifications', label: 'Notifications', desktopOnly: true },
-    { path: 'general', label: 'General', mobileOnly: true },
+    { path: 'notifications', label: 'Notifications' },
   ];
 
   /** true when a child page (e.g. /settings/account) is active */
   readonly hasChild = toSignal(
     this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd),
+      filter((e) => e instanceof NavigationEnd),
       startWith(null),
-      map(() => this.router.url.split(/[?#]/)[0].replace(/\/$/, '') !== '/settings'),
+      map(
+        () =>
+          this.router.url.split(/[?#]/)[0].replace(/\/$/, '') !== '/settings'
+      )
     ),
-    { initialValue: false },
+    { initialValue: false }
   );
 
   private desktop = window.matchMedia('(min-width: 768px)');
