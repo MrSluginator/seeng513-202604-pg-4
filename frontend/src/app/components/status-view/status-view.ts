@@ -11,7 +11,7 @@ import { Footer } from '../footer/footer';
   templateUrl: './status-view.html',
 })
 export class StatusView {
-    private location = inject(Location);
+  private location = inject(Location);
   private router = inject(Router);
 
   code = input.required<string>();
