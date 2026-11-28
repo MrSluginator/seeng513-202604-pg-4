@@ -6,12 +6,34 @@
   />
 }
 
+<ng-template #popup let-event>
+  <div class="popup">
+    <p>{{ event.location.name }}</p>
+    <small>{{ event.location.longitude }}</small>
+    <small>{{ event.location.latitude }}</small>
+    <f-button text="Open in heat map" icon="map" (clicked)="navigateToMap()" />
+  </div>
+</ng-template>
+
 <div class="column">
   <div class="content">
     @if (event(); as event) {
       <f-event-card class="card" size="xl" [event]="event" />
       <div class="info">
-        <f-heat-map />
+        @if (event.location?.latitude && event.location?.longitude) {
+          <f-event-map
+            class="event-map"
+            [events]="[event]"
+            [selectedEventId]="event.id"
+            [showHeat]="false"
+            [zoom]="15"
+            [center]="[
+              event.location?.latitude ?? 0,
+              event.location?.longitude ?? 0,
+            ]"
+            [popupTemplate]="popup"
+          />
+        }
         <f-graph [title]="event.title" [data]="graphData()" />
         <div class="reviews">
           <h3 class="review-header">

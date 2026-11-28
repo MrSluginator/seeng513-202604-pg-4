@@ -10,12 +10,19 @@
   align-self: stretch;
   padding: 0 20px 20px 20px;
   gap: 40px;
+  flex: 1;
 
   @media (max-width: 768px) {
     align-items: center;
     flex-direction: column;
     padding-top: 20px;
   }
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .card {
@@ -29,6 +36,11 @@
   gap: 20px;
   flex: 1 0 0;
   align-self: stretch;
+}
+
+.event-map {
+  border-radius: 32px;
+  overflow: hidden;
 }
 
 .column {

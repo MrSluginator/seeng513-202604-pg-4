@@ -4,12 +4,11 @@
   </header>
 
   <div class="map-pane">
-    <div
-      #mapContainer
-      class="map-container"
-      role="region"
-      aria-label="Interactive event map"
-    ></div>
+    <f-event-map
+      [events]="events()"
+      [(selectedEventId)]="selectedEventId"
+      (boundsChange)="viewBounds.set($event)"
+    />
 
     <div class="map-controls">
       <div
