@@ -23,6 +23,12 @@
       <div class="map-filter-action">
         <f-filter-button />
       </div>
+
+      <f-time-slider
+        class="map-time-slider"
+        [(hour)]="selectedHour"
+        [authRequired]="heatmapAuthRequired()"
+      />
     </div>
   </div>
 

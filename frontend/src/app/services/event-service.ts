@@ -7,6 +7,10 @@ import {
   EventCreate,
   EventUpdate,
 } from '../../models/event.schema';
+import {
+  HeatmapQuery,
+  HeatmapResponseSchema,
+} from '../../models/heatmap.schema';
 import { isUUID } from '../../utils/validation';
 import { environment } from '../../environments/environment';
 import { FilterProps } from '../../models/filters';
@@ -56,6 +60,7 @@ export function filtersToParams(f: FilterProps): Record<string, Param> {
 export class EventService {
   private readonly http = inject(HttpClient);
   private base = `${environment.apiBaseUrl}/events`;
+  private heatmapBase = `${environment.apiBaseUrl}/heatmap`;
 
   getEvent(id: () => string) {
     return httpResource(
@@ -136,6 +141,28 @@ export class EventService {
   fetchTags() {
     return firstValueFrom(this.http.get(`${this.base}/tags`)).then((res) =>
       z.array(Tag).parse(res)
+    );
+  }
+
+  getHeatmap(query: () => HeatmapQuery) {
+    return httpResource(
+      () => {
+        const q = query();
+        const params: Record<string, Param> = { hour: q.hour };
+        if (q.day !== undefined) params['day'] = q.day;
+        if (q.min_lat !== undefined) params['min_lat'] = q.min_lat;
+        if (q.max_lat !== undefined) params['max_lat'] = q.max_lat;
+        if (q.min_lng !== undefined) params['min_lng'] = q.min_lng;
+        if (q.max_lng !== undefined) params['max_lng'] = q.max_lng;
+        if (q.limit !== undefined) params['limit'] = q.limit;
+        return {
+          url: this.heatmapBase,
+          params,
+        };
+      },
+      {
+        parse: HeatmapResponseSchema.parse,
+      }
     );
   }
 

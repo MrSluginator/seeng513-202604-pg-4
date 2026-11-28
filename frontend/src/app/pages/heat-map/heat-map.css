@@ -16,6 +16,7 @@
 .heat-map-page {
   position: relative;
   display: flex;
+  flex-direction: column;
   flex: 1;
   width: 100%;
   min-height: 0;
@@ -23,7 +24,18 @@
 }
 
 .mobile-header {
-  display: none;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--n0);
+  padding: 14px 16px 12px;
+  z-index: 5;
+}
+
+.mobile-title {
+  font-size: 1.625rem;
+  line-height: 1.2;
+  color: var(--n7);
 }
 
 .map-pane {
@@ -32,8 +44,8 @@
   display: flex;
   min-width: 0;
   min-height: 0;
-  margin-left: 32px;
-  border-radius: 32px;
+  margin-left: 0;
+  border-radius: 0;
   overflow: hidden;
   isolation: isolate;
   z-index: 0;
@@ -51,60 +63,99 @@
 
 .map-controls {
   position: absolute;
-  bottom: 16px;
-  left: 16px;
+  inset: 10px 10px auto;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  pointer-events: none;
+}
+
+.map-time-slider {
+  width: 100%;
+  pointer-events: auto;
 }
 
 .map-category-selectors {
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 6px;
   pointer-events: none;
 
-  & > * {
+  &>* {
     pointer-events: auto;
   }
 }
 
+.map-category-selectors ::ng-deep f-category,
+.map-category-selectors ::ng-deep f-widget {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+}
+
+.map-category-selectors ::ng-deep .widget {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  min-height: 30px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  flex-direction: row;
+  gap: 0;
+  background: color-mix(in srgb, var(--_light) 35%, var(--n0) 75%);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.map-category-selectors ::ng-deep .widget[aria-checked='true'] {
+  background: color-mix(in srgb, var(--_light) 85%, var(--n0) 15%);
+}
+
+.map-category-selectors ::ng-deep .widget-text {
+  display: none;
+}
+
+.map-filter-action,
+.sidebar-header,
+:host ::ng-deep .leaflet-control-zoom {
+  display: none;
+}
+
 .events-sidebar {
-  width: 368px;
+  --card-w: min(340px, calc(100vw - 56px));
+  position: absolute;
+  inset: auto 0 88px;
+  width: 100%;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  background-color: var(--n0);
+  background-color: transparent;
   min-height: 0;
-  overflow: hidden;
-}
-
-.sidebar-header {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 8px;
-  padding: 16px 20px;
-  background-color: var(--n0);
-}
-
-.sidebar-title {
-  color: var(--n7);
-  --h4-size: var(--h3-size);
+  z-index: 5;
+  pointer-events: none;
+  overflow: visible;
 }
 
 .sidebar-list {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  padding: 8px 16px 16px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
-  gap: 16px;
+  overflow: auto hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  gap: 12px;
+  padding: 6px max(24px, calc((100vw - var(--card-w)) / 2)) 14px;
+  pointer-events: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .sidebar-card-item {
@@ -114,7 +165,10 @@
   --h3-weight: var(--h4-weight);
   --h3-line-height: 20px;
   border-radius: 16px;
-  width: 100%;
+  flex: 0 0 var(--card-w);
+  width: var(--card-w);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 
   &.selected {
     outline: 2px solid var(--p5);
@@ -128,7 +182,13 @@
 }
 
 .sidebar-empty {
-  padding: 32px 16px;
+  margin: 0 auto;
+  max-width: calc(100vw - 48px);
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--n0) 92%, transparent);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
   text-align: center;
   color: var(--n5);
   display: flex;
@@ -136,120 +196,129 @@
   gap: 6px;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .heat-map-page {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .mobile-header {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    background: var(--n0);
-    padding: 14px 16px 12px;
-    z-index: 5;
-  }
-
-  .mobile-title {
-    font-size: 1.625rem;
-    line-height: 1.2;
-    color: var(--n7);
+    display: none;
   }
 
   .map-pane {
-    margin-left: 0;
-    border-radius: 0;
+    margin-left: 32px;
+    border-radius: 32px;
   }
 
   .map-controls {
-    inset: 10px 10px auto;
-    flex-direction: row;
-    gap: 0;
+    inset: auto auto 16px 16px;
+    gap: 16px;
+  }
+
+  .map-time-slider {
+    width: auto;
   }
 
   .map-category-selectors {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    width: 100%;
-    gap: 6px;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: auto;
+    gap: 8px;
   }
 
   .map-category-selectors ::ng-deep f-category,
   .map-category-selectors ::ng-deep f-widget {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
+    flex: initial;
+    min-width: auto;
+    display: inline;
   }
 
   .map-category-selectors ::ng-deep .widget {
-    width: 100%;
-    min-width: 0;
-    height: 30px;
-    min-height: 30px;
-    padding: 4px 6px;
-    border-radius: 10px;
-    flex-direction: row;
-    gap: 0;
-    background: color-mix(in srgb, var(--_light) 35%, var(--n0) 75%);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    width: fit-content;
+    min-width: var(--width, 72px);
+    height: 60px;
+    min-height: 60px;
+    padding: 8px;
+    border-radius: 8px;
+    flex-direction: column;
+    gap: 10px;
+    background: color-mix(in srgb, var(--_light) 20%, transparent);
+    backdrop-filter: none;
+    box-shadow: none;
   }
 
   .map-category-selectors ::ng-deep .widget[aria-checked='true'] {
-    background: color-mix(in srgb, var(--_light) 85%, var(--n0) 15%);
+    background: color-mix(in srgb, var(--_light) 80%, transparent);
   }
 
   .map-category-selectors ::ng-deep .widget-text {
-    display: none;
+    display: inline;
   }
 
-  .map-filter-action,
-  .sidebar-header,
+  .map-filter-action {
+    display: block;
+    pointer-events: auto;
+  }
+
   :host ::ng-deep .leaflet-control-zoom {
-    display: none;
+    display: block;
   }
 
   .events-sidebar {
-    --card-w: min(340px, calc(100vw - 56px));
-    position: absolute;
-    inset: auto 0 88px;
-    width: 100%;
-    background: transparent;
-    z-index: 5;
-    pointer-events: none;
-    overflow: visible;
+    position: static;
+    inset: auto;
+    width: 368px;
+    background-color: var(--n0);
+    z-index: auto;
+    pointer-events: auto;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 8px;
+    padding: 16px 20px;
+    background-color: var(--n0);
+  }
+
+  .sidebar-title {
+    color: var(--n7);
+    --h4-size: var(--h3-size);
   }
 
   .sidebar-list {
-    flex-direction: row;
-    overflow: auto hidden;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-    gap: 12px;
-    padding: 6px max(24px, calc((100vw - var(--card-w)) / 2)) 14px;
-    pointer-events: auto;
+    flex-direction: column;
+    overflow-x: visible;
+    overflow-y: auto;
+    scroll-snap-type: none;
+    scrollbar-width: auto;
+    overscroll-behavior-x: auto;
+    gap: 16px;
+    padding: 8px 16px 16px;
 
     &::-webkit-scrollbar {
-      display: none;
+      display: initial;
     }
   }
 
   .sidebar-card-item {
-    flex: 0 0 var(--card-w);
-    width: var(--card-w);
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
+    flex: initial;
+    width: 100%;
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
   }
 
   .sidebar-empty {
-    margin: 0 auto;
-    max-width: calc(100vw - 48px);
-    padding: 14px 20px;
-    border-radius: 16px;
-    background: color-mix(in srgb, var(--n0) 92%, transparent);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+    margin: 0;
+    max-width: none;
+    padding: 32px 16px;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
   }
 }
 

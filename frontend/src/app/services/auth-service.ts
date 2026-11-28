@@ -6,7 +6,6 @@ import {
   AccountType,
   AuthResponse,
   LoginRequest,
-  RoleUpdate,
   SignupRequest,
   UserMe,
 } from '../../models/user.schema';
@@ -81,7 +80,7 @@ export class AuthService {
   }
 
   requireRole(roles: AccountType[]) {
-    if (roles.find((role) => role === this.user()?.account_type)) return;
+    if (roles.find((role) => role === this.user()?.account_type)) return false;
     this.requiredRole.set(roles[0]);
     this._showDialog.set(true);
     return true;
