@@ -33,8 +33,7 @@ export const routes: Routes = [
   {
     path: 'settings',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/settings/settings').then((m) => m.Settings),
+    loadChildren: () => import('./pages/settings/settings.routes').then(m => m.routes),
   },
   {
     matcher: authMatcher,
