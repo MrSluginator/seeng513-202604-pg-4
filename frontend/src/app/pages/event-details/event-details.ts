@@ -1,7 +1,6 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { EventService } from '../../services/event-service';
 import { EventCard } from '../../components/event-card/event-card';
-import { HeatMap } from '../heat-map/heat-map';
 import { Graph } from '../../molecules/graph/graph';
 import { Footer } from '../../components/footer/footer';
 import { Comment } from '../../molecules/comment/comment';
@@ -14,9 +13,11 @@ import {
 } from '../../dialogs/review-dialog/review-dialog';
 import { Button } from '../../atoms/button/button';
 import { ReviewRequest } from '../../../models/review.schema';
+import { EventMap } from '../../components/event-map/event-map';
+import { Router } from '@angular/router';
 
 @Component({
-  imports: [EventCard, HeatMap, Graph, Footer, Comment, ReviewDialog, Button],
+  imports: [EventCard, Graph, Footer, Comment, ReviewDialog, Button, EventMap],
   selector: 'f-event-details',
   styleUrl: './event-details.css',
   templateUrl: './event-details.html',
@@ -26,6 +27,7 @@ export class EventDetails {
   private readonly eventApi = inject(EventService);
   private readonly savedEventApi = inject(SavedEventService);
   private readonly reviewApi = inject(ReviewService);
+  private readonly router = inject(Router);
   id = input.required<string>();
 
   protected readonly _event = this.eventApi.getEventDetails(this.id);
@@ -70,5 +72,9 @@ export class EventDetails {
       content: result.comment,
     };
     this.reviewApi.postReview(this.id(), req).subscribe();
+  }
+
+  protected navigateToMap() {
+    this.router.navigate(['/map'], { queryParams: { event: this.id() } });
   }
 }
