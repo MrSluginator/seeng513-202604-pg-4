@@ -1,0 +1,28 @@
+<div class="shell" [class.has-child]="hasChild()">
+  <nav class="sidebar">
+    <div class="menuLinks">
+      @for (item of items; track item.path; let first = $first) {
+        @if (!first) {
+          <f-divider />
+        }
+        <a
+          class="sidebarItem"
+          [routerLink]="item.path"
+          routerLinkActive="active"
+        >
+          <h3>{{ item.label }}</h3>
+          <f-icon name="right" size="m" />
+        </a>
+      }
+    </div>
+  </nav>
+
+  <main class="content">
+    <a class="heading" routerLink="./" aria-label="Back to settings">
+      <f-icon name="left" size="m" />
+      <h2 class="heading-text">{{ title() }}</h2>
+    </a>
+    <h3 class="desktop-heading">{{ title() }}</h3>
+    <router-outlet />
+  </main>
+</div>

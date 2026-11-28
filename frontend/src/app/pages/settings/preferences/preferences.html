@@ -1,0 +1,70 @@
+<section class="section tagsSection">
+  <div class="tagsControls">
+    <div class="row">
+      <h3 class="sectionTitle">Preferred Tags</h3>
+      <f-button text="Select Tags" icon="filter" (click)="openTagPicker()" />
+    </div>
+
+    <p class="description">
+      Select which type of events you want to see the most
+    </p>
+
+    <div class="row">
+      <p>
+        Invert Selection
+        <small>(Set all tags to preferred except the selected tags)</small>
+      </p>
+      <f-toggle-button
+        [ngModel]="invertSelection()"
+        (ngModelChange)="invertSelection.set($event)"
+      />
+    </div>
+  </div>
+  <f-divider [direction]="'vertical'" />
+  <div class="tagsSelected">
+    <p>Selected Tags:</p>
+    @for (tag of tags(); track tag) {
+      <f-widget [text]="tag.name" />
+    }
+  </div>
+</section>
+<f-divider />
+<section class="section">
+  <div class="row between">
+    <h3>Feed</h3>
+    <f-menu-button [options]="feedOptions" [text]="feedMode()" />
+  </div>
+
+  <div class="row between">
+    <p>
+      Allow Flare to track your interaction history to personalize your feed
+    </p>
+    <f-toggle-button [ngModel]="trackHistory()" />
+  </div>
+
+  <div class="row toggleRow">
+    <p>
+      Allow Flare to show adult oriented events, which may include risks or
+      mature content
+    </p>
+    <f-toggle-button [ngModel]="adultContent()" />
+  </div>
+</section>
+<f-divider />
+<section class="section">
+  <div class="row">
+    <h3>Friends</h3>
+    <f-button text="Invite a Friend" name="share" (click)="invite()" />
+  </div>
+
+  <div class="row between">
+    <span>Allow friends to see your activity</span>
+    <f-toggle-button [ngModel]="shareActivity()" />
+  </div>
+
+  <div class="row">
+    <span>Create a Group</span>
+    <f-button icon="plus" (click)="createGroup()" />
+  </div>
+</section>
+<f-divider />

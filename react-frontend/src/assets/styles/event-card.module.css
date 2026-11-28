@@ -1,272 +1,60 @@
+
 .card {
-  display: flex;
-  flex-direction: column;
-  align-self: center;
-  align-items: center;
-  position: relative;
+  background-color: var(--p1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  min-width: 0;
+}
 
-  border-radius: 32px;
-  background: var(--p2);
-  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.25);
-
-  cursor: pointer;
-  transition:
-    background-color ease 150ms,
-    scale ease 150ms;
-
-  &.s {
-    width: 330px;
-    height: min-content;
-    border-radius: 16px;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  &.m {
-    height: 350px;
-    width: 350px;
-  }
-
-  &.l {
-    width: 100%;
-    height: fit-content;
-    flex-direction: row-reverse;
-    justify-content: center;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-      max-width: 480px;
-    }
-  }
-
-  &.xl {
-    height: fit-content;
-    flex: 1;
-    box-shadow: none;
-    cursor: default;
-  }
-
-  @media (hover: hover) {
-    &:is(.s, .m):hover {
-      scale: 1.03;
-    }
-
-    &:is(.s, .m, .l):hover {
-      background-color: var(--p3);
-    }
-  }
+.imageContainer {
+  width: 100%;
+  height: 120px;
+  background-color: var(--n7);
 }
 
 .image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
   display: flex;
   justify-content: center;
-  flex: 1 1 0;
-  align-self: stretch;
-  overflow: hidden;
-  border-radius: 32px;
-  background: var(--n1);
-  contain: size;
-
-  .xl & {
-    z-index: 1;
-    flex: none;
-    width: 100%;
-    min-height: 0;
-    aspect-ratio: 3 / 2;
-  }
-
-  @media (max-width: 768px) {
-    .l & {
-      flex: none;
-      width: 100%;
-      aspect-ratio: 3 / 2;
-    }
-  }
+  align-items: center;
+  height: 100%;
+  color: var(--p1);
+  font-size: 12px;
 }
 
-.info {
+.details {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  padding: 20px;
-  gap: 20px;
-
-  .s & {
-    padding: 0;
-    gap: 10px;
-  }
-
-  .m & {
-    padding: 16px;
-    padding-top: 8px;
-    gap: 0px;
-  }
-
-  .l & {
-    flex: 1 0 0;
-
-    @media (max-width: 768px) {
-      gap: 10px;
-      padding: 0;
-    }
-  }
-
-  .xl & {
-    @media (max-width: 768px) {
-      gap: 0;
-      padding: 0;
-    }
-  }
-}
-
-.titleBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  align-self: stretch;
-
-  :is(.l, .xl) & {
-    @media (max-width: 768px) {
-      padding: 10px 20px;
-    }
-  }
-}
-
-.link {
-  color: inherit;
-  text-decoration: none;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  align-self: stretch;
-  gap: 10px;
-  z-index: 1;
-
-  :is(.l, .xl) & {
-    order: 4;
-    padding: 0 10px;
-  }
-
-  @media (max-width: 768px) {
-    .l & {
-      display: none;
-    }
-
-    .xl & {
-      padding: 10px 20px;
-      order: 2;
-    }
-  }
-}
-
-.description {
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  flex: 1 0 0;
-  gap: 10px;
-  min-height: 200px;
-  padding: 20px;
-  border-radius: 32px;
-  background: var(--n0);
-  text-align: left;
-  order: 3;
-
-  p {
-    flex: 1;
-  }
-
-  h3 {
-    flex: 1;
-  }
-}
-
-.interactables {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  align-self: stretch;
-  gap: 20px;
-
-  .m & {
-    flex-direction: column-reverse;
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 1;
-  }
-}
-
-.stats {
-  --location-basis: 100%;
-
-  display: flex;
-  flex-direction: row-reverse;
-  flex-wrap: wrap;
   gap: 4px;
-  width: 100%;
-
-  :is(.l, .xl) & {
-    --location-basis: auto;
-    gap: 8px;
-
-    @media (max-width: 768px) {
-      --location-basis: 100%;
-      gap: 10px;
-      padding: 0 20px;
-    }
-  }
+  padding: 10px;
 }
 
-:is(.time, .location) {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.details h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--n7);
 }
 
-.price {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  width: 124px;
+.details p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--n7);
 }
 
-.time {
-  flex: 2 0 135px; /* grows, but never below 135px */
+.category {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--p6);
 }
 
 .location {
-  flex: 3 0 var(--location-basis); /* grows, never shrinks */
-  max-width: 100%; /* once alone on a line, don't overflow the card */
-}
-
-.icons {
-  display: flex;
-  align-items: center;
-
-  & > * + * {
-    margin-inline-start: -8px;
-    /* overlap the dollar icons */
-  }
-}
-
-.free {
-  color: var(--n0);
-}
-
-.rich {
-  color: var(--y3);
+  font-size: 11px;
+  color: var(--n7);
 }

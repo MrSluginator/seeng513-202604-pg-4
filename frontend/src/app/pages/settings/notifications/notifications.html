@@ -1,0 +1,38 @@
+<f-divider />
+<section class="section">
+  <h3>Email Notifications</h3>
+
+  <div class="row between">
+    <p>Allow Flare to send you emails according to your preferences</p>
+    <f-toggle-button
+      label="Email notifications"
+      [(ngModel)]="emailNotifications"
+    />
+  </div>
+</section>
+<f-divider />
+
+<section class="section">
+  <h3>Notify Me When...</h3>
+
+  <div class="optionList">
+    @for (
+      option of notificationOptions();
+      track option.label;
+      let i = $index;
+      let first = $first
+    ) {
+      @if (!first) {
+        <f-divider />
+      }
+      <div class="row between">
+        <p>{{ option.label }}</p>
+        <f-toggle-button
+          [label]="option.label"
+          [ngModel]="option.enabled"
+          (ngModelChange)="setOption(i, $event)"
+        />
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,86 @@
+<div [formGroup]="form">
+  <h2 class="pageTitle">Account</h2>
+
+  <section class="section profileSection">
+    <div class="row between">
+      <h3>Profile Picture</h3>
+
+      <div class="profileContainer">
+        <div class="profilePicture"></div>
+        <f-button
+          class="profileButton"
+          icon="settings"
+          aria-label="Change profile picture"
+          (click)="changePicture()"
+        />
+      </div>
+    </div>
+  </section>
+  <f-divider />
+
+  <section class="section">
+    <div class="row between">
+      <label for="username"><h3>Username</h3></label>
+      <f-text-input
+        id="username"
+        formControlName="username"
+        placeholder="Username"
+        autocomplete="username"
+      />
+    </div>
+  </section>
+  <f-divider />
+
+  <section class="section">
+    <div class="row between">
+      <label for="bio"><h3>Bio</h3></label>
+      <f-text-input id="bio" formControlName="bio" placeholder="Bio here..." />
+    </div>
+  </section>
+  <f-divider />
+
+  <section class="section">
+    <div class="row between">
+      <label for="email"><h3>Email</h3></label>
+      <f-text-input
+        id="email"
+        formControlName="email"
+        type="email"
+        placeholder="email@gmail.ca"
+        autocomplete="email"
+      />
+    </div>
+  </section>
+  <f-divider />
+
+  <section class="section">
+    <div class="row between">
+      <label for="phone"><h3>Phone Number</h3></label>
+      <f-text-input
+        id="phone"
+        formControlName="phone"
+        type="tel"
+        placeholder="+1 234 567 8910"
+        autocomplete="tel"
+      />
+    </div>
+  </section>
+  <f-divider />
+
+  <section class="section">
+    <div class="row between">
+      <label for="password"><h3>Password</h3></label>
+
+      <div class="passwordContainer">
+        <f-button text="Reset Password" (click)="resetPassword()" />
+        <f-text-input
+          id="password"
+          formControlName="password"
+          type="password"
+        />
+      </div>
+    </div>
+  </section>
+
+  <f-button type="submit" text="Save changes" />
+</div>

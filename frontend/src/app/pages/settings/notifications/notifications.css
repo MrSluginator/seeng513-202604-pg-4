@@ -1,0 +1,60 @@
+:host {
+  display: block;
+  color: var(--n7);
+}
+
+.pageTitle {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 32px;
+}
+
+.section h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.between {
+  justify-content: space-between;
+}
+
+.row p {
+  margin: 0;
+}
+
+/* Rows in the "Notify me when" list are separated by dividers */
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 767px) {
+  .pageTitle,
+  :host > f-divider:first-of-type {
+    display: none;
+  }
+
+  .section {
+    padding: 24px 16px;
+  }
+
+  .section h3 {
+    font-size: 22px;
+  }
+}
