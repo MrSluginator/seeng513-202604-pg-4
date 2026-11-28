@@ -2,7 +2,12 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { isUUID } from '../../utils/validation';
-import { Review, ReviewListSchema, ReviewRequest, ReviewSchema } from '../../models/review.schema';
+import {
+  Review,
+  ReviewListSchema,
+  ReviewRequest,
+  ReviewSchema,
+} from '../../models/review.schema';
 
 @Service()
 export class ReviewService {

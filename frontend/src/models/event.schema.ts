@@ -42,8 +42,10 @@ const processEvent = (raw: Record<string, unknown>) => {
   };
 };
 
-const flattenEvent = (data: z.infer<typeof EventCreateBase | typeof EventUpdateBase>) => {
-  const { time, price, location, tags, ...rest} = data;
+const flattenEvent = (
+  data: z.infer<typeof EventCreateBase | typeof EventUpdateBase>
+) => {
+  const { time, price, location, tags, ...rest } = data;
   return {
     ...rest,
     start_time: time?.start_time ?? null,
@@ -60,8 +62,8 @@ const flattenEvent = (data: z.infer<typeof EventCreateBase | typeof EventUpdateB
     longitude: location?.longitude ?? null,
 
     tag_ids: tags.map((t) => t.id),
-  }
-}
+  };
+};
 
 const EventBase = z.object({
   id: z.guid(),
@@ -93,10 +95,7 @@ const EventDetailBase = EventBase.extend({
 });
 
 export const Event = z.preprocess(processEvent, EventBase);
-export const EventDetail = z.preprocess(
-  processEvent,
-  EventDetailBase
-);
+export const EventDetail = z.preprocess(processEvent, EventDetailBase);
 export const EventList = z.object({
   total: z.number().int(),
   items: z.array(Event),

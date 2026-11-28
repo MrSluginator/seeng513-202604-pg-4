@@ -8,7 +8,10 @@ import { Comment } from '../../molecules/comment/comment';
 import { ReviewService } from '../../services/review-service';
 import { SavedEventService } from '../../services/saved-event-service';
 import { AuthService } from '../../services/auth-service';
-import { ReviewDialog, ReviewResult } from '../../dialogs/review-dialog/review-dialog';
+import {
+  ReviewDialog,
+  ReviewResult,
+} from '../../dialogs/review-dialog/review-dialog';
 import { Button } from '../../atoms/button/button';
 import { ReviewRequest } from '../../../models/review.schema';
 
@@ -67,7 +70,7 @@ export class EventDetails {
     const req: ReviewRequest = {
       rating: result.rating,
       content: result.comment,
-    }
+    };
     this.reviewApi.postReview(this.id(), req).subscribe();
   }
 }

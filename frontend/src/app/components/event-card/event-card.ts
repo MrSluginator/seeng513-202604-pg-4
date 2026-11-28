@@ -112,7 +112,9 @@ export class EventCard {
     this.sparked.set(!prev);
     this.pending.set(true);
 
-    const req$ = this.eventApi.sparkEvent(this.event().id, {amount: prev ? -1 : 1});
+    const req$ = this.eventApi.sparkEvent(this.event().id, {
+      amount: prev ? -1 : 1,
+    });
     req$.pipe(finalize(() => this.pending.set(false))).subscribe({
       error: () => this.sparked.set(prev),
     });

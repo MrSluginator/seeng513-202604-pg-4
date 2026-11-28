@@ -17,7 +17,7 @@
           <h3 class="review-header">
             What others have to say about {{ event.title }}
           </h3>
-          <f-button text="Review this event" (clicked)="onReview()"/>
+          <f-button text="Review this event" (clicked)="onReview()" />
           @if (reviews.hasValue()) {
             @for (review of reviews.value()!.items; track $index) {
               <f-comment [review]="review" />
