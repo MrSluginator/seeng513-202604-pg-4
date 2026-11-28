@@ -1,0 +1,11 @@
+<main class="status">
+  <h3 class="code">{{ code() }}</h3>
+  <h1>{{ title() }}</h1>
+  <p>{{ message() }}</p>
+
+  <div class="actions">
+    <f-button text="Go Back" (click)="goBack()" />
+    <f-button text="Home" (click)="goHome()"/>
+  </div>
+</main>
+<f-footer/>
