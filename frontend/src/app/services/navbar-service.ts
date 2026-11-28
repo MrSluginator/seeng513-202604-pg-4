@@ -35,8 +35,6 @@ export class NavbarService {
     () => this.active()?.placeholder ?? 'Search...'
   );
 
-  readonly signedIn = signal(false);
-
   setSearch<T>(config: NavbarSearchConfig<T>): void {
     this.query.set('');
     this.active.set({

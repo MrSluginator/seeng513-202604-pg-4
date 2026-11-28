@@ -70,8 +70,8 @@
           </ng-template>
         </f-search-bar>
       }
-      @if (nav.signedIn()) {
-        <div>Profile Button</div>
+      @if (auth.isLoggedIn()) {
+        <f-profile-button/>
       } @else {
         <f-button text="Sign In" (click)="onSignInClick()" />
       }

@@ -54,14 +54,4 @@ export class FilterService {
   removeTag(tag: Tag): void {
     this.patch({ tags: this._filters().tags.filter((t) => t.id !== tag.id) });
   }
-
-  queryTags(query: string): SearchResult<Tag>[] {
-    console.log(query);
-    return [];
-  }
-
-  queryLocations(query: string): SearchResult<Location>[] {
-    console.log(query);
-    return [];
-  }
 }

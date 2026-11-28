@@ -41,6 +41,7 @@ export const appConfig: ApplicationConfig = {
       try {
         await firstValueFrom(users.getMe());
       } catch (err) {
+        console.error('init: getMe failed', err);
         if (err instanceof HttpErrorResponse && err.status === 401) {
           auth.logout();
         }

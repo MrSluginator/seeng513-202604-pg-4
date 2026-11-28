@@ -1,0 +1,4 @@
+<button class="button" (click)="onClick()">
+  <f-icon name="profile" size="l" color="s5" [fill]="true"/>
+  <h3 class="username">{{ auth.user()?.username || 'Username' }}</h3>
+</button>
