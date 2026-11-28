@@ -1,38 +1,43 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Button } from '../../../atoms/button/button';
+import { Divider } from '../../../atoms/divider/divider';
+import { Widget } from '../../../atoms/widget/widget';
+import { Icon } from '../../../atoms/icon/icon';
 
-type SocialStatus = 'disconnected' | 'pending' | 'verified';
+type ConnectionStatus = 'disconnected' | 'pending' | 'verified';
 
-interface Social {
+interface SocialAccount {
+  id: string;
   name: string;
-  status: SocialStatus;
+  status: ConnectionStatus;
 }
 
 @Component({
   selector: 'f-connect-socials',
-  imports: [RouterLink],
+  imports: [Button, Divider, Icon],
   templateUrl: './connect-socials.html',
-  styleUrl: './connect-socials.scss',
+  styleUrl: './connect-socials.css',
 })
 export class ConnectSocials {
-  socials = signal<Social[]>([
-    { name: 'Instagram', status: 'disconnected' },
-    { name: 'Facebook', status: 'verified' },
-    { name: 'TikTok', status: 'pending' },
+  protected accounts = signal<SocialAccount[]>([
+    { id: 'instagram', name: 'Instagram', status: 'disconnected' },
+    { id: 'facebook', name: 'Facebook', status: 'verified' },
+    { id: 'tiktok', name: 'TikTok', status: 'pending' },
   ]);
 
-  connect(name: string) {
-    // replace with your real OAuth flow
-    this.setStatus(name, 'pending');
+  protected connect(id: string): void {
+    this.setStatus(id, 'pending');
+    // TODO: start the OAuth flow for this provider
   }
 
-  disconnect(name: string) {
-    this.setStatus(name, 'disconnected');
+  protected disconnect(id: string): void {
+    this.setStatus(id, 'disconnected');
+    // TODO: revoke the connection on the backend
   }
 
-  private setStatus(name: string, status: SocialStatus) {
-    this.socials.update((list) =>
-      list.map((s) => (s.name === name ? { ...s, status } : s))
+  private setStatus(id: string, status: ConnectionStatus): void {
+    this.accounts.update((accounts) =>
+      accounts.map((a) => (a.id === id ? { ...a, status } : a))
     );
   }
 }

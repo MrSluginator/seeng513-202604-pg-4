@@ -1,0 +1,98 @@
+:host {
+  display: block;
+  color: var(--n7);
+}
+
+.pageTitle {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+}
+
+.section h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.between {
+  justify-content: space-between;
+}
+
+/* Profile picture */
+
+.profileSection {
+  padding-block: 32px;
+}
+
+.profileContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profilePicture {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--p7);
+}
+
+.profileButton {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.passwordContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile */
+
+@media (max-width: 767px) {
+  .pageTitle {
+    display: none;
+  }
+
+  .section {
+    padding: 16px;
+  }
+
+  .section h3 {
+    font-size: 20px;
+  }
+
+  /* Label above field instead of beside it */
+  .section:not(.profileSection) .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Input first, reset button underneath (as in the mobile mockup) */
+  .passwordContainer {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .profilePicture {
+    width: 65px;
+    height: 65px;
+  }
+}

@@ -1,48 +1,38 @@
-<h1 class="heading">
-  <a class="mobile-back" routerLink="/settings" aria-label="Back">‹</a>
-  Notifications
-</h1>
+<f-divider />
+<section class="section">
+  <h3>Email Notifications</h3>
 
-<section class="settings-section">
-  <h2 class="section-title">Email Notifications</h2>
-
-  <div class="option-row">
-    <p class="small-text">
-      Allow Flare to send you emails according to your preferences
-    </p>
-
-    <button
-      type="button"
-      role="switch"
-      aria-label="Email notifications"
-      [attr.aria-checked]="emailNotifications()"
-      class="toggle"
-      [class.toggle-active]="emailNotifications()"
-      (click)="toggleEmail()"
-    >
-      <span class="toggle-thumb"></span>
-    </button>
+  <div class="row between">
+    <p>Allow Flare to send you emails according to your preferences</p>
+    <f-toggle-button
+      label="Email notifications"
+      [(ngModel)]="emailNotifications"
+    />
   </div>
 </section>
+<f-divider />
 
-<section class="settings-section">
-  <h2 class="section-title">Notify Me When...</h2>
+<section class="section">
+  <h3>Notify Me When...</h3>
 
-  @for (option of notificationOptions(); track option.label; let i = $index) {
-    <div class="notification-row">
-      <p class="small-text">{{ option.label }}</p>
-
-      <button
-        type="button"
-        role="switch"
-        [attr.aria-label]="option.label"
-        [attr.aria-checked]="option.enabled"
-        class="toggle"
-        [class.toggle-active]="option.enabled"
-        (click)="toggleNotification(i)"
-      >
-        <span class="toggle-thumb"></span>
-      </button>
-    </div>
-  }
+  <div class="optionList">
+    @for (
+      option of notificationOptions();
+      track option.label;
+      let i = $index;
+      let first = $first
+    ) {
+      @if (!first) {
+        <f-divider />
+      }
+      <div class="row between">
+        <p>{{ option.label }}</p>
+        <f-toggle-button
+          [label]="option.label"
+          [ngModel]="option.enabled"
+          (ngModelChange)="setOption(i, $event)"
+        />
+      </div>
+    }
+  </div>
 </section>

@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   NavigationEnd,
@@ -7,7 +7,7 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { Icon } from '../../../atoms/icon/icon';
 import { Divider } from '../../../atoms/divider/divider';
 
@@ -17,6 +17,8 @@ interface MenuItem {
   desktopOnly?: boolean;
   mobileOnly?: boolean;
 }
+
+const stripUrl = (url: string) => url.split(/[?#]/)[0];
 
 @Component({
   selector: 'f-settings-shell',
@@ -30,23 +32,25 @@ export class SettingsShell {
   readonly items: MenuItem[] = [
     { path: 'account', label: 'Account' },
     { path: 'connect-socials', label: 'Connect Socials' },
-    { path: 'privacy', label: 'Privacy' },
     { path: 'preferences', label: 'Preferences' },
     { path: 'notifications', label: 'Notifications' },
   ];
 
-  /** true when a child page (e.g. /settings/account) is active */
-  readonly hasChild = toSignal(
+  private url = toSignal(
     this.router.events.pipe(
-      filter((e) => e instanceof NavigationEnd),
-      startWith(null),
-      map(
-        () =>
-          this.router.url.split(/[?#]/)[0].replace(/\/$/, '') !== '/settings'
-      )
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => stripUrl(e.urlAfterRedirects))
     ),
-    { initialValue: false }
+    { initialValue: stripUrl(this.router.url) }
   );
+
+  private activeItem = computed(() => {
+    const segments = this.url().split('/');
+    return this.items.find((i) => segments.includes(i.path));
+  });
+
+  readonly hasChild = computed(() => !!this.activeItem());
+  protected title = computed(() => this.activeItem()?.label ?? '');
 
   private desktop = window.matchMedia('(min-width: 768px)');
 

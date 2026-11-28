@@ -22,11 +22,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'privacy',
-        title: 'Privacy',
-        loadComponent: () => import('./privacy/privacy').then((m) => m.Privacy),
-      },
-      {
         path: 'preferences',
         title: 'Preferences',
         loadComponent: () =>

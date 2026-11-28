@@ -1,5 +1,7 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Divider } from '../../../atoms/divider/divider';
+import { ToggleButton } from '../../../atoms/toggle-button/toggle-button';
 
 interface NotificationOption {
   label: string;
@@ -8,27 +10,27 @@ interface NotificationOption {
 
 @Component({
   selector: 'f-notifications',
-  imports: [RouterLink],
+  imports: [FormsModule, Divider, ToggleButton],
   templateUrl: './notifications.html',
-  styleUrl: './notifications.scss',
+  styleUrl: './notifications.css',
 })
 export class Notifications {
-  emailNotifications = signal(false);
+  protected emailNotifications = signal(true);
 
-  notificationOptions = signal<NotificationOption[]>([
-    // replace with your real options
-    { label: 'Someone saves my event', enabled: true },
-    { label: 'An event I saved is starting soon', enabled: true },
-    { label: 'New events near me', enabled: false },
+  protected notificationOptions = signal<NotificationOption[]>([
+    { label: 'Events that I RSVDed to are starting soon', enabled: false },
+    { label: 'My RSVPed events have updates', enabled: true },
+    { label: 'Flare finds events that may interest me', enabled: true },
+    { label: 'New events in my area are created', enabled: false },
+    { label: 'There are trending events in my area', enabled: false },
+    { label: 'People send me sparks', enabled: true },
   ]);
 
-  toggleEmail() {
-    this.emailNotifications.update((v) => !v);
-  }
-
-  toggleNotification(index: number) {
+  protected setOption(index: number, enabled: boolean): void {
     this.notificationOptions.update((options) =>
-      options.map((o, i) => (i === index ? { ...o, enabled: !o.enabled } : o))
+      options.map((option, i) =>
+        i === index ? { ...option, enabled } : option
+      )
     );
   }
 }
