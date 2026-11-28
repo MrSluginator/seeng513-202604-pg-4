@@ -1,59 +1,25 @@
-import styles from '../assets/styles/settings.module.css';
-
-function SettingsMenu() {
-  return (
-    <main className={styles.mobileMenu}>
-
-      {/* Username banner */}
-      <div className={styles.userBanner}>
-        <div className={styles.userAvatar}></div>
-        <span>USERNAME</span>
-      </div>
-
-      {/* Settings menu */}
-      <div className={styles.menuLinks}>
-        <button
-          type="button"
-          className={styles.menuItem}
+<div class="page" [class.has-child]="hasChild()">
+  <nav class="sidebar">
+    <div class="menuLinks">
+      @for (item of items; track item.path; let first = $first) {
+        @if (!first) {
+          <f-divider />
+        }
+        <a
+          class="sidebarItem"
+          [class.desktop-only]="item.desktopOnly"
+          [class.mobile-only]="item.mobileOnly"
+          [routerLink]="item.path"
+          routerLinkActive="active"
         >
-          <span>Account</span>
-          <span>›</span>
-        </button>
+          <h3>{{ item.label }}</h3>
+          <f-icon name="right" size="m" />
+        </a>
+      }
+    </div>
+  </nav>
 
-        <button
-          type="button"
-          className={styles.menuItem}
-        >
-          <span>Connect Socials</span>
-          <span>›</span>
-        </button>
-
-        <button
-          type="button"
-          className={styles.menuItem}
-        >
-          <span>Privacy</span>
-          <span>›</span>
-        </button>
-
-        <button
-          type="button"
-          className={styles.menuItem}
-        >
-          <span>Preferences</span>
-          <span>›</span>
-        </button>
-
-        <button
-          type="button"
-          className={styles.menuItem}
-        >
-          <span>General</span>
-          <span>›</span>
-        </button>
-      </div>
-    </main>
-  );
-}
-
-export default SettingsMenu;
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

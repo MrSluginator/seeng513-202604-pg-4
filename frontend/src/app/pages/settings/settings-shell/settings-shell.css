@@ -1,4 +1,4 @@
-.page {
+:host {
   display: flex;
   align-items: stretch;
   gap: 20px;
@@ -12,7 +12,7 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 260px;
+  width: 300px;
   flex-shrink: 0;
   padding: 16px;
   box-sizing: border-box;
@@ -21,11 +21,13 @@
 }
 
 .sidebarItem {
-  width: 100%;
+  display: flex;
+  padding: 12px 20px 12px 10px;
+  align-items: center;
+  align-self: stretch;
+  justify-content: space-between;
   padding: 12px 10px;
   border: none;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--p6) 40%, transparent);
   background-color: transparent;
   color: var(--n7);
   font-family: inherit;
@@ -42,14 +44,12 @@
 }
 
 .sidebarItem:hover {
-  background-color:
-    color-mix(in srgb, var(--p6) 15%, transparent);
+  background-color: var(--p3);
   border-radius: 12px;
 }
 
 .active {
-  background-color:
-    color-mix(in srgb, var(--p6) 30%, var(--p1));
+  background-color: var(--p2);
   border-radius: 12px;
 }
 
