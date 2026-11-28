@@ -10,20 +10,24 @@
 
 @if (showMenu()) {
   <div class="menu" role="listbox">
-    @for (result of results(); track result.label; let i = $index) {
-      <button
-        type="button"
-        class="option"
-        role="option"
-        [class.active]="i === activeIndex()"
-        [attr.aria-selected]="i === activeIndex()"
-        (click)="select(result)"
-      >
-        <f-icon name="search" />
-        {{ result.label }}
-      </button>
-    } @empty {
-      <div class="empty">No results</div>
+    @if (loading()) {
+      <div class="empty">Searching...</div>
+    } @else {
+      @for (result of results(); track $index; let i = $index) {
+        <button
+          type="button"
+          class="option"
+          role="option"
+          [class.active]="i === activeIndex()"
+          [attr.aria-selected]="i === activeIndex()"
+          (click)="select(result)"
+        >
+          <f-icon name="search" />
+          {{ result.label }}
+        </button>
+      } @empty {
+        <div class="empty">No results</div>
+      }
     }
   </div>
 }

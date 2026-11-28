@@ -35,8 +35,10 @@ export class SearchBar<T> {
   // API
   readonly placeholder = input('Search...');
   readonly results = input<SearchResult<T>[]>([]);
+  readonly loading = input(false);
   readonly query = model('');
   readonly resultSelected = output<SearchResult<T>>();
+  readonly submitted = output<string>();
 
   // Internal UI state
   protected readonly isOpen = signal(false);
@@ -62,20 +64,30 @@ export class SearchBar<T> {
 
   protected onKeydown(event: KeyboardEvent): void {
     const count = this.results().length;
-    if (count === 0) return;
     switch (event.key) {
       case 'ArrowDown':
+        if (count === 0) return;
         event.preventDefault();
         this.open();
         this.activeIndex.update((i) => (i + 1) % count);
         break;
       case 'ArrowUp':
+        if (count === 0) return;
         event.preventDefault();
         this.activeIndex.update((i) => (i <= 0 ? count - 1 : i - 1));
         break;
       case 'Enter': {
+        event.preventDefault();
         const result = this.results()[this.activeIndex()];
-        if (result) this.select(result);
+        if (result) {
+          this.select(result);
+        } else {
+          const trimmed = this.query().trim();
+          if (trimmed) {
+            this.submitted.emit(trimmed);
+            this.close();
+          }
+        }
         break;
       }
     }
