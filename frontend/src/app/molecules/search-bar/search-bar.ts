@@ -16,7 +16,7 @@ import {
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { from, of } from 'rxjs';
+import { from } from 'rxjs';
 import { TextInput } from '../../atoms/text-input/text-input';
 import type { SearchFn, SearchResult } from './search-bar.types';
 import { SearchResultTemplate } from './search-result-template';
@@ -54,6 +54,7 @@ export class SearchBar<T> {
   readonly relatedSearch = input<SearchFn<T> | undefined>();
   readonly query = model('');
   readonly resultSelected = output<SearchResult<T>>();
+  readonly submitted = output<string>();
   readonly menuAlign = input<'start' | 'end'>('end');
   /** Optional `<ng-template fSearchResult let-result>` that renders each result. */
   protected readonly resultTemplate =
@@ -154,23 +155,33 @@ export class SearchBar<T> {
 
   protected onKeydown(event: KeyboardEvent): void {
     const count = this.ordered().length;
-    if (count === 0) return;
     switch (event.key) {
       // Tags wrap across rows, so left/right and up/down both step through them.
       case 'ArrowDown':
       case 'ArrowRight':
+        if (count === 0) return;
         event.preventDefault();
         this.open();
         this.activeIndex.update((i) => (i + 1) % count);
         break;
       case 'ArrowUp':
       case 'ArrowLeft':
+        if (count === 0) return;
         event.preventDefault();
         this.activeIndex.update((i) => (i <= 0 ? count - 1 : i - 1));
         break;
       case 'Enter': {
+        event.preventDefault();
         const result = this.ordered()[this.activeIndex()];
-        if (result) this.select(result);
+        if (result) {
+          this.select(result);
+        } else {
+          const trimmed = this.query().trim();
+          if (trimmed) {
+            this.submitted.emit(trimmed);
+            this.close();
+          }
+        }
         break;
       }
     }

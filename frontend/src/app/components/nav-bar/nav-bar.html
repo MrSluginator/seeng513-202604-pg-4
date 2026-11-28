@@ -48,28 +48,15 @@
     </div>
 
     <div class="holder">
-      @if (nav.active(); as search) {
-        <f-search-bar
-          [placeholder]="search.placeholder"
-          [search]="search.search"
-          [relatedSearch]="search.relatedSearch"
-          [(query)]="nav.query"
-          (resultSelected)="search.onSelect($event)"
-        >
-          <!-- Forwards the page's template (or the label) into the search bar -->
-          <ng-template
-            fSearchResult
-            let-result
-            let-group="group"
-            let-active="active"
-          >
-            <ng-container
-              [ngTemplateOutlet]="search.resultTemplate ?? labelOnly"
-              [ngTemplateOutletContext]="{ $implicit: result, group, active }"
-            />
-          </ng-template>
-        </f-search-bar>
-      }
+      <f-search-bar
+        placeholder="Search events..."
+        menuTitle="Suggested Events"
+        directLabel="Matching Events"
+        [search]="searchEvents"
+        [(query)]="query"
+        (resultSelected)="onResultSelected($event)"
+        (submitted)="onSearchSubmitted($event)"
+      />
       @if (auth.isLoggedIn()) {
         <f-profile-button />
       } @else {
@@ -78,5 +65,3 @@
     </div>
   </div>
 </div>
-
-<ng-template #labelOnly let-result>{{ result.label }}</ng-template>

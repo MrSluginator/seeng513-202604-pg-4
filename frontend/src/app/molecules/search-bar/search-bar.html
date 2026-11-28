@@ -24,11 +24,7 @@
         <section class="group">
           <small>{{ directLabel() }}</small>
           <div class="results">
-            @for (
-              result of directResults();
-              track result.label;
-              let i = $index
-            ) {
+            @for (result of directResults(); track $index; let i = $index) {
               <button
                 type="button"
                 class="result"
@@ -58,11 +54,7 @@
         <section class="group">
           <small>{{ relatedLabel() }}</small>
           <div class="results">
-            @for (
-              result of relatedResults();
-              track result.label;
-              let i = $index
-            ) {
+            @for (result of relatedResults(); track $index; let i = $index) {
               <button
                 type="button"
                 class="result"
