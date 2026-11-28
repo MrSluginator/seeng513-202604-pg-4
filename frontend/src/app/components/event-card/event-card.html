@@ -23,13 +23,6 @@
   </div>
 </ng-template>
 
-@if (reviewOpen()) {
-  <f-review-dialog
-    [event]="event()"
-    (submitted)="onReviewSubmit($event)"
-    (cancelled)="reviewOpen.set(false)"
-  />
-}
 <div class="card" [class]="size()">
   @if (size() === 'm') {
     <ng-container [ngTemplateOutlet]="interactables" />

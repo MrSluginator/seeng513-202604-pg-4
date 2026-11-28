@@ -17,10 +17,6 @@ import { Price } from '../../molecules/price/price';
 import { Event, EventDetail } from '../../../models/event.schema';
 import { formatNumber, formatTimeRange } from '../../../utils/format';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import {
-  ReviewDialog,
-  ReviewResult,
-} from '../../dialogs/review-dialog/review-dialog';
 import { SavedEventService } from '../../services/saved-event-service';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth-service';
@@ -40,7 +36,6 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
     Widget,
     Price,
     IconProgressBar,
-    ReviewDialog,
   ],
   selector: 'f-event-card',
   styleUrl: './event-card.css',
@@ -121,16 +116,6 @@ export class EventCard {
     req$.pipe(finalize(() => this.pending.set(false))).subscribe({
       error: () => this.sparked.set(prev),
     });
-  }
-
-  protected onReview(): void {
-    if (this.auth.requireRole(['standard'])) return;
-    this.reviewOpen.set(true);
-  }
-
-  protected onReviewSubmit(result: ReviewResult): void {
-    this.reviewOpen.set(false);
-    console.log(result);
   }
 
   protected onShare(): void {

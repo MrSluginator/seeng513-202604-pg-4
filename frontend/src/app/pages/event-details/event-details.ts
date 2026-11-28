@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { EventService } from '../../services/event-service';
 import { EventCard } from '../../components/event-card/event-card';
 import { HeatMap } from '../heat-map/heat-map';
@@ -6,24 +6,42 @@ import { Graph } from '../../molecules/graph/graph';
 import { Footer } from '../../components/footer/footer';
 import { Comment } from '../../molecules/comment/comment';
 import { ReviewService } from '../../services/review-service';
+import { SavedEventService } from '../../services/saved-event-service';
+import { AuthService } from '../../services/auth-service';
+import { ReviewDialog, ReviewResult } from '../../dialogs/review-dialog/review-dialog';
+import { Button } from '../../atoms/button/button';
 
 @Component({
-  imports: [EventCard, HeatMap, Graph, Footer, Comment],
+  imports: [EventCard, HeatMap, Graph, Footer, Comment, ReviewDialog, Button],
   selector: 'f-event-details',
   styleUrl: './event-details.css',
   templateUrl: './event-details.html',
 })
 export class EventDetails {
+  private readonly auth = inject(AuthService);
   private readonly eventApi = inject(EventService);
+  private readonly savedEventApi = inject(SavedEventService);
   private readonly reviewApi = inject(ReviewService);
   id = input.required<string>();
 
-  protected readonly event = this.eventApi.getEventDetails(this.id);
+  protected readonly _event = this.eventApi.getEventDetails(this.id);
+  protected readonly event = computed(() => {
+    if (this._event.hasValue())
+      return {
+        ...this._event.value(),
+        is_saved: this._event.value()
+          ? this.savedEventApi.isSaved(this._event.value()!.id)
+          : false,
+      };
+    return undefined;
+  });
   protected readonly reviews = this.reviewApi.getReviews(this.id);
+  protected readonly reviewOpen = signal(false);
 
   protected readonly graphData = computed(() => {
-    if (!this.event.hasValue()) return [];
-    const raw = this.event.value().crowd_by_hour;
+    const e = this.event();
+    if (!e) return [];
+    const raw = e.crowd_by_hour;
     console.log(raw);
     const data = Object.entries(raw)
       .map(([hour, crowd]) => {
@@ -37,4 +55,14 @@ export class EventDetails {
     console.log(data);
     return data;
   });
+
+  protected onReview(): void {
+    if (this.auth.requireRole(['standard'])) return;
+    this.reviewOpen.set(true);
+  }
+
+  protected onReviewSubmit(result: ReviewResult): void {
+    this.reviewOpen.set(false);
+    console.log(result);
+  }
 }
