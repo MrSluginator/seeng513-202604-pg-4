@@ -31,9 +31,12 @@ function Settings() {
         </button>
       </aside>
 
-      {/* Account settings content */}
+      {/* Account content */}
       <main className={styles.content}>
-        <h1 className={styles.heading}>Account</h1>
+        <h1 className={styles.heading}>
+          <span className={styles.mobileBack}>‹</span>
+          Account
+        </h1>
 
         {/* Profile picture */}
         <div className={`${styles.settingRow} ${styles.profileRow}`}>
