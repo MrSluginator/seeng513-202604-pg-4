@@ -1,0 +1,39 @@
+<div class="container" [class]="size()">
+  @if (carousel(); as c) {
+    <f-carousel
+      class="carousel"
+      [items]="events()"
+      [getKey]="getKey"
+      label="Featured events"
+      itemLabel="event"
+      [overlay]="false"
+      [showControls]="c.controls"
+    >
+      <ng-template let-event>
+        <f-event-card [size]="size()" [event]="event" />
+      </ng-template>
+    </f-carousel>
+  }
+
+  @if (grid(); as g) {
+    <div class="grid">
+      <div
+        class="event-grid"
+        [style.max-height.px]="hidden() ? 480 : null"
+        [style.overflow]="hidden() ? 'hidden' : 'visible'"
+      >
+        @for (event of events(); track event.id) {
+          <f-event-card [size]="size()" [event]="event" />
+        }
+      </div>
+
+      @if (g.hidden) {
+        <f-button
+          [text]="toggleLabel()"
+          [icon]="toggleIcon()"
+          (click)="onShowMore()"
+        />
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,95 @@
+.p {
+  background-color: color-mix(in srgb, var(--p3) 20%, transparent);
+  border-color: var(--p4);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--p3) 20%, transparent);
+    border-color: var(--p4);
+    color: var(--p4);
+  }
+
+  &[aria-checked='true'] {
+    background-color: var(--p3);
+    border-color: var(--p4);
+  }
+}
+
+.s {
+  background-color: color-mix(in srgb, var(--s3) 20%, transparent);
+  border-color: var(--s4);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--s3) 20%, transparent);
+    border-color: var(--s4);
+    color: var(--s4);
+  }
+
+  &[aria-checked='true'] {
+    background-color: var(--s3);
+    border-color: var(--s4);
+  }
+}
+
+.o {
+  background-color: color-mix(in srgb, var(--o1) 20%, transparent);
+  border-color: var(--o2);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--o1) 20%, transparent);
+    border-color: var(--o2);
+    color: var(--o2);
+  }
+
+  &[aria-checked='true'] {
+    background-color: var(--o1);
+    border-color: var(--o2);
+  }
+}
+
+.y {
+  background-color: color-mix(in srgb, var(--y1) 20%, transparent);
+  border-color: var(--y2);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--y1) 20%, transparent);
+    border-color: var(--y2);
+    color: var(--y2);
+  }
+
+  &[aria-checked='true'] {
+    background-color: var(--y1);
+    border-color: var(--y2);
+  }
+}
+
+.g {
+  background-color: color-mix(in srgb, var(--g1) 20%, transparent);
+  border-color: var(--g2);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--g1) 20%, transparent);
+    border-color: var(--g2);
+    color: var(--g2);
+  }
+
+  &[aria-checked='true'] {
+    background-color: var(--g1);
+    border-color: var(--g2);
+  }
+}
+
+.b {
+  background-color: color-mix(in srgb, var(--b1) 20%, transparent);
+  border-color: var(--b2);
+
+  &:hover {
+    color: var(--b2);
+    background-color: color-mix(in srgb, var(--b1) 20%, transparent);
+    border-color: var(--b2);
+  }
+
+  &[aria-checked='true'] {
+    background-color: var(--b1);
+    border-color: var(--b2);
+  }
+}

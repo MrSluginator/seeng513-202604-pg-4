@@ -1,0 +1,57 @@
+<section class="heat-map-page" aria-label="Event heat map">
+  <header class="mobile-header">
+    <h1 class="mobile-title">Find Events Near You</h1>
+  </header>
+
+  <div class="map-pane">
+    <div
+      #mapContainer
+      class="map-container"
+      role="region"
+      aria-label="Interactive event map"
+    ></div>
+
+    <div class="map-controls">
+      <div
+        class="map-category-selectors"
+        role="toolbar"
+        aria-label="Category filters"
+      >
+        <f-all-categories [form]="categoryForm" />
+      </div>
+
+      <div class="map-filter-action">
+        <f-filter-button />
+      </div>
+    </div>
+  </div>
+
+  <aside class="events-sidebar" aria-label="Events in current map view">
+    <header class="sidebar-header">
+      <h4 class="sidebar-title">Quick List</h4>
+      <p>Check out what you can see on the map in a glance</p>
+    </header>
+
+    <div #sidebarList class="sidebar-list">
+      @for (item of visibleEvents(); track item.event.id) {
+        <div
+          class="sidebar-card-item"
+          [attr.data-event-id]="item.event.id"
+          [class.selected]="selectedEventId() === item.event.id"
+          tabindex="0"
+          role="button"
+          (click)="focusEvent(item)"
+          (keydown.enter)="focusEvent(item)"
+          (keydown.space)="$event.preventDefault(); focusEvent(item)"
+        >
+          <f-event-card [event]="item.event" size="s" [link]="false" />
+        </div>
+      } @empty {
+        <div class="sidebar-empty">
+          <p>No events in this map area.</p>
+          <small>Pan, zoom out, or recenter the map to see events.</small>
+        </div>
+      }
+    </div>
+  </aside>
+</section>

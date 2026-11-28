@@ -1,0 +1,82 @@
+<div class="box">
+  <div class="mobile">
+    <a class="link" routerLink="/map" routerLinkActive="active">
+      <f-icon name="map" size="m" />
+    </a>
+    <a class="link" routerLink="/saved" routerLinkActive="active">
+      <f-icon name="bookmark" size="m" />
+    </a>
+    <a
+      class="link"
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <f-icon name="home" size="m" />
+    </a>
+    <a class="link" routerLink="/post" routerLinkActive="active">
+      <f-icon name="event" size="m" />
+    </a>
+    @if (auth.isLoggedIn()) {
+      <a class="link" routerLink="/settings" routerLinkActive="active">
+        <f-icon name="settings" size="m" />
+      </a>
+    } @else {
+      <a class="link" routerLink="/sign_in" routerLinkActive="active">
+        <f-icon name="profile" size="m" />
+      </a>
+    }
+  </div>
+
+  <div class="desktop">
+    <div class="holder">
+      <a
+        class="link"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <f-logo size="m" />
+      </a>
+      <a class="link" routerLink="/map" routerLinkActive="active"> Heat Map </a>
+      <a class="link" routerLink="/saved" routerLinkActive="active">
+        Saved Events
+      </a>
+      <a class="link" routerLink="/post" routerLinkActive="active">
+        Post Event
+      </a>
+    </div>
+
+    <div class="holder">
+      @if (nav.active(); as search) {
+        <f-search-bar
+          [placeholder]="search.placeholder"
+          [search]="search.search"
+          [relatedSearch]="search.relatedSearch"
+          [(query)]="nav.query"
+          (resultSelected)="search.onSelect($event)"
+        >
+          <!-- Forwards the page's template (or the label) into the search bar -->
+          <ng-template
+            fSearchResult
+            let-result
+            let-group="group"
+            let-active="active"
+          >
+            <ng-container
+              [ngTemplateOutlet]="search.resultTemplate ?? labelOnly"
+              [ngTemplateOutletContext]="{ $implicit: result, group, active }"
+            />
+          </ng-template>
+        </f-search-bar>
+      }
+      @if (nav.signedIn()) {
+        <div>Profile Button</div>
+      } @else {
+        <f-button text="Sign In" (click)="onSignInClick()" />
+      }
+    </div>
+  </div>
+</div>
+
+<ng-template #labelOnly let-result>{{ result.label }}</ng-template>

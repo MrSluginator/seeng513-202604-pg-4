@@ -23,18 +23,20 @@ services:
       - path: ./backend/.env
         required: false
     environment:
+      CORS_ORIGINS: http://localhost:4200
       DATABASE_URL: postgresql://flare_user:flare_password@db:5432/flare_db
     depends_on:
       db:
         condition: service_healthy
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      API_BASE_URL: http://localhost:8000
     ports:
-      - "5173:5173"
-    env_file:
-      - path: ./frontend/.env
-        required: false
+      - "4200:4200"
     depends_on:
       - backend
 

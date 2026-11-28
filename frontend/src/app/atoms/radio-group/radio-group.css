@@ -1,0 +1,121 @@
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  font-family: inherit;
+  color: var(--n7);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-line-height);
+}
+
+.option-disabled {
+  cursor: not-allowed;
+  color: var(--n5);
+}
+
+/* Hide the real input visually but keep it focusable and readable
+   by screen readers. Do NOT use display: none. */
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The custom circle */
+.circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--p2);
+  background: var(--p1);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+
+  .dot {
+    height: 16px;
+    width: 16px;
+    flex-shrink: 0;
+    border-radius: 22px;
+    background: var(--p1);
+    transition: background-color 150ms ease;
+  }
+}
+
+.input:checked + .circle {
+  .dot {
+    background: var(--p3);
+  }
+}
+
+.input:hover + .circle {
+  border-color: var(--p4);
+  background-color: var(--p2);
+
+  .dot {
+    background-color: var(--p2);
+  }
+}
+
+.input:hover:checked + .circle {
+  .dot {
+    background-color: var(--p4);
+  }
+}
+
+.input:hover:checked + .circle {
+  .dot {
+    background-color: var(--p4);
+  }
+}
+
+.input:disabled + .circle {
+  border-color: var(--n3);
+  background-color: var(--n2);
+
+  .dot {
+    background-color: var(--n2);
+  }
+}
+
+.input:disabled:checked + .circle {
+  .dot {
+    background-color: var(--n4);
+  }
+}
+
+.input:focus-visible + .circle {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.label {
+  text-align: left;
+}

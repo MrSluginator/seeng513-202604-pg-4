@@ -1,0 +1,53 @@
+.widget {
+  --_light: var(--w-light, var(--p3));
+  --_dark: var(--w-dark, var(--p4));
+
+  display: inline-flex;
+  height: 26px;
+  width: fit-content;
+  min-width: var(--width, 48px);
+  min-height: 26px;
+  padding: 4px 8px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+
+  border-radius: 8px;
+  border: 1px solid var(--_dark);
+  background: color-mix(in srgb, var(--_light) 20%, transparent);
+  color: inherit;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease;
+
+  &:hover {
+    color: var(--_dark);
+  }
+
+  &[aria-checked='true'] {
+    background-color: color-mix(in srgb, var(--_light) 80%, transparent);
+  }
+
+  &:disabled {
+    border-color: var(--n3);
+    background-color: var(--n2);
+    color: var(--n5);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+.bigget {
+  flex-direction: column;
+  height: 60px;
+  min-width: var(--width, 72px);
+  min-height: 60px;
+  padding: 8px;
+  gap: 10px;
+}

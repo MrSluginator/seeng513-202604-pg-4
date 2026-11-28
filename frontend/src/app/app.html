@@ -1,0 +1,13 @@
+<div class="App">
+  <f-nav-bar />
+  <div class="page">
+    <router-outlet />
+  </div>
+  <f-filter-dialog />
+  @if (auth.showDialog()) {
+    <f-sign-in-dialog
+      [requiredRole]="auth.requiredRole()"
+      (closed)="auth.closeDialog()"
+    />
+  }
+</div>

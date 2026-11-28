@@ -1,0 +1,41 @@
+.box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating {
+  display: flex;
+  background-color: color-mix(in srgb, var(--p7) 20%, transparent);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.star {
+  position: relative;
+  display: inline-flex;
+  color: var(--n5);
+}
+
+/* clips the filled icon to the rated portion */
+.filled {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  display: flex;
+  color: var(--y1);
+}
+
+.filled svg,
+.filled svg path {
+  fill: currentColor;
+}
+
+@media (max-width: 768px) {
+  .box small {
+    display: none;
+  }
+}

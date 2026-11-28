@@ -1,0 +1,93 @@
+<f-text-input
+  icon="search"
+  [placeholder]="placeholder()"
+  [ngModel]="query()"
+  [ngModelOptions]="{ standalone: true }"
+  (ngModelChange)="onQueryChange($event)"
+  (focusin)="open()"
+  (keydown)="onKeydown($event)"
+/>
+
+@if (showMenu()) {
+  <div
+    class="menu"
+    role="listbox"
+    [attr.aria-label]="menuTitle()"
+    [attr.aria-busy]="loading()"
+  >
+    <h3>{{ menuTitle() }}</h3>
+
+    @if (ordered().length === 0) {
+      <p class="empty">{{ loading() ? 'Searching…' : 'No results' }}</p>
+    } @else {
+      @if (directResults().length) {
+        <section class="group">
+          <small>{{ directLabel() }}</small>
+          <div class="results">
+            @for (
+              result of directResults();
+              track result.label;
+              let i = $index
+            ) {
+              <button
+                type="button"
+                class="result"
+                role="option"
+                [class.active]="i === activeIndex()"
+                [attr.aria-selected]="i === activeIndex()"
+                (click)="select(result)"
+              >
+                <ng-container
+                  [ngTemplateOutlet]="
+                    resultTemplate()?.template ?? defaultResult
+                  "
+                  [ngTemplateOutletContext]="{
+                    $implicit: result,
+                    group: 'direct',
+                    active: i === activeIndex(),
+                  }"
+                />
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      @if (relatedResults().length) {
+        @let offset = directResults().length;
+        <section class="group">
+          <small>{{ relatedLabel() }}</small>
+          <div class="results">
+            @for (
+              result of relatedResults();
+              track result.label;
+              let i = $index
+            ) {
+              <button
+                type="button"
+                class="result"
+                role="option"
+                [class.active]="offset + i === activeIndex()"
+                [attr.aria-selected]="offset + i === activeIndex()"
+                (click)="select(result)"
+              >
+                <ng-container
+                  [ngTemplateOutlet]="
+                    resultTemplate()?.template ?? defaultResult
+                  "
+                  [ngTemplateOutletContext]="{
+                    $implicit: result,
+                    group: 'related',
+                    active: offset + i === activeIndex(),
+                  }"
+                />
+              </button>
+            }
+          </div>
+        </section>
+      }
+    }
+  </div>
+}
+
+<ng-template #defaultResult let-result>{{ result.label }}</ng-template>

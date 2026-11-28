@@ -1,0 +1,49 @@
+.bar {
+  display: flex;
+  background-color: color-mix(in srgb, var(--n5) 20%, transparent);
+  padding: 4px;
+  border-radius: 8px;
+  justify-content: space-between;
+
+  .disabled {
+    opacity: 0.5;
+  }
+}
+
+.selectable {
+  background-color: color-mix(in srgb, var(--p5) 20%, transparent);
+  .item {
+    cursor: pointer;
+  }
+
+  .selectable:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+.item {
+  position: relative;
+  display: inline-flex;
+}
+
+/* clips the filled icon to the rated portion */
+.filled {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.filled svg,
+.filled svg path {
+  fill: currentColor;
+}
