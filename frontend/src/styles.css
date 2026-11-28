@@ -206,37 +206,11 @@ dialog,
   overflow-y: auto;
 }
 
-.App:has(f-heat-map) {
-  overflow: hidden;
-}
-
 .page {
   flex: 1;
-} /* wrap your <Routes> in a div with this class */
-
-.page:has(f-heat-map) {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow: hidden;
-}
-
-@media (max-width: 767px) {
-  .App:has(f-heat-map) {
-    position: relative;
-  }
-
-  .App:has(f-heat-map) .box {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    pointer-events: none;
-  }
-
-  .App:has(f-heat-map) .box .mobile {
-    pointer-events: auto;
-  }
 }
 
 .box {
