@@ -1,5 +1,5 @@
 import { Routes, UrlMatcher } from '@angular/router';
-import { authGuard, roleGuard } from './guards/auth-guard';
+import { authGuard, guestGuard, roleGuard } from './guards/auth-guard';
 
 export const authMatcher: UrlMatcher = (segments) =>
   segments.length === 1 &&
@@ -38,6 +38,7 @@ export const routes: Routes = [
   },
   {
     matcher: authMatcher,
+    canActivate: [guestGuard],
     loadComponent: () =>
       import('./pages/sign-in/sign-in').then((m) => m.SignIn),
   },

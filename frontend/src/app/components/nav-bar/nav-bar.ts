@@ -12,6 +12,7 @@ import { SearchBar, SearchResult } from '../../molecules/search-bar/search-bar';
 import { NavbarService } from '../../services/navbar-service';
 import { NgTemplateOutlet } from '@angular/common';
 import { AuthService } from '../../services/auth-service';
+import { ProfileButton } from '../../molecules/profile-button/profile-button';
 
 @Component({
   selector: 'f-nav-bar',
@@ -23,6 +24,7 @@ import { AuthService } from '../../services/auth-service';
     Logo,
     SearchBar,
     NgTemplateOutlet,
+    ProfileButton,
   ],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.css',
