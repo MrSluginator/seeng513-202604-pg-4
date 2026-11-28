@@ -1,0 +1,21 @@
+<div class="comment">
+  <div class="header">
+    <div class="user">
+      <h3>{{ review()?.username }}</h3>
+      <f-icon-progress-bar
+        [value]="review()?.rating ?? 0"
+        iconName="spark"
+        backgroundColor="n5"
+        fillColor="y1"
+        [label]="ratingLabel()"
+      />
+    </div>
+    <f-button
+      icon="spark"
+      [pressed]="sparked()"
+      [label]="sparkLabel()"
+      (click)="onSpark()"
+    />
+  </div>
+  <p class="content">{{ review()?.content }}</p>
+</div>

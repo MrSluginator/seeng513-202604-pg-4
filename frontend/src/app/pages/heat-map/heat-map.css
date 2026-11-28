@@ -4,6 +4,13 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  height: 100%;
+
+  @media (max-width: 768px) {
+    margin-bottom: calc(-1 * var(--mobile-nav-height, 84px));
+    position: relative;
+    z-index: 0;
+  }
 }
 
 .heat-map-page {

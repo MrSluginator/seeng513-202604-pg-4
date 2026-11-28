@@ -111,6 +111,11 @@
   }
 }
 
+.input:focus-visible + .circle {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 .label {
   text-align: left;
 }

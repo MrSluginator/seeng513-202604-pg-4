@@ -17,10 +17,12 @@ import { Price } from '../../molecules/price/price';
 import { Event, EventDetail } from '../../../models/event.schema';
 import { formatNumber, formatTimeRange } from '../../../utils/format';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import {
-  ReviewDialog,
-  ReviewResult,
-} from '../../dialogs/review-dialog/review-dialog';
+import { SavedEventService } from '../../services/saved-event-service';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../services/auth-service';
+import { Tag } from '../../../models/tag.schema';
+import { FilterService } from '../../services/filter-service';
+import { EventService } from '../../services/event-service';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -34,7 +36,6 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
     Widget,
     Price,
     IconProgressBar,
-    ReviewDialog,
   ],
   selector: 'f-event-card',
   styleUrl: './event-card.css',
@@ -43,6 +44,10 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly eventApi = inject(EventService);
+  private readonly savedEventApi = inject(SavedEventService);
+  private readonly auth = inject(AuthService);
+  private readonly filterSvc = inject(FilterService);
 
   readonly event = input.required<Event | EventDetail>();
   readonly detail = computed(() => this.event() as EventDetail);
@@ -51,16 +56,20 @@ export class EventCard {
   protected readonly reviewOpen = signal(false);
 
   // Starts from event().defaultSaved and resets if a different event is passed in
-  protected readonly saved = linkedSignal(() => this.event().saved);
-
-  protected readonly saveLabel = computed(() =>
-    this.saved() ? 'Remove from saved' : 'Save event'
-  );
+  protected readonly saved = linkedSignal(() => this.event().is_saved);
+  protected readonly sparked = signal(false);
+  protected readonly pending = signal(false);
 
   protected readonly timeLabel = computed(() => {
     const time = this.event().time;
     if (time === null) return '';
     return formatTimeRange(time);
+  });
+  protected readonly locationLabel = computed(() => {
+    const location = this.event().location;
+    if (!location) return 'Location Unknown';
+    if (location.name) return location.name;
+    return `${location.longitude}, ${location.latitude}`;
   });
 
   protected readonly ratingLabel = computed(() => `${this.event().rating}/5.0`);
@@ -75,21 +84,40 @@ export class EventCard {
     return `${title} photo ${index + 1} of ${photos.length}`;
   }
 
-  protected searchTag(tag: string): void {
-    this.router.navigate(['/search'], { queryParams: { tag } });
+  protected searchTag(tag: Tag): void {
+    this.filterSvc.addTag(tag);
+    this.router.navigate(['/'], { fragment: 'feed' }).then(() => {
+      document
+        .getElementById('feed')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    // this.router.navigate(['/search'], { queryParams: { tag } });
   }
 
   protected onSave(): void {
-    this.saved.update((prev) => !prev);
+    if (this.auth.requireRole(['standard'])) return;
+    const prev = this.saved();
+    this.saved.set(!prev);
+    this.pending.set(true);
+
+    const req$ = this.savedEventApi.toggleSave(this.event().id, !prev);
+    req$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      error: () => this.saved.set(prev),
+    });
   }
 
-  protected onReview(): void {
-    this.reviewOpen.set(true);
-  }
+  protected onSpark(): void {
+    if (this.auth.requireRole(['standard'])) return;
+    const prev = this.sparked();
+    this.sparked.set(!prev);
+    this.pending.set(true);
 
-  protected onReviewSubmit(result: ReviewResult): void {
-    this.reviewOpen.set(false);
-    console.log(result);
+    const req$ = this.eventApi.sparkEvent(this.event().id, {
+      amount: prev ? -1 : 1,
+    });
+    req$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      error: () => this.sparked.set(prev),
+    });
   }
 
   protected onShare(): void {

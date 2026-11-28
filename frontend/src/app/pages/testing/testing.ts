@@ -44,7 +44,7 @@ const makeEvent = (
   shares_count: 1,
   review_count: 1,
   rating: 4.3,
-  saved: false,
+  is_saved: false,
   created_at: new Date(),
   updated_at: new Date(),
   photos: [

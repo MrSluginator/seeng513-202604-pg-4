@@ -1,30 +1,92 @@
-import { Service, signal } from '@angular/core';
+import { Service, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, defer, map, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
+import {
+  AccountType,
+  AuthResponse,
+  LoginRequest,
+  SignupRequest,
+  UserMe,
+} from '../../models/user.schema';
 
-const TOKEN_STORAGE_KEY = 'flare_access_token';
+const TOKEN_KEY = 'access_token';
 
 @Service()
 export class AuthService {
-  private readonly _token = signal<string | null>(this.readStoredToken());
-  readonly token = this._token.asReadonly();
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiBaseUrl}/auth`;
 
-  setToken(token: string | null): void {
-    this._token.set(token);
-    try {
-      if (token) {
-        localStorage.setItem(TOKEN_STORAGE_KEY, token);
-      } else {
-        localStorage.removeItem(TOKEN_STORAGE_KEY);
-      }
-    } catch {
-      // Ignore storage errors (e.g., private browsing)
-    }
+  private readonly _token = signal<string | null>(this.readToken());
+  private readonly _user = signal<UserMe | null>(null);
+  private readonly _showDialog = signal(false);
+  readonly requiredRole = signal<AccountType | undefined>(undefined);
+
+  readonly token = this._token.asReadonly();
+  readonly user = this._user.asReadonly();
+  readonly showDialog = this._showDialog.asReadonly();
+  readonly isLoggedIn = computed(() => !!this._token());
+
+  setUser(user: UserMe): void {
+    this._user.set(user);
   }
 
-  private readStoredToken(): string | null {
+  signUp(payload: SignupRequest): Observable<AuthResponse> {
+    return defer(() => {
+      const body = SignupRequest.parse(payload);
+      return this.http.post<unknown>(`${this.base}/signup`, body);
+    }).pipe(
+      map((res) => AuthResponse.parse(res)),
+      tap((res) => this.setSession(res))
+    );
+  }
+
+  login(payload: LoginRequest): Observable<AuthResponse> {
+    return defer(() => {
+      const body = LoginRequest.parse(payload);
+      return this.http.post<unknown>(`${this.base}/login`, body);
+    }).pipe(
+      map((res) => AuthResponse.parse(res)),
+      tap((res) => this.setSession(res))
+    );
+  }
+
+  logout(): void {
     try {
-      return localStorage.getItem(TOKEN_STORAGE_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+    } catch {
+      console.error('Failed to log out.');
+    }
+    this._token.set(null);
+    this._user.set(null);
+  }
+
+  private setSession(res: AuthResponse): void {
+    try {
+      localStorage.setItem(TOKEN_KEY, res.access_token);
+    } catch {
+      console.error('Failed to set session.');
+    }
+    this._token.set(res.access_token);
+    this._user.set(res.user);
+  }
+
+  private readToken(): string | null {
+    try {
+      return localStorage.getItem(TOKEN_KEY);
     } catch {
       return null;
     }
+  }
+
+  requireRole(roles: AccountType[]) {
+    if (roles.find((role) => role === this.user()?.account_type)) return false;
+    this.requiredRole.set(roles[0]);
+    this._showDialog.set(true);
+    return true;
+  }
+
+  closeDialog() {
+    this._showDialog.set(false);
   }
 }

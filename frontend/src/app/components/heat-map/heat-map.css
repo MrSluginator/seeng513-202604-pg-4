@@ -1,0 +1,11 @@
+.content {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  aspect-ratio: 3 / 2;
+  border-radius: 32px;
+  background-color: var(--n1);
+}

@@ -1,27 +1,27 @@
-import {
-  HttpClient,
-  HttpRequest,
-  httpResource,
-  HttpResourceRequest,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import {
-  EventDetailSchema,
-  EventListSchema,
-  EventSchema,
+  EventDetail,
+  EventList,
+  Event,
+  EventCreate,
+  EventUpdate,
 } from '../../models/event.schema';
 import {
   HeatmapQuery,
   HeatmapResponseSchema,
 } from '../../models/heatmap.schema';
 import { isUUID } from '../../utils/validation';
-import { FilterProps } from '../../models/filters';
 import { environment } from '../../environments/environment';
+import { FilterProps } from '../../models/filters';
+import { firstValueFrom } from 'rxjs';
+import { z } from 'zod';
+import { Tag } from '../../models/tag.schema';
+import { SparkVote } from '../../models/sparks.schema';
 
 type Param = string | number | boolean | readonly (string | number | boolean)[];
 
-function filtersToParams(f: FilterProps): Record<string, Param> {
+export function filtersToParams(f: FilterProps): Record<string, Param> {
   const hasLocations = f.locations.length > 0;
   const params: Record<string, Param> = {
     sort: f.sort === 'distance' && !hasLocations ? 'start_time' : f.sort,
@@ -65,28 +65,54 @@ export class EventService {
   getEvent(id: () => string) {
     return httpResource(
       () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
-      { parse: EventSchema.parse }
+      { parse: Event.parse }
     );
+  }
+
+  deleteEvent(eventId: string) {
+    return this.http.delete(`${this.base}/${eventId}`);
+  }
+
+  createEvent(event: EventCreate) {
+    return this.http.post(this.base, event);
+  }
+
+  updateEvent(eventId: string, event: EventUpdate) {
+    return isUUID(eventId)
+      ? this.http.patch(`${this.base}/eventId`, event)
+      : null;
   }
 
   getEventDetails(id: () => string) {
     return httpResource(
       () => (isUUID(id()) ? `${this.base}/${id()}` : undefined),
-      { parse: EventDetailSchema.parse }
+      { parse: EventDetail.parse }
     );
   }
 
-  getEventFeed(filters: () => FilterProps) {
+  listEvents(filters: () => FilterProps) {
     return httpResource(
       () => ({
         url: this.base,
         params: filtersToParams(filters()),
       }),
       {
-        parse: EventListSchema.parse,
+        parse: EventList.parse,
         defaultValue: { total: 0, items: [] },
       }
     );
+  }
+
+  fetchEvents(filters: FilterProps, limit = 20, offset = 0) {
+    return firstValueFrom(
+      this.http.get(this.base, {
+        params: {
+          ...filtersToParams(filters),
+          limit,
+          offset,
+        },
+      })
+    ).then((res) => EventList.parse(res));
   }
 
   getFeatured(limit = 10) {
@@ -100,31 +126,21 @@ export class EventService {
         },
       }),
       {
-        parse: EventListSchema.parse,
+        parse: EventList.parse,
         defaultValue: { total: 0, items: [] },
       }
     );
   }
 
-  searchResource(query: () => string, filters: () => FilterProps, limit = 8) {
-    return httpResource(
-      () => {
-        const q = query().trim();
-        if (!q) return undefined;
+  listTags() {
+    return httpResource(() => `${this.base}/tags`, {
+      parse: z.array(Tag).parse,
+    });
+  }
 
-        return {
-          url: this.base,
-          params: {
-            ...filtersToParams({ ...filters(), query: q }),
-            limit,
-            offset: 0,
-          },
-        };
-      },
-      {
-        parse: EventListSchema.parse,
-        defaultValue: { total: 0, items: [] },
-      }
+  fetchTags() {
+    return firstValueFrom(this.http.get(`${this.base}/tags`)).then((res) =>
+      z.array(Tag).parse(res)
     );
   }
 
@@ -148,5 +164,9 @@ export class EventService {
         parse: HeatmapResponseSchema.parse,
       }
     );
+  }
+
+  sparkEvent(eventId: string, spark: SparkVote) {
+    return this.http.post(`${this.base}/${eventId}/spark`, spark);
   }
 }
