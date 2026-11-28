@@ -1,48 +1,51 @@
-import { Review, ReviewList } from './../../../models/review.schema';
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { EventService, ReviewService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { EventCard } from '../../components/event-card/event-card';
 import { HeatMap } from '../heat-map/heat-map';
 import { Graph } from '../../molecules/graph/graph';
 import { Footer } from '../../components/footer/footer';
 import { Comment } from '../../molecules/comment/comment';
+import { ReviewService } from '../../services/review-service';
+import { SavedEventService } from '../../services/saved-event-service';
+import { AuthService } from '../../services/auth-service';
+import {
+  ReviewDialog,
+  ReviewResult,
+} from '../../dialogs/review-dialog/review-dialog';
+import { Button } from '../../atoms/button/button';
+import { ReviewRequest } from '../../../models/review.schema';
 
 @Component({
-  imports: [EventCard, HeatMap, Graph, Footer, Comment],
+  imports: [EventCard, HeatMap, Graph, Footer, Comment, ReviewDialog, Button],
   selector: 'f-event-details',
   styleUrl: './event-details.css',
   templateUrl: './event-details.html',
 })
 export class EventDetails {
+  private readonly auth = inject(AuthService);
   private readonly eventApi = inject(EventService);
+  private readonly savedEventApi = inject(SavedEventService);
   private readonly reviewApi = inject(ReviewService);
   id = input.required<string>();
 
-  protected readonly event = this.eventApi.getEventDetails(this.id);
-
+  protected readonly _event = this.eventApi.getEventDetails(this.id);
+  protected readonly event = computed(() => {
+    if (this._event.hasValue())
+      return {
+        ...this._event.value(),
+        is_saved: this._event.value()
+          ? this.savedEventApi.isSaved(this._event.value()!.id)
+          : false,
+      };
+    return undefined;
+  });
   protected readonly reviews = this.reviewApi.getReviews(this.id);
-  // protected readonly reviews = computed(
-  //   () =>
-  //     ({
-  //       total: 1,
-  //       items: [
-  //         {
-  //           id: '00-00',
-  //           event_id: this.id(),
-  //           user_id: '00-00',
-  //           username: 'Big John',
-  //           rating: 4.3,
-  //           content:
-  //             'this is a really cool event, please go, I need you to go please!',
-  //           created_at: new Date(),
-  //         },
-  //       ],
-  //     }) as ReviewList
-  // );
+  protected readonly reviewOpen = signal(false);
 
   protected readonly graphData = computed(() => {
-    if (!this.event.hasValue()) return [];
-    const raw = this.event.value().crowd_by_hour;
+    const e = this.event();
+    if (!e) return [];
+    const raw = e.crowd_by_hour;
     console.log(raw);
     const data = Object.entries(raw)
       .map(([hour, crowd]) => {
@@ -56,4 +59,18 @@ export class EventDetails {
     console.log(data);
     return data;
   });
+
+  protected onReview(): void {
+    if (this.auth.requireRole(['standard'])) return;
+    this.reviewOpen.set(true);
+  }
+
+  protected onReviewSubmit(result: ReviewResult): void {
+    this.reviewOpen.set(false);
+    const req: ReviewRequest = {
+      rating: result.rating,
+      content: result.comment,
+    };
+    this.reviewApi.postReview(this.id(), req).subscribe();
+  }
 }

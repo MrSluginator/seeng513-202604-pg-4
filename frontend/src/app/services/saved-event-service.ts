@@ -8,7 +8,7 @@ import {
 import { AuthService } from './auth-service';
 import { firstValueFrom, tap } from 'rxjs';
 import { FilterProps } from '../../models/filters';
-import { filtersToParams } from './api-service';
+import { filtersToParams } from './event-service';
 
 @Service()
 export class SavedEventService {

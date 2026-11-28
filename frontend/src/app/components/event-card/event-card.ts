@@ -17,15 +17,12 @@ import { Price } from '../../molecules/price/price';
 import { Event, EventDetail } from '../../../models/event.schema';
 import { formatNumber, formatTimeRange } from '../../../utils/format';
 import { IconProgressBar } from '../../molecules/icon-progress-bar/icon-progress-bar';
-import {
-  ReviewDialog,
-  ReviewResult,
-} from '../../dialogs/review-dialog/review-dialog';
 import { SavedEventService } from '../../services/saved-event-service';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth-service';
 import { Tag } from '../../../models/tag.schema';
 import { FilterService } from '../../services/filter-service';
+import { EventService } from '../../services/event-service';
 
 export type EventSize = 's' | 'm' | 'l' | 'xl';
 
@@ -39,7 +36,6 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
     Widget,
     Price,
     IconProgressBar,
-    ReviewDialog,
   ],
   selector: 'f-event-card',
   styleUrl: './event-card.css',
@@ -48,6 +44,7 @@ export type EventSize = 's' | 'm' | 'l' | 'xl';
 })
 export class EventCard {
   private readonly router = inject(Router);
+  private readonly eventApi = inject(EventService);
   private readonly savedEventApi = inject(SavedEventService);
   private readonly auth = inject(AuthService);
   private readonly filterSvc = inject(FilterService);
@@ -60,11 +57,8 @@ export class EventCard {
 
   // Starts from event().defaultSaved and resets if a different event is passed in
   protected readonly saved = linkedSignal(() => this.event().is_saved);
+  protected readonly sparked = signal(false);
   protected readonly pending = signal(false);
-
-  protected readonly saveLabel = computed(() =>
-    this.saved() ? 'Remove from saved' : 'Save event'
-  );
 
   protected readonly timeLabel = computed(() => {
     const time = this.event().time;
@@ -112,14 +106,18 @@ export class EventCard {
     });
   }
 
-  protected onReview(): void {
+  protected onSpark(): void {
     if (this.auth.requireRole(['standard'])) return;
-    this.reviewOpen.set(true);
-  }
+    const prev = this.sparked();
+    this.sparked.set(!prev);
+    this.pending.set(true);
 
-  protected onReviewSubmit(result: ReviewResult): void {
-    this.reviewOpen.set(false);
-    console.log(result);
+    const req$ = this.eventApi.sparkEvent(this.event().id, {
+      amount: prev ? -1 : 1,
+    });
+    req$.pipe(finalize(() => this.pending.set(false))).subscribe({
+      error: () => this.sparked.set(prev),
+    });
   }
 
   protected onShare(): void {

@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { FilterService } from '../../services/filter-service';
-import { EventService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { NavbarService } from '../../services/navbar-service';
 import { Router } from '@angular/router';
 import {
@@ -59,26 +59,6 @@ export class Saved {
   ).map(([value, label]) => ({ value, label }));
   protected readonly selectedSort = computed(
     () => SORT_OPTIONS[this.filterSvc.filters().sort]
-  );
-
-  private readonly debouncedQuery = toSignal(
-    toObservable(this.navbarSvc.query).pipe(
-      debounceTime(250),
-      distinctUntilChanged()
-    ),
-    { initialValue: '' }
-  );
-
-  private readonly searchRes = this.eventApi.searchResource(
-    () => this.debouncedQuery(),
-    () => this.filterSvc.filters()
-  );
-
-  protected readonly searchResults = computed<SearchResult<Event>[]>(() =>
-    this.searchRes.value().items.map((event) => ({
-      label: event.title,
-      value: event,
-    }))
   );
 
   protected readonly search: SearchFn<Event> = async (query) => {

@@ -1,34 +1,28 @@
 <ng-template #interactables>
   <div class="interactables">
     <f-button
-      icon="spark"
-      label="Rate event"
-      (click)="onReview()"
-      [disabled]="pending()"
-    />
-    <f-button
       icon="share"
       label="Share event"
       (click)="onShare()"
       [disabled]="pending()"
     />
     <f-button
+      icon="spark"
+      [label]="sparked() ? 'Remove spark' : 'Donate spark'"
+      [pressed]="sparked()"
+      (click)="onSpark()"
+      [disabled]="pending()"
+    />
+    <f-button
       icon="bookmark"
       [pressed]="saved()"
-      [label]="saveLabel()"
+      [label]="this.saved() ? 'Remove from saved' : 'Save event'"
       (click)="onSave()"
       [disabled]="pending()"
     />
   </div>
 </ng-template>
 
-@if (reviewOpen()) {
-  <f-review-dialog
-    [event]="event()"
-    (submitted)="onReviewSubmit($event)"
-    (cancelled)="reviewOpen.set(false)"
-  />
-}
 <div class="card" [class]="size()">
   @if (size() === 'm') {
     <ng-container [ngTemplateOutlet]="interactables" />
