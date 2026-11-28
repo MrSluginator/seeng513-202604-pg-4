@@ -46,7 +46,6 @@ export class EventDetails {
     const e = this.event();
     if (!e) return [];
     const raw = e.crowd_by_hour;
-    console.log(raw);
     const data = Object.entries(raw)
       .map(([hour, crowd]) => {
         return [Number.parseInt(hour) * 60, Number.parseFloat(crowd)] as [
@@ -56,7 +55,6 @@ export class EventDetails {
       })
       .sort((a, b) => a[0] - b[0]);
     data.push([24 * 60, data[0][1]]);
-    console.log(data);
     return data;
   });
 

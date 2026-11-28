@@ -90,7 +90,6 @@ export class SignIn {
 
   protected submit(): void {
     const form = this.mode() === 'login' ? this.loginForm : this.signupForm;
-    console.log(form.invalid, this.error());
     if (form.invalid) {
       form.markAllAsTouched();
       return;
