@@ -1,1 +1,46 @@
-<p>saved works!</p>
+<div class="feed">
+  <div class="feed-header">
+    <div class="tags">
+      <small>Showing items with the following tags:</small>
+      @for (tag of filterSvc.filters().tags; track tag.id) {
+        <f-widget
+          [text]="tag.name"
+          icon="times"
+          (click)="filterSvc.removeTag(tag)"
+        />
+      }
+    </div>
+    <div class="filters">
+      <f-menu-button
+        class="sort"
+        [text]="`Sort: ${selectedSort()}`"
+        label="Sort events"
+        [options]="sortOptions"
+        (selected)="onSortSelected($event)"
+      />
+      <f-search-bar
+        class="search"
+        placeholder="Search events..."
+        [search]="search"
+        (resultSelected)="selectEvent($event)"
+      >
+        <ng-template
+          fSearchResult=""
+          [fSearchResult]="search"
+          let-result
+          let-group="group"
+          let-active="active"
+        >
+          {{ result.label }}
+        </ng-template>
+      </f-search-bar>
+      <f-filter-button />
+    </div>
+  </div>
+  <f-event-grid
+    size="m"
+    [events]="saved()"
+    [display]="{ type: 'grid', hidden: false }"
+  />
+</div>
+<f-footer />

@@ -17,7 +17,7 @@ import {
   MenuButton,
   MenuOption,
 } from '../../molecules/menu-button/menu-button';
-import { EventService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { FilterService } from '../../services/filter-service';
 import { Event } from '../../../models/event.schema';
 import { FilterProps, Sort, SORT_OPTIONS } from '../../../models/filters';
@@ -133,7 +133,7 @@ export class Search {
     };
   });
 
-  protected readonly searchResults = this.eventApi.getEventFeed(
+  protected readonly searchResults = this.eventApi.listEvents(
     this.effectiveFilters
   );
 

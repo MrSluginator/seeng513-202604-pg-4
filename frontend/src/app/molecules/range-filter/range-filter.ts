@@ -42,7 +42,7 @@ export class RangeFilter implements ControlValueAccessor {
   readonly min = input.required<number>();
   readonly max = input.required<number>();
   /** Range shown while the filter has no value (initially, and after a reset). */
-  readonly defaultValue = input.required<Range<number>>();
+  readonly defaultValue = input<Range<number>>();
   readonly step = input(1);
   readonly majorSteps = input(5);
   readonly minorSteps = input(4);
@@ -50,8 +50,8 @@ export class RangeFilter implements ControlValueAccessor {
   readonly sliderLabel = input('Range');
 
   protected readonly enabled = signal(false);
-  protected readonly range = linkedSignal<Range<number>>(() =>
-    this.defaultValue()
+  protected readonly range = linkedSignal<Range<number>>(
+    () => this.defaultValue() ?? [this.min(), this.max()]
   );
   private readonly formDisabled = signal(false);
 
@@ -93,9 +93,8 @@ export class RangeFilter implements ControlValueAccessor {
       this.enabled.set(true);
       this.range.set([value[0], value[1]]);
     } else {
-      // null / undefined (including form.reset()): filter off, range back to default
       this.enabled.set(false);
-      this.range.set(this.defaultValue());
+      // this.range.set(this.defaultValue() ?? [this.min(), this.max()]);
     }
   }
 

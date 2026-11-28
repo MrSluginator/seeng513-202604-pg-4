@@ -1,1 +1,39 @@
-<p>event-details works!</p>
+@if (reviewOpen()) {
+  <f-review-dialog
+    [event]="event()!"
+    (submitted)="onReviewSubmit($event)"
+    (cancelled)="reviewOpen.set(false)"
+  />
+}
+
+<div class="column">
+  <div class="content">
+    @if (event(); as event) {
+      <f-event-card class="card" size="xl" [event]="event" />
+      <div class="info">
+        <f-heat-map />
+        <f-graph [title]="event.title" [data]="graphData()" />
+        <div class="reviews">
+          <h3 class="review-header">
+            What others have to say about {{ event.title }}
+          </h3>
+          <f-button text="Review this event" (clicked)="onReview()" />
+          @if (reviews.hasValue()) {
+            @for (review of reviews.value()!.items; track $index) {
+              <f-comment [review]="review" />
+            } @empty {
+              <p>Be the first to leave a review!</p>
+            }
+          }
+        </div>
+      </div>
+    } @else {
+      <div>
+        <h3>
+          Please return to the main page, no event found with id '{{ id() }}'
+        </h3>
+      </div>
+    }
+  </div>
+  <f-footer />
+</div>

@@ -3,6 +3,7 @@
     <div
       #track
       class="track"
+      tabindex="-1"
       (scroll)="onScroll($event)"
       (pointerdown)="cancelTarget()"
       (wheel)="cancelTarget()"
@@ -12,6 +13,7 @@
           class="slide"
           role="group"
           aria-roledescription="slide"
+          [attr.inert]="$index === index() ? null : ''"
           [attr.aria-label]="
             itemLabel() + ' ' + ($index + 1) + ' of ' + items().length
           "
@@ -38,6 +40,7 @@
             <button
               type="button"
               class="dot"
+              tabindex="-1"
               [class.active]="$index === index()"
               [attr.aria-label]="'Go to ' + itemLabel() + ' ' + ($index + 1)"
               [attr.aria-current]="$index === index()"

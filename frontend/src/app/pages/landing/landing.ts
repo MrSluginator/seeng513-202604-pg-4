@@ -7,19 +7,14 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { EventGrid } from '../../components/event-grid/event-grid';
 import { FilterService } from '../../services/filter-service';
 import { FilterButton } from '../../molecules/filter-button/filter-button';
 import { Widget } from '../../atoms/widget/widget';
-import { EventService } from '../../services/api-service';
+import { EventService } from '../../services/event-service';
 import { Divider } from '../../atoms/divider/divider';
 import {
   MenuButton,
@@ -27,7 +22,12 @@ import {
 } from '../../molecules/menu-button/menu-button';
 import { SORT_OPTIONS } from '../../../models/filters';
 import { NavbarService } from '../../services/navbar-service';
-import { SearchResult, SearchBar } from '../../molecules/search-bar/search-bar';
+import {
+  SearchResult,
+  SearchBar,
+  SearchFn,
+  SearchResultTemplate,
+} from '../../molecules/search-bar/search-bar';
 import { Footer } from '../../components/footer/footer';
 import { AllCategories } from '../../molecules/category/all-categories';
 import {
@@ -36,6 +36,7 @@ import {
   CategoryName,
 } from '../../molecules/category/categories';
 import { Event } from '../../../models/event.schema';
+import { SavedEventService } from '../../services/saved-event-service';
 
 @Component({
   imports: [
@@ -47,6 +48,7 @@ import { Event } from '../../../models/event.schema';
     SearchBar,
     Footer,
     AllCategories,
+    SearchResultTemplate,
   ],
   selector: 'f-landing',
   styleUrl: './landing.css',
@@ -55,11 +57,28 @@ import { Event } from '../../../models/event.schema';
 export class Landing {
   private readonly filterSvc = inject(FilterService);
   private readonly eventApi = inject(EventService);
+  private readonly savedEventApi = inject(SavedEventService);
   private readonly navbarSvc = inject(NavbarService);
   private readonly router = inject(Router);
 
-  protected readonly featured = this.eventApi.getFeatured();
-  protected readonly feed = this.eventApi.getEventFeed(this.filterSvc.filters);
+  private readonly _featured = this.eventApi.getFeatured();
+  private readonly _feed = this.eventApi.listEvents(this.filterSvc.filters);
+
+  protected readonly featured = computed(
+    () =>
+      this._featured.value().items.map((event) => ({
+        ...event,
+        is_saved: this.savedEventApi.isSaved(event.id),
+      })) || []
+  );
+  protected readonly feed = computed(
+    () =>
+      this._feed.value().items.map((event) => ({
+        ...event,
+        is_saved: this.savedEventApi.isSaved(event.id),
+      })) || []
+  );
+
   private readonly feedSection =
     viewChild.required<ElementRef<HTMLElement>>('feedSection');
 
@@ -67,25 +86,10 @@ export class Landing {
     SORT_OPTIONS
   ).map(([value, label]) => ({ value, label }));
 
-  private readonly debouncedQuery = toSignal(
-    toObservable(this.navbarSvc.query).pipe(
-      debounceTime(250),
-      distinctUntilChanged()
-    ),
-    { initialValue: '' }
-  );
-
-  private readonly searchRes = this.eventApi.searchResource(
-    () => this.debouncedQuery(),
-    () => this.filterSvc.filters()
-  );
-
-  protected readonly searchResults = computed<SearchResult<Event>[]>(() =>
-    this.searchRes.value().items.map((event) => ({
-      label: event.title,
-      value: event,
-    }))
-  );
+  protected readonly search: SearchFn<Event> = async (query) => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return [];
+  };
 
   protected readonly categoryForm: CategoryForm = (() => {
     const selected = new Set(this.filterSvc.filters().categories);
@@ -115,14 +119,8 @@ export class Landing {
 
     this.navbarSvc.setSearch<Event>({
       placeholder: 'Search events...',
-      results: () => this.searchResults(),
+      search: this.search,
       onSelect: (event) => this.selectEvent(event),
-    });
-
-    effect(() => {
-      console.log('feed status:', this.feed.status());
-      console.log('feed error:', this.feed.error());
-      console.log('feed value:', this.feed.value());
     });
   }
 

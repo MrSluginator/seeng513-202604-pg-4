@@ -1,46 +1,50 @@
-import { Service, computed, signal } from '@angular/core';
-import { SearchResult } from '../molecules/search-bar/search-bar';
+import { Service, TemplateRef, computed, signal } from '@angular/core';
+import {
+  SearchFn,
+  SearchResult,
+  SearchResultContext,
+} from '../molecules/search-bar/search-bar';
+import { of } from 'rxjs';
 
 export interface NavbarSearchConfig<T> {
   placeholder?: string;
-  /** Called reactively with the current query; read any signals you need inside. */
-  results: (query: string) => SearchResult<T>[];
+  search: SearchFn<T>;
+  relatedSearch?: SearchFn<T>;
+  resultTemplate?: TemplateRef<SearchResultContext<T>>;
   onSelect: (result: SearchResult<T>) => void;
 }
 
 /** What the navbar actually stores: the selection logic is baked into each result. */
 type NavbarResult = SearchResult<() => void>;
 
-interface ActiveSearch {
+interface ActiveSearchConfig {
   placeholder: string;
-  results: (query: string) => NavbarResult[];
+  search: SearchFn<unknown>;
+  relatedSearch?: SearchFn<unknown>;
+  resultTemplate?: TemplateRef<SearchResultContext<unknown>>;
+  onSelect: (result: SearchResult<unknown>) => void;
 }
 
 @Service()
 export class NavbarService {
   readonly query = signal('');
-
-  private readonly active = signal<ActiveSearch | null>(null);
+  readonly active = signal<ActiveSearchConfig | null>(null);
 
   readonly hasSearch = computed(() => this.active() !== null);
   readonly placeholder = computed(
     () => this.active()?.placeholder ?? 'Search...'
   );
-  readonly results = computed<NavbarResult[]>(
-    () => this.active()?.results(this.query()) ?? []
-  );
-
-  readonly signedIn = signal(false);
 
   setSearch<T>(config: NavbarSearchConfig<T>): void {
     this.query.set('');
     this.active.set({
       placeholder: config.placeholder ?? 'Search...',
-      results: (query) =>
-        config.results(query).map((result) => ({
-          label: result.label,
-          value: () => config.onSelect(result),
-        })),
+      search: config.search as SearchFn<unknown>,
+      relatedSearch: (config.relatedSearch ??
+        (() => of([]))) as SearchFn<unknown>,
+      resultTemplate: config.resultTemplate as
+        TemplateRef<SearchResultContext<unknown>> | undefined,
+      onSelect: (result) => config.onSelect(result as SearchResult<T>),
     });
   }
 
